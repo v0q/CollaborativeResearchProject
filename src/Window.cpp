@@ -16,6 +16,7 @@ namespace hsitho
     initializeOpenGLFunctions();
     glInfo();
     glClearColor(0.f, 0.f, 0.f, 1.f);
+    startTimer(10);
 	}
 
   void GLWindow::paintGL()
@@ -37,6 +38,12 @@ namespace hsitho
       } break;
       default: break;
     }
+  }
+
+  void GLWindow::timerEvent(QTimerEvent *_timer)
+  {
+    m_timePassed += 0.1;
+    update();
   }
 
   void GLWindow::glInfo()
@@ -61,4 +68,6 @@ namespace hsitho
     // qPrintable() will print our QString w/o quotes around it.
     qDebug() << qPrintable(glVersion) << "(" << qPrintable(glProfile) << ")";
   }
+
+
 }

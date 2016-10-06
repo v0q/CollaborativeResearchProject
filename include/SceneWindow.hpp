@@ -20,6 +20,5 @@ namespace hsitho
     std::shared_ptr<ShaderManager> m_shaderMan;
 
     GLuint m_vao;
-    int m_frame;
 	};
 }

@@ -17,8 +17,12 @@ namespace hsitho
     virtual void resizeGL(const int _w, const int _h) override;
 
     void glInfo();
+    float getTimePassed() { return m_timePassed; }
 
   private:
     void keyPressEvent(QKeyEvent *_event) override;
+    void timerEvent(QTimerEvent *_timer) override;
+
+    float m_timePassed;
 	};
 }

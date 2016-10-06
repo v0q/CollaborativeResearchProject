@@ -20,9 +20,11 @@ namespace hsitho
     ~ShaderManager() {}
     void createShader(const std::string &_name, const std::string &_vs, const std::string &_fs);
     void useShader(const std::string &_name);
-    void setUniform4f(const std::string &_name, const GLfloat *_val);
+    void setUniform1f(const std::string &_name, const GLfloat _val);
+    void setUniform2f(const std::string &_name, const GLfloat *_val);
     void setUniform3fv(const std::string &_name, const GLfloat *_val);
     void setUniform4fv(const std::string &_name, const GLfloat *_val);
+    void setUniform4f(const std::string &_name, const GLfloat *_val);
     GLint getProgram() const { return m_programId; }
   private:
     static std::shared_ptr<hsitho::ShaderManager> m_instance;

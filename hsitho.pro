@@ -18,3 +18,7 @@ OTHER_FILES += shaders/*
 
 OBJECTS_DIR = ./obj
 MOC_DIR = ./moc
+
+DISTFILES += \
+    shaders/crystalbeacon.frag \
+    shaders/raymarchprimitives.frag

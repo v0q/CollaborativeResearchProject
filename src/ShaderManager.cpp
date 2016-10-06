@@ -64,6 +64,18 @@ namespace hsitho
     }
   }
 
+  void ShaderManager::setUniform1f(const std::string &_name, const GLfloat _val)
+  {
+    GLint loc = glGetUniformLocation(m_programId, _name.c_str());
+    glUniform1f(loc, _val);
+  }
+
+  void ShaderManager::setUniform2f(const std::string &_name, const GLfloat *_val)
+  {
+    GLint loc = glGetUniformLocation(m_programId, _name.c_str());
+    glUniform2f(loc, _val[0], _val[1]);
+  }
+
   void ShaderManager::setUniform3fv(const std::string &_name, const GLfloat *_val)
   {
     GLint loc = glGetUniformLocation(m_programId, _name.c_str());
