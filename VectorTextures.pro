@@ -1,5 +1,6 @@
 # General
 TARGET = VectorTextures
+DESTDIR = .
 CONFIG += c++11
 
 # QT Specific

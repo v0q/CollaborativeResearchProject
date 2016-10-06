@@ -4,8 +4,10 @@
 
 #include <QGLBuffer>
 #include <QGLShaderProgram>
+#include <QOpenGLFunctions>
+#include <QOpenGLVertexArrayObject>
 
-class GLWidget : public QGLWidget
+class GLWidget : public QGLWidget, protected QOpenGLFunctions
 {
 	Q_OBJECT
 public:
@@ -19,8 +21,6 @@ protected:
 	virtual void keyPressEvent(QKeyEvent* e);
 
 private:
-	bool prepareShaderProgram(const QString& vertexShaderPath,	const QString& fragmentShaderPath);
-
-	QGLShaderProgram m_shader;
-	QGLBuffer m_vertexBuffer;
+	QOpenGLVertexArrayObject m_vao;
+	GLuint m_vbo;
 };
