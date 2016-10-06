@@ -2,6 +2,7 @@
 *.slo
 *.lo
 *.o
+obj/
 # qt files
 *.pro.user*
 .qmake*
