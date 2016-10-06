@@ -1,112 +1,64 @@
-#include <QCoreApplication>
-#include <QPainter>
+#include <QGuiApplication>
+#include <QKeyEvent>
+#include <QDebug>
 
 #include "Window.hpp"
 
 namespace hsitho
 {
-	GLWindow::GLWindow(QWindow *parent) :
-		QWindow(parent),
-		m_update_pending(false),
-		m_animating(false),
-		m_context(nullptr),
-		m_device(nullptr)
-	{
-		setSurfaceType(QWindow::OpenGLSurface);
+  GLWindow::GLWindow()
+  {
+    makeCurrent();
+  }
+
+  void GLWindow::initializeGL()
+  {
+    initializeOpenGLFunctions();
+    glInfo();
+    glClearColor(0.f, 0.f, 0.f, 1.f);
 	}
 
-	void GLWindow::render(QPainter *painter)
-	{
-		Q_UNUSED(painter);
-	}
+  void GLWindow::paintGL()
+  {
+  }
 
-	void GLWindow::initialize()
-	{
-		glClearColor(1.f, 1.f, 1.f, 1.0f);
-	}
+  void GLWindow::resizeGL(const int _w, const int _h)
+  {
+    const qreal retinaScale = devicePixelRatio();
+    glViewport(0, 0, _w * retinaScale, _h * retinaScale);
+  }
 
-	void GLWindow::render()
-	{
-		if(!m_device) {
-			m_device = new QOpenGLPaintDevice;
-		}
+  void GLWindow::keyPressEvent(QKeyEvent *_event)
+  {
+    switch(_event->key())
+    {
+      case Qt::Key_Escape: {
+        QGuiApplication::exit(EXIT_SUCCESS);
+      } break;
+      default: break;
+    }
+  }
 
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+  void GLWindow::glInfo()
+  {
+    QString glType;
+    QString glVersion;
+    QString glProfile;
 
-		m_device->setSize(size());
+    // Get Version Information
+    glVersion = reinterpret_cast<const char*>(glGetString(GL_VERSION));
 
-		QPainter painter(m_device);
-		render(&painter);
-	}
+    // Get Profile Information
+    #define CASE(c) case QSurfaceFormat::c: glProfile = #c; break
+      switch (format().profile())
+      {
+        CASE(NoProfile);
+        CASE(CoreProfile);
+        CASE(CompatibilityProfile);
+      }
+    #undef CASE
 
-	void GLWindow::renderLater()
-	{
-		if(!m_update_pending) {
-			m_update_pending = true;
-			QCoreApplication::postEvent(this, new QEvent(QEvent::UpdateRequest));
-		}
-	}
-
-	void GLWindow::renderNow()
-	{
-		if(!isExposed()) {
-			return;
-		}
-
-		bool needsInitialize = false;
-
-		if(!m_context) {
-			m_context = new QOpenGLContext(this);
-			m_context->setFormat(requestedFormat());
-			m_context->create();
-
-			needsInitialize = true;
-		}
-
-		m_context->makeCurrent(this);
-
-		if(needsInitialize) {
-			initializeOpenGLFunctions();
-			initialize();
-		}
-
-		render();
-
-		m_context->swapBuffers(this);
-
-		if(m_animating) {
-			renderLater();
-		}
-	}
-
-	void GLWindow::setAnimating(bool animating)
-	{
-		m_animating = animating;
-
-		if(animating) {
-			renderLater();
-		}
-	}
-
-	bool GLWindow::event(QEvent *event)
-	{
-		switch (event->type()) {
-			case QEvent::UpdateRequest: {
-				m_update_pending = false;
-				renderNow();
-				return true;
-			} break;
-			default: {
-				return QWindow::event(event);
-			}
-		}
-	}
-
-	void GLWindow::exposeEvent(QExposeEvent *event)
-	{
-		Q_UNUSED(event);
-
-		if (isExposed())
-				renderNow();
-	}
+    // qPrintable() will print our QString w/o quotes around it.
+    qDebug() << qPrintable(glVersion) << "(" << qPrintable(glProfile) << ")";
+  }
 }

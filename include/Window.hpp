@@ -1,40 +1,24 @@
 #pragma once
 
-#include <QWindow>
+#include <QOpenGLWindow>
 #include <QOpenGLFunctions>
-#include <QOpenGLPaintDevice>
-#include <QOpenGLShaderProgram>
+#include <QKeyEvent>
 
 namespace hsitho
 {
-	class GLWindow : public QWindow, protected QOpenGLFunctions
-	{
-		Q_OBJECT
+  class GLWindow : public QOpenGLWindow, protected QOpenGLFunctions
+  {
 	public:
-		explicit GLWindow(QWindow *parent = 0);
+    explicit GLWindow();
 		~GLWindow() {}
 
-		virtual void render(QPainter *painter);
-		virtual void render();
+    virtual void initializeGL() override;
+    virtual void paintGL() override;
+    virtual void resizeGL(const int _w, const int _h) override;
 
-		virtual void initialize();
+    void glInfo();
 
-		void setAnimating(bool animating);
-
-	public slots:
-		void renderLater();
-		void renderNow();
-
-	protected:
-		bool event(QEvent *event) Q_DECL_OVERRIDE;
-
-		void exposeEvent(QExposeEvent *event) Q_DECL_OVERRIDE;
-
-	private:
-		bool m_update_pending;
-		bool m_animating;
-
-		QOpenGLContext *m_context;
-		QOpenGLPaintDevice *m_device;
+  private:
+    void keyPressEvent(QKeyEvent *_event) override;
 	};
 }

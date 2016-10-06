@@ -1,5 +1,8 @@
 #pragma once
 
+#include <QOpenGLShaderProgram>
+
+#include "ShaderManager.hpp"
 #include "Window.hpp"
 
 namespace hsitho
@@ -10,15 +13,13 @@ namespace hsitho
 		SceneWindow();
 		~SceneWindow() {}
 
-		void initialize() Q_DECL_OVERRIDE;
-		void render() Q_DECL_OVERRIDE;
+    void initializeGL();
+    void paintGL();
 
 	private:
-		GLuint m_posAttr;
-		GLuint m_colAttr;
-		GLuint m_matrixUniform;
+    std::shared_ptr<ShaderManager> m_shaderMan;
 
-		QOpenGLShaderProgram *m_program;
-		int m_frame;
+    GLuint m_vao;
+    int m_frame;
 	};
 }

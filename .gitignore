@@ -33,7 +33,7 @@ Makefile
 # Executables
 *.exe
 *.out
-VectorTextures
+hsitho
 # image files
 *.psd
 

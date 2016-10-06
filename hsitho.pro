@@ -1,7 +1,8 @@
 # General
-TARGET = VectorTextures
+TARGET = hsitho
 DESTDIR = .
 CONFIG += c++11
+CONFIG -= app_bundle
 
 # QT Specific
 QT += gui

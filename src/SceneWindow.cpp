@@ -5,83 +5,55 @@
 
 namespace hsitho
 {
-	SceneWindow::SceneWindow() :
-		m_program(0),
-		m_frame(0)
+  SceneWindow::SceneWindow() :
+    m_shaderMan(hsitho::ShaderManager::instance())
 	{
 	}
 
-	void SceneWindow::initialize()
-	{
-		m_program = new QOpenGLShaderProgram(this);
+  void SceneWindow::initializeGL()
+  {
+    GLWindow::initializeGL();
 
-		std::ifstream file;
+    m_shaderMan->createShader("ScreenQuad", "screenQuad.vert", "screenQuad.frag");
+    m_shaderMan->useShader("ScreenQuad");
 
-		file.open("shaders/vert.glsl", std::ios_base::in);
-		if(file.is_open())
-		{
-			std::string src = std::string((std::istreambuf_iterator<char>(file)),
-																		(std::istreambuf_iterator<char>()));;
-			const char *csrc = src.c_str();
-			m_program->addShaderFromSourceCode(QOpenGLShader::Vertex, csrc);
-		}
-		file.close();
-		file.open("shaders/frag.glsl", std::ios_base::in);
-		if(file.is_open())
-		{
-			std::string src = std::string((std::istreambuf_iterator<char>(file)),
-																		(std::istreambuf_iterator<char>()));;
-			const char *csrc = src.c_str();
-			m_program->addShaderFromSourceCode(QOpenGLShader::Fragment, csrc);
-		}
+    // Generate and bind VAO and VBO buffers
+    GLuint vbo;
+    glGenVertexArrays(1, &m_vao);
+    glBindVertexArray(m_vao);
 
-		file.close();
-
-		m_program->link();
-		m_posAttr = m_program->attributeLocation("vertex");
+    glGenBuffers(1, &vbo); // Generate 1 buffer
+    glBindBuffer(GL_ARRAY_BUFFER, vbo);
 	}
 
-	void SceneWindow::render()
+  void SceneWindow::paintGL()
 	{
 		const qreal retinaScale = devicePixelRatio();
 		glViewport(0, 0, width() * retinaScale, height() * retinaScale);
 
-		glClear(GL_COLOR_BUFFER_BIT);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		m_program->bind();
+    float vertices[] = {
+      // First triangle
+      -1.0f,  1.0f,
+      -1.0f, -1.0f,
+       1.0f,  1.0f,
+      // Second triangle
+      -1.0f, -1.0f,
+       1.0f, -1.0f,
+       1.0f,  1.0f
+    };
 
-		QMatrix4x4 matrix;
-		matrix.perspective(60.0f, 4.0f/3.0f, 0.1f, 100.0f);
-		matrix.translate(0, 0, -2);
-		matrix.rotate(100.0f * m_frame, 0, 1, 0);
+    glBindVertexArray(m_vao);
+    GLint posAttrib = glGetAttribLocation(m_shaderMan->getProgram(), "a_Position");
 
-		m_program->setUniformValue(m_matrixUniform, matrix);
+    glEnableVertexAttribArray(posAttrib);
 
-		GLfloat vertices[] = {
-				0.0f, 0.707f,
-				-0.5f, -0.5f,
-				0.5f, -0.5f
-		};
+    glVertexAttribPointer(posAttrib, 2, GL_FLOAT, GL_FALSE, 0, vertices);
 
-		GLfloat colors[] = {
-				1.0f, 0.0f, 0.0f,
-				0.0f, 1.0f, 0.0f,
-				0.0f, 0.0f, 1.0f
-		};
+    glDrawArrays(GL_TRIANGLES, 0, 6);
 
-		glVertexAttribPointer(m_posAttr, 2, GL_FLOAT, GL_FALSE, 0, vertices);
-		glVertexAttribPointer(m_colAttr, 3, GL_FLOAT, GL_FALSE, 0, colors);
-
-		glEnableVertexAttribArray(0);
-		glEnableVertexAttribArray(1);
-
-		glDrawArrays(GL_TRIANGLES, 0, 3);
-
-		glDisableVertexAttribArray(1);
-		glDisableVertexAttribArray(0);
-
-		m_program->release();
-
-		++m_frame;
-	}
+    glBindVertexArray(0);
+    glDisableVertexAttribArray(posAttrib);
+  }
 }
