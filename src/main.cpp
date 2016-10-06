@@ -1,20 +1,21 @@
 #include <QApplication>
 #include <QGLFormat>
 
-#include "glwidget.hpp"
+#include "SceneWindow.hpp"
 
 int main(int argc, char* argv[])
 {
-	QApplication a(argc, argv);
+	QGuiApplication app(argc, argv);
 
-	QGLFormat glFormat;
-	glFormat.setVersion(4, 1);
-	glFormat.setProfile(QGLFormat::CoreProfile);
-	glFormat.setSampleBuffers(true);
+	QSurfaceFormat format;
+	format.setSamples(16);
 
-	// Create a GLWidget requesting our format
-	GLWidget w(glFormat);
-	w.show();
+	hsitho::SceneWindow window;
+	window.setFormat(format);
+	window.resize(1280, 720);
+	window.show();
 
-	return a.exec();
+	window.setAnimating(true);
+
+	return app.exec();
 }
