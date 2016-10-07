@@ -19,14 +19,7 @@ namespace hsitho
 		program->addShaderFromSourceFile(QOpenGLShader::Vertex, "./shaders/" + _vs);
 		program->addShaderFromSourceFile(QOpenGLShader::Fragment, "./shaders/" + _fs);
 
-//		for(auto i : program->shaders())
-//			qDebug() << qPrintable(i->sourceCode());
-
-		program->link();
-
-		std::cout << program->attributeLocation("a_Position") << " ";
-		std::cout << program->attributeLocation("a_FragCoord");
-		std::cout << "\n";
+    program->link();
 
 		m_shaders[_name] = program;
   }

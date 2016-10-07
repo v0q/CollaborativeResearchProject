@@ -6,7 +6,8 @@
 
 namespace hsitho
 {
-  GLWindow::GLWindow()
+  GLWindow::GLWindow() :
+    m_timePassed(0.f)
   {
     makeCurrent();
   }
