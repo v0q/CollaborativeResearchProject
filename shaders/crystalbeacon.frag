@@ -1,9 +1,9 @@
 #version 410
 
-uniform float u_globalTime;
+uniform float u_GlobalTime;
 uniform vec2 u_Resolution;
-in vec2 o_fragCoord;
-out vec4 fragColor;
+in vec2 o_FragCoord;
+out vec4 FragColor;
 
 float time;
 float atime;
@@ -121,8 +121,8 @@ Ray createRay(vec3 center, vec3 lookAt, vec3 up, vec2 uv, float fov, float aspec
 void main()
 {
   vec2 res = vec2(640.0, 480.0);
-  time = u_globalTime;
-  vec2 p = o_fragCoord.xy;
+  time = u_GlobalTime;
+  vec2 p = o_FragCoord.xy;
   vec3 cameraPos = vec3(7.);//vec3(7.*sin(time/3.),7.*cos(time/3.),-4.*sin(time/8.));
   vec3 lookAt = vec3(0.);
   vec3 up = vec3(0.,0.,1.);
@@ -138,5 +138,5 @@ void main()
   float vig = p.x*(1.-p.x)*p.y*(1.-p.y)*4.;
   vig = pow(vig,0.3);
   col *= vig;
-  fragColor = vec4(col, 1.0);
+  FragColor = vec4(col, 1.0);
 }
