@@ -21,4 +21,5 @@ MOC_DIR = ./moc
 
 DISTFILES += \
     shaders/crystalbeacon.frag \
-    shaders/raymarchprimitives.frag
+    shaders/raymarchprimitives.frag \
+    shaders/distancefieldprimitives.frag
