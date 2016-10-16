@@ -1,6 +1,8 @@
 # General
-TARGET = VectorTextures
+TARGET = hsitho
+DESTDIR = .
 CONFIG += c++11
+CONFIG -= app_bundle
 
 # QT Specific
 QT += gui
@@ -16,3 +18,9 @@ OTHER_FILES += shaders/*
 
 OBJECTS_DIR = ./obj
 MOC_DIR = ./moc
+
+DISTFILES += \
+    shaders/crystalbeacon.frag \
+    shaders/raymarchprimitives.frag \
+    nodeEditor/*.cpp \
+    nodeEditor/*.hpp
