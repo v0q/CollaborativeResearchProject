@@ -11,25 +11,41 @@ out vec4 o_FragColor;
  */
 
 // Signed distance field function for cube
-vec4 cube(vec3 _position, float _w)
+float sphere(vec3 _position, float _w)
+{
+    return length(_position)-_w;
+}
+
+float cube(vec3 _position, float _w)
 {
   vec3 pos = abs(_position);
   float dx = pos.x - _w;
   float dy = pos.y - _w;
   float dz = pos.z - _w;
   float m = max(dx, max(dy, dz));
-  return vec4(m, dx, dy, dz);
+  return m;
 }
 
-vec3 normal(vec3 _position)
+float sdTorus( vec4 p, vec2 t )
 {
-  vec3 epsilon = vec3(0.01f, 0.0f, 0.0f);
-  vec3 normal = vec3(
-    cube(_position + epsilon.xyy, 0.6f).x - cube(_position - epsilon.xyy, 0.6f).x,
-    cube(_position + epsilon.yxy, 0.6f).x - cube(_position - epsilon.yxy, 0.6f).x,
-    cube(_position + epsilon.yyx, 0.6f).x - cube(_position - epsilon.yyx, 0.6f).x
-  );
-  return normalize(normal);
+  vec2 q = vec2(length(p.xz)-t.x,p.y);
+  return length(q)-t.y;
+}
+
+float smin(float a, float b, float k)
+{
+  float h = clamp( 0.5+0.5*(b-a)/k, 0.0, 1.0 );
+  return mix( b, a, h ) - k*h*(1.0-h);
+}
+
+float map(vec3 _position)
+{
+//  return sphere(_position, 0.6f);
+  return sdTorus(mat4x4(sin(45), cos(45), 0, 0,
+                        -cos(45), sin(45), 0, 0,
+                        0, 0, 1, 0,
+                        0, 0, 0, 1)*vec4(_position, 1.0f), vec2(3.5f, 0.5f));
+//  return smin(cube(_position + vec3(0.f, 0.f, 0.5f), 0.6f), sphere(_position + vec3(0.f, -0.5f, -0.5f), 0.6f), 0.3f);
 }
 
 // Ray for tracing
@@ -56,41 +72,30 @@ mat2x3 createRay(vec3 _origin, vec3 _lookAt, vec3 _upV, vec2 _uv, float _fov, fl
 // Rendering function
 vec3 render(mat2x3 _ray)
 {
-  float distance = 0.f;
-  vec3 position;
-  for(int i = 0; i < 60; ++i)
+  float distance = 1.f;
+  float traceprecision = 0.01f;
+  float position;
+  int  i;
+  for(i = 0; i < 50; ++i)
   {
-    position = _ray[0] + distance * _ray[1];
-    distance += cube(position, 0.6f).x;
+    position = map(_ray[0] + distance * _ray[1]);
+    if(position <= traceprecision) {
+      break;
+    }
+    distance += position;
   }
 
-  vec4 m = cube(position, 0.6f);
-
-  if(m.x < 0.01)
+  if(position <= traceprecision)
   {
-    vec3 n = normal(position);
-    vec3 l = normalize(vec3(1.f, 2.f, 5.f));
-    vec3 diffuse = clamp(dot(n, l), 0.f, 1.f)*vec3(1.);
-    vec3 r = reflect(_ray[1], n);
-    float dx = m.y;
-    float dy = m.z;
-    float dz = m.w;
-    float start = 0.0f;
-    float end = 0.05f;
-    float f = smoothstep(start, end, abs(dx-dy));
-    f *= smoothstep(start, end, abs(dx-dz));
-    f *= smoothstep(start, end, abs(dz-dy));
-    f = 1.f - f;
-    float rf = 1.f - abs(dot(_ray[1], n));
-    rf = pow(rf, 3.f);
-    return diffuse * (1.f - rf) * 0.8f;
+    vec3 diffuse = vec3(0.8f, 0.6f, 0.f);
+    return vec3(i/60.f, 1 - i/60.f, 0.f);
   }
-  return vec3(0.f);
+  return vec3(1.f);
 }
 
 void main()
 {
-  vec3 cameraPosition = vec3(sin(u_GlobalTime/10.f)*5.f, 5.f, cos(u_GlobalTime/10.f)*5.f);
+  vec3 cameraPosition = vec3(sin(u_GlobalTime/10.f)*5.f, 0.f, cos(u_GlobalTime/10.f)*5.f);
   vec3 lookAt = vec3(0.f);
   vec3 upVector = vec3(0.f, 1.f, 0.f);
   float aspectRatio = u_Resolution.x / u_Resolution.y;
