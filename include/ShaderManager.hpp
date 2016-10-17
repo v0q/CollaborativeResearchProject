@@ -18,7 +18,7 @@ namespace hsitho
     }
 
 		~ShaderManager();
-		void createShader(const std::string &_name, const QString &_vs, const QString &_fs, QObject *_parent);
+    void createShader(const std::string &_name, const QString &_vs, const QString &_fs);
 		void useShader(const std::string &_name);
 		QOpenGLShaderProgram* getProgram() const { return m_program; }
   private:

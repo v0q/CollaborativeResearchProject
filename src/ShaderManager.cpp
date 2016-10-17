@@ -12,7 +12,7 @@ namespace hsitho
 	{
 	}
 
-	void ShaderManager::createShader(const std::string &_name, const QString &_vs, const QString &_fs, QObject *_parent)
+  void ShaderManager::createShader(const std::string &_name, const QString &_vs, const QString &_fs)
 	{
 		QOpenGLShaderProgram *program = new QOpenGLShaderProgram();
 

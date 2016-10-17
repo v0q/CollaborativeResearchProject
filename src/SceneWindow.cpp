@@ -1,9 +1,6 @@
 #include <fstream>
 #include <iostream>
 
-
-
-
 #include "SceneWindow.hpp"
 
 namespace hsitho
@@ -22,7 +19,7 @@ namespace hsitho
   {
 		GLWindow::initializeGL();
 
-		m_shaderMan->createShader("ScreenQuad", "screenQuad.vert", "crystalbeacon.frag", this);
+    m_shaderMan->createShader("ScreenQuad", "screenQuad.vert", "crystalbeacon.frag");
 		m_shaderMan->useShader("ScreenQuad");
 
 		// Generate and bind VAO and VBO buffers

@@ -1,11 +1,8 @@
 #pragma once
 
-#include <nodeEditor/NodeDataModel.cpp>
-
 #include <QOpenGLWindow>
 #include <QOpenGLFunctions>
 #include <QKeyEvent>
-
 
 namespace hsitho
 {
@@ -15,8 +12,6 @@ namespace hsitho
 
     explicit GLWindow();
 		~GLWindow() {}
-
-
 
     virtual void initializeGL() override;
     virtual void paintGL() override;

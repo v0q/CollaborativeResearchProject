@@ -12,15 +12,22 @@ QT += core
 
 # Project specific files
 SOURCES += ./src/*.cpp
-HEADERS += ./include/*.hpp
+HEADERS += ./include/*.hpp \
+           ./nodeEditor/*.hpp
+
 INCLUDEPATH += ./include
-OTHER_FILES += shaders/*
+OTHER_FILES += ./shaders/* \
+               ./libs/*
+
+LIBS += -L./libs -lnodes
 
 OBJECTS_DIR = ./obj
 MOC_DIR = ./moc
 
-DISTFILES += \
-    shaders/crystalbeacon.frag \
-    shaders/raymarchprimitives.frag \
-    nodeEditor/*.cpp \
-    nodeEditor/*.hpp
+DISTFILES += shaders/crystalbeacon.frag \
+             shaders/raymarchprimitives.frag
+
+DEFINES += NODE_EDITOR_SHARED
+
+QMAKE_CXXFLAGS_WARN_ON += -Wno-unused-parameter \
+                          -Wno-unused-function

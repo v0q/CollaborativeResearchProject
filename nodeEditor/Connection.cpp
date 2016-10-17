@@ -256,6 +256,7 @@ getNode(PortType portType) const
 
     default:
       // not possible
+      return _inNode;
       break;
   }
 }
@@ -277,6 +278,7 @@ getNode(PortType portType)
 
     default:
       // not possible
+      return _inNode;
       break;
   }
 }
