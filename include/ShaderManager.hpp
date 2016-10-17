@@ -17,7 +17,7 @@ namespace hsitho
       return m_instance;
     }
 
-		~ShaderManager();
+    ~ShaderManager();
     void createShader(const std::string &_name, const QString &_vs, const QString &_fs);
 		void useShader(const std::string &_name);
 		QOpenGLShaderProgram* getProgram() const { return m_program; }

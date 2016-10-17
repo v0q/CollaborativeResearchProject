@@ -6,7 +6,7 @@
 namespace hsitho
 {
   SceneWindow::SceneWindow() :
-    m_shaderMan(hsitho::ShaderManager::instance())
+    m_shaderMan(ShaderManager::instance())
 	{
 	}
 
@@ -19,11 +19,11 @@ namespace hsitho
   {
 		GLWindow::initializeGL();
 
-    m_shaderMan->createShader("ScreenQuad", "screenQuad.vert", "crystalbeacon.frag");
-		m_shaderMan->useShader("ScreenQuad");
+    m_shaderMan->createShader("ScreenQuad", "screenQuad.vert", "distancefieldprimitives.frag");
+    m_shaderMan->useShader("ScreenQuad");
 
 		// Generate and bind VAO and VBO buffers
-		m_vao = new QOpenGLVertexArrayObject(this);
+    m_vao = new QOpenGLVertexArrayObject(dynamic_cast<QObject*>(this));
 		m_vao->create();
 		m_vao->bind();
 

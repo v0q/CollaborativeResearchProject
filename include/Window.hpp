@@ -8,8 +8,7 @@ namespace hsitho
 {
   class GLWindow : public QOpenGLWindow, protected QOpenGLFunctions
   {
-	public:
-
+  public:
     explicit GLWindow();
 		~GLWindow() {}
 

@@ -1,11 +1,11 @@
-//#include "nodeEditor/NodeData.hpp"
-//#include "nodeEditor/FlowScene.hpp"
-//#include "nodeEditor/FlowView.hpp"
+#include "nodeEditor/NodeData.hpp"
+#include "nodeEditor/FlowScene.hpp"
+#include "nodeEditor/FlowView.hpp"
 
 #include <QApplication>
 #include <QGLFormat>
 
-//#include "nodeEditor/DataModelRegistry.hpp"
+#include "nodeEditor/DataModelRegistry.hpp"
 
 #include "SceneWindow.hpp"
 

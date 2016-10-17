@@ -21,8 +21,6 @@ namespace hsitho
 	private:
     std::shared_ptr<ShaderManager> m_shaderMan;
 		QOpenGLVertexArrayObject *m_vao;
-		QOpenGLBuffer m_vbo;
-
-//    GLuint m_vao;
+    QOpenGLBuffer m_vbo;
 	};
 }
