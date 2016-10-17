@@ -15,7 +15,9 @@ SOURCES += ./src/*.cpp
 HEADERS += ./include/*.hpp \
            ./nodeEditor/*.hpp
 
-INCLUDEPATH += ./include
+FORMS += ./ui/mainwindow.ui
+
+INCLUDEPATH += . ./include
 OTHER_FILES += ./shaders/* \
                ./libs/*
 

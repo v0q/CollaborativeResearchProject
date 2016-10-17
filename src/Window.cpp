@@ -1,15 +1,22 @@
 #include <QGuiApplication>
 #include <QKeyEvent>
 #include <QDebug>
+#include <iostream>
 
 #include "Window.hpp"
 
 namespace hsitho
 {
-  GLWindow::GLWindow() :
+  GLWindow::GLWindow(QWidget *_parent) :
+    QOpenGLWidget(_parent),
     m_timePassed(0.f)
   {
-    makeCurrent();
+    this->resize(_parent->size());
+//    makeCurrent();
+  }
+
+  GLWindow::~GLWindow()
+  {
   }
 
   void GLWindow::initializeGL()

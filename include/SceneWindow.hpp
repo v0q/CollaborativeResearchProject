@@ -9,10 +9,10 @@
 
 namespace hsitho
 {
-	class SceneWindow : public GLWindow
-	{
+  class SceneWindow : public GLWindow
+  {
 	public:
-		SceneWindow();
+    SceneWindow(QWidget *_parent);
 		~SceneWindow();
 
     void initializeGL();
