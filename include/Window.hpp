@@ -1,16 +1,17 @@
 #pragma once
 
-#include <QOpenGLWindow>
+#include <QOpenGLWidget>
 #include <QOpenGLFunctions>
 #include <QKeyEvent>
 
 namespace hsitho
 {
-  class GLWindow : public QOpenGLWindow, protected QOpenGLFunctions
+  class GLWindow : public QOpenGLWidget, protected QOpenGLFunctions
   {
+  Q_OBJECT
   public:
-    explicit GLWindow();
-		~GLWindow() {}
+    explicit GLWindow(QWidget *_parent);
+    ~GLWindow();
 
     virtual void initializeGL() override;
     virtual void paintGL() override;

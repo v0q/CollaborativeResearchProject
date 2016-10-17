@@ -5,19 +5,20 @@
 
 namespace hsitho
 {
-  SceneWindow::SceneWindow() :
+  SceneWindow::SceneWindow(QWidget *_parent) :
+    GLWindow(_parent),
     m_shaderMan(ShaderManager::instance())
-	{
+  {
 	}
 
 	SceneWindow::~SceneWindow()
-	{
+  {
 		delete m_vao;
 	}
 
   void SceneWindow::initializeGL()
   {
-		GLWindow::initializeGL();
+    GLWindow::initializeGL();
 
     m_shaderMan->createShader("ScreenQuad", "screenQuad.vert", "distancefieldprimitives.frag");
     m_shaderMan->useShader("ScreenQuad");

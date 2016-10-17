@@ -7,11 +7,12 @@
 
 #include "nodeEditor/DataModelRegistry.hpp"
 
-#include "SceneWindow.hpp"
+//#include "SceneWindow.hpp"
+#include "mainwindow.hpp"
 
 int main(int argc, char* argv[])
 {
-  QGuiApplication app(argc, argv);
+  QApplication app(argc, argv);
 
   QSurfaceFormat format;
   format.setSamples(16);
@@ -19,11 +20,12 @@ int main(int argc, char* argv[])
   format.setVersion(4, 1);
   format.setProfile(QSurfaceFormat::CoreProfile);
 
-  hsitho::SceneWindow window;
-	window.setFormat(format);
-	window.resize(1280, 720);
-	window.show();
-  window.setTitle("hsitho");
+  QSurfaceFormat::setDefaultFormat(format);
+
+  MainWindow window;
+//  hsitho::SceneWindow window;
+//	window.setFormat(format);
+  window.show();
 
 	return app.exec();
 }

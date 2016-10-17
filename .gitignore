@@ -13,6 +13,7 @@ ui_*
 build-*
 Makefile
 # Compiled Dynamic libraries
+*.so
 *.dylib
 *.dll
 
