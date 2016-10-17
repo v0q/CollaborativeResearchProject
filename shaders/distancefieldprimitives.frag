@@ -38,13 +38,26 @@ float smin(float a, float b, float k)
   return mix( b, a, h ) - k*h*(1.0-h);
 }
 
+float union(float a, float b)
+{
+  return min(a, b);
+}
+
 float map(vec3 _position)
 {
+  float pos = 1.f;
+  pos = sphere(_position, 0.6f);
+  pos = union(pos, sdTorus(mat4x4(sin(45), cos(45), 0, 0,
+                                  -cos(45), sin(45), 0, 0,
+                                  0, 0, 1, 0,
+                                  0, 0, 0, 1)*vec4(_position, 1.0f), vec2(3.5f, 0.5f)));
+  pos = union(pos, smin(cube(_position + vec3(0.f, 0.f, 0.5f), 0.6f), sphere(_position + vec3(0.f, -0.5f, 0.5f), 0.6f), 0.3f));
+  return pos;
 //  return sphere(_position, 0.6f);
-  return sdTorus(mat4x4(sin(45), cos(45), 0, 0,
-                        -cos(45), sin(45), 0, 0,
-                        0, 0, 1, 0,
-                        0, 0, 0, 1)*vec4(_position, 1.0f), vec2(3.5f, 0.5f));
+//  return sdTorus(mat4x4(sin(45), cos(45), 0, 0,
+//                        -cos(45), sin(45), 0, 0,
+//                        0, 0, 1, 0,
+//                        0, 0, 0, 1)*vec4(_position, 1.0f), vec2(3.5f, 0.5f));
 //  return smin(cube(_position + vec3(0.f, 0.f, 0.5f), 0.6f), sphere(_position + vec3(0.f, -0.5f, -0.5f), 0.6f), 0.3f);
 }
 
@@ -76,7 +89,7 @@ vec3 render(mat2x3 _ray)
   float traceprecision = 0.01f;
   float position;
   int  i;
-  for(i = 0; i < 50; ++i)
+  for(i = 0; i < 60; ++i)
   {
     position = map(_ray[0] + distance * _ray[1]);
     if(position <= traceprecision) {
@@ -95,7 +108,7 @@ vec3 render(mat2x3 _ray)
 
 void main()
 {
-  vec3 cameraPosition = vec3(sin(u_GlobalTime/10.f)*5.f, 0.f, cos(u_GlobalTime/10.f)*5.f);
+  vec3 cameraPosition = vec3(sin(u_GlobalTime/10.f)*5.f, 2.5f, cos(u_GlobalTime/10.f)*5.f);
   vec3 lookAt = vec3(0.f);
   vec3 upVector = vec3(0.f, 1.f, 0.f);
   float aspectRatio = u_Resolution.x / u_Resolution.y;
