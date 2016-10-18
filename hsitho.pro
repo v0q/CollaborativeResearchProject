@@ -11,13 +11,16 @@ QT += opengl
 QT += core
 
 # Project specific files
-SOURCES += ./src/*.cpp
+SOURCES += ./src/*.cpp \
+           ./src/nodes/*.cpp
 HEADERS += ./include/*.hpp \
+           ./include/nodes/*.hpp \
            ./nodeEditor/*.hpp
 
 FORMS += ./ui/mainwindow.ui
 
-INCLUDEPATH += . ./include
+INCLUDEPATH += . ./include \
+               ./include/nodes
 OTHER_FILES += ./shaders/* \
                ./libs/*
 

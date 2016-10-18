@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 
+#include "nodeEditor/FlowScene.hpp"
 #include "SceneWindow.hpp"
 
 namespace Ui {
@@ -21,6 +22,7 @@ private:
   Ui::MainWindow *m_ui;
 
   hsitho::SceneWindow *m_gl;
+  FlowScene *m_nodes;
 };
 
 #endif // MAINWINDOW_H
