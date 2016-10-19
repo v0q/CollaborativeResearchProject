@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1480</width>
+    <width>1440</width>
     <height>720</height>
    </rect>
   </property>
@@ -14,18 +14,30 @@
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="QWidget" name="NodeEditorWidget" native="true">
+   <widget class="QWidget" name="SceneWidget" native="true">
     <property name="geometry">
      <rect>
-      <x>10</x>
+      <x>720</x>
       <y>0</y>
       <width>720</width>
       <height>720</height>
      </rect>
     </property>
-    <layout class="QHBoxLayout" name="m_nodeEditorLayout">
-     <item>
-      <spacer name="horizontalSpacer">
+    <layout class="QGridLayout" name="m_sceneLayout">
+     <property name="leftMargin">
+      <number>0</number>
+     </property>
+     <property name="topMargin">
+      <number>0</number>
+     </property>
+     <property name="rightMargin">
+      <number>0</number>
+     </property>
+     <property name="bottomMargin">
+      <number>0</number>
+     </property>
+     <item row="0" column="0">
+      <spacer name="horizontalSpacer_2">
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
        </property>
@@ -39,18 +51,30 @@
      </item>
     </layout>
    </widget>
-   <widget class="QWidget" name="SceneWidget" native="true">
+   <widget class="QWidget" name="NodeEditorWidget" native="true">
     <property name="geometry">
      <rect>
-      <x>740</x>
+      <x>0</x>
       <y>0</y>
       <width>720</width>
       <height>720</height>
      </rect>
     </property>
-    <layout class="QHBoxLayout" name="m_sceneLayout">
-     <item>
-      <spacer name="horizontalSpacer_2">
+    <layout class="QGridLayout" name="m_nodeEditorLayout">
+     <property name="leftMargin">
+      <number>0</number>
+     </property>
+     <property name="topMargin">
+      <number>0</number>
+     </property>
+     <property name="rightMargin">
+      <number>0</number>
+     </property>
+     <property name="bottomMargin">
+      <number>0</number>
+     </property>
+     <item row="0" column="0">
+      <spacer name="horizontalSpacer">
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
        </property>

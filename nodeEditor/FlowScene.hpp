@@ -32,9 +32,10 @@ class Node;
 class NODE_EDITOR_PUBLIC FlowScene
   : public QGraphicsScene
 {
+  Q_OBJECT
 public:
 
-  FlowScene();
+  FlowScene(QWidget *_parent);
 
   ~FlowScene();
 
@@ -66,6 +67,8 @@ public:
   void
   load();
 
+  std::unordered_map<QUuid, std::shared_ptr<Node>> getNodes() { return _nodes; }
+
 private:
 
   using SharedConnection = std::shared_ptr<Connection>;
@@ -73,6 +76,9 @@ private:
 
   std::unordered_map<QUuid, SharedConnection> _connections;
   std::unordered_map<QUuid, SharedNode>       _nodes;
+
+signals:
+  void nodeEditorChanged();
 };
 
 std::shared_ptr<Node>

@@ -38,7 +38,7 @@ float smin(float a, float b, float k)
   return mix( b, a, h ) - k*h*(1.0-h);
 }
 
-float union(float a, float b)
+float p_union(float a, float b)
 {
   return min(a, b);
 }
@@ -46,12 +46,13 @@ float union(float a, float b)
 float map(vec3 _position)
 {
   float pos = 1.f;
-  pos = sphere(_position, 0.6f);
-  pos = union(pos, sdTorus(mat4x4(sin(45), cos(45), 0, 0,
-                                  -cos(45), sin(45), 0, 0,
-                                  0, 0, 1, 0,
-                                  0, 0, 0, 1)*vec4(_position, 1.0f), vec2(3.5f, 0.5f)));
-  pos = union(pos, smin(cube(_position + vec3(0.f, 0.f, 0.5f), 0.6f), sphere(_position + vec3(0.f, -0.5f, 0.5f), 0.6f), 0.3f));
+//  pos = p_union(pos, cube(_position + vec3(0.0f, 0.0f, 0.0f), 0.5f));
+//  pos = sphere(_position, 0.6f);
+//  pos = p_union(pos, sdTorus(mat4x4(sin(45), cos(45), 0, 0,
+//                                  -cos(45), sin(45), 0, 0,
+//                                  0, 0, 1, 0,
+//                                  0, 0, 0, 1)*vec4(_position, 1.0f), vec2(3.5f, 0.5f)));
+//  pos = p_union(pos, smin(cube(_position + vec3(0.f, 0.f, 0.5f), 0.6f), sphere(_position + vec3(0.f, -0.5f, 0.5f), 0.6f), 0.3f));
   return pos;
 //  return sphere(_position, 0.6f);
 //  return sdTorus(mat4x4(sin(45), cos(45), 0, 0,

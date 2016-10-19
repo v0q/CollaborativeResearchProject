@@ -1,12 +1,18 @@
-#ifndef MAINWINDOW_H
-#define MAINWINDOW_H
+#pragma once
 
 #include <QMainWindow>
 
+#include "nodeEditor/FlowScene.hpp"
 #include "SceneWindow.hpp"
+#include "CubePrimitiveDataModel.hpp"
 
-namespace Ui {
-class MainWindow;
+namespace Ui
+{
+  class MainWindow;
+}
+namespace hsitho
+{
+  class SceneWindow;
 }
 
 class MainWindow : public QMainWindow
@@ -17,10 +23,16 @@ public:
   explicit MainWindow(QWidget *_parent = 0);
   ~MainWindow();
 
+  std::unordered_map<QUuid, std::shared_ptr<Node>> getNodes() { return m_nodes->getNodes(); }
+
 private:
   Ui::MainWindow *m_ui;
 
   hsitho::SceneWindow *m_gl;
-};
+  FlowScene *m_nodes;
 
-#endif // MAINWINDOW_H
+public slots:
+  void nodeChanged() { emit(nodeEditorModified(getNodes())); }
+signals:
+  void nodeEditorModified(std::unordered_map<QUuid, std::shared_ptr<Node>> _nodes);
+};

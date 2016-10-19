@@ -4,6 +4,8 @@
 #include <QOpenGLFunctions>
 #include <QKeyEvent>
 
+#include "nodeEditor/FlowScene.hpp"
+
 namespace hsitho
 {
   class GLWindow : public QOpenGLWidget, protected QOpenGLFunctions
@@ -25,5 +27,8 @@ namespace hsitho
     void timerEvent(QTimerEvent *_timer) override;
 
     float m_timePassed;
+
+  public slots:
+    virtual void nodeChanged(std::unordered_map<QUuid, std::shared_ptr<Node>> _nodes) = 0;
 	};
 }
