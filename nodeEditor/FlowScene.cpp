@@ -35,6 +35,7 @@ createConnection(PortType connectedPort,
   connection->setGraphicsObject(std::move(cgo));
 
   _connections[connection->id()] = connection;
+  emit nodeEditorChanged();
 
   return connection;
 }
@@ -78,6 +79,7 @@ restoreConnection(Properties const &p)
   connection->setGraphicsObject(std::move(cgo));
 
   _connections[connection->id()] = connection;
+  emit nodeEditorChanged();
 
   return connection;
 }
@@ -88,6 +90,7 @@ FlowScene::
 deleteConnection(std::shared_ptr<Connection> connection)
 {
   _connections.erase(connection->id());
+  emit nodeEditorChanged();
 }
 
 
@@ -101,6 +104,7 @@ createNode(std::unique_ptr<NodeDataModel> && dataModel)
   node->setGraphicsObject(std::move(ngo));
 
   _nodes[node->id()] = node;
+  emit nodeEditorChanged();
 
   return node;
 }
@@ -129,6 +133,7 @@ restoreNode(Properties const &p)
   node->restore(p);
 
   _nodes[node->id()] = node;
+  emit nodeEditorChanged();
   return node;
 }
 
@@ -157,6 +162,7 @@ removeNode(QGraphicsItem* item)
   deleteConnections(PortType::Out);
 
   _nodes.erase(node->id());
+  emit nodeEditorChanged();
 }
 
 
@@ -272,8 +278,9 @@ load()
 
 
 FlowScene::
-FlowScene()
+FlowScene(QWidget *_parent)
 {
+  connect(this, SIGNAL(nodeEditorChanged()), _parent, SLOT(nodeChanged()));
   setItemIndexMethod(QGraphicsScene::NoIndex);
 }
 

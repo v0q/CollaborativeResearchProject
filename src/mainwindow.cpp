@@ -7,6 +7,9 @@
 
 #include "CubePrimitiveDataModel.hpp"
 
+#include <iostream>
+
+
 MainWindow::MainWindow(QWidget *_parent) :
   QMainWindow(_parent),
   m_ui(new Ui::MainWindow)
@@ -16,7 +19,9 @@ MainWindow::MainWindow(QWidget *_parent) :
 
   DataModelRegistry::registerModel<CubePrimitiveDataModel>();
 
-  m_nodes = new FlowScene;
+  connect(this, SIGNAL(nodeEditorModified(std::unordered_map<QUuid, std::shared_ptr<Node>>)), m_gl, SLOT(nodeChanged(std::unordered_map<QUuid, std::shared_ptr<Node>>)));
+
+  m_nodes = new FlowScene(this);
 
   m_ui->m_sceneLayout->addWidget(m_gl, 0, 0, 1, 1);
   m_ui->m_nodeEditorLayout->addWidget(new FlowView(m_nodes), 0, 0, 1, 1);

@@ -7,96 +7,80 @@
 
 #include <iostream>
 
-class NumberData : public NodeData
+
+/// The class can potentially incapsulate any user data which
+/// need to be transferred within the Node Editor graph
+class MyNodeData : public NodeData
 {
 public:
 
-  NumberData()
-    : _number(0.0)
-  {}
+  NodeDataType
+  type() const override
+  { return NodeDataType {"Cube", "Cube Data"}; }
 
-  NumberData(double const number)
-    : _number(number)
-  {}
-
-  NodeDataType type() const override
-  {
-    return NodeDataType {"number",
-                         "Number"};
-  }
-
-  double number() const
-  { return _number; }
-
-  QString numberAsText() const
-  { return QString::number(_number, 'f'); }
-
-private:
-
-  double _number;
 };
 
+class SimpleNodeData : public NodeData
+{
+public:
+
+  NodeDataType
+  type() const override
+  { return NodeDataType {"SimpleData", "Simple Data"}; }
+};
+
+//------------------------------------------------------------------------------
 
 /// The model dictates the number of inputs and outputs for the Node.
 /// In this example it has no logic.
-class CubePrimitiveDataModel
-  : public NodeDataModel
+class CubePrimitiveDataModel : public NodeDataModel
 {
   Q_OBJECT
 
 public:
-  CubePrimitiveDataModel();
 
-  virtual
-  ~CubePrimitiveDataModel() {}
+  virtual ~CubePrimitiveDataModel();
 
-public:
+  QString caption() const override
+  {
+    return QString("Cube Data Model");
+  }
 
-  QString
-  caption() const override
-  { return QString("Number Source"); }
+  static QString name()
+  {
+    return QString("CubePrimitiveDataModel");
+  }
 
-  bool
-  captionVisible() const override
-  { return false; }
+  void save(Properties &p) const override;
 
-  static QString
-  name() { return QString("NumberSource"); }
+  unsigned int nPorts(PortType portType) const override;
 
-public:
+  NodeDataType dataType(PortType portType, PortIndex portIndex) const override;
 
-  void
-  save(Properties &p) const override;
+  std::shared_ptr<NodeData> outData(PortIndex port) override;
 
-  void
-  restore(Properties const &p) override;
+  void setInData(std::shared_ptr<NodeData>, int) override;
 
-public:
 
-  unsigned int
-  nPorts(PortType portType) const override;
+  QWidget *embeddedWidget() override;
 
-  NodeDataType
-  dataType(PortType portType, PortIndex portIndex) const override;
 
-  std::shared_ptr<NodeData>
-  outData(PortIndex port) override;
+  QString getOutData()
+  {
+    return QString("Blah");
+  }
 
-  void
-  setInData(std::shared_ptr<NodeData>, int) override
-  { }
+//  float getCubeSize()
+//  {
+//    return m_cubeSize;
+//  }
 
-  QWidget *
-  embeddedWidget() override { return _lineEdit; }
 
-private slots:
-
-  void
-  onTextEdited(QString const &string);
+  void print(float &_cubeSize);
 
 private:
 
-  std::shared_ptr<NumberData> _number;
+  float m_cubeSize;
 
-  QLineEdit * _lineEdit;
+
 };

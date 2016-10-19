@@ -22,5 +22,10 @@ namespace hsitho
     std::shared_ptr<ShaderManager> m_shaderMan;
 		QOpenGLVertexArrayObject *m_vao;
     QOpenGLBuffer m_vbo;
-	};
+
+    const char *m_shaderUserInput;
+
+  public slots:
+    virtual void nodeChanged(std::unordered_map<QUuid, std::shared_ptr<Node>> _nodes);
+  };
 }

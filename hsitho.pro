@@ -12,19 +12,21 @@ QT += core
 
 # Project specific files
 SOURCES += ./src/*.cpp \
-           ./src/nodes/*.cpp
+           ./src/nodes/*.cpp \
+           ./nodeEditor/*.cpp
 HEADERS += ./include/*.hpp \
            ./include/nodes/*.hpp \
-           ./nodeEditor/*.hpp
+           ./nodeEditor/*.hpp \
 
 FORMS += ./ui/mainwindow.ui
 
 INCLUDEPATH += . ./include \
-               ./include/nodes
+               ./include/nodes \
+               ./nodeEditor
 OTHER_FILES += ./shaders/* \
                ./libs/*
 
-LIBS += -L./libs -lnodes
+#LIBS += -L./libs -lnodes
 
 OBJECTS_DIR = ./obj
 MOC_DIR = ./moc

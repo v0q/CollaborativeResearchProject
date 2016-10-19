@@ -1,61 +1,29 @@
 #include "CubePrimitiveDataModel.hpp"
 
-#include <QtGui/QDoubleValidator>
 
-CubePrimitiveDataModel::
-CubePrimitiveDataModel()
-  : _lineEdit(new QLineEdit())
+CubePrimitiveDataModel::~CubePrimitiveDataModel()
 {
-  _lineEdit->setValidator(new QDoubleValidator());
 
-  _lineEdit->setMaximumSize(_lineEdit->sizeHint());
-
-  connect(_lineEdit, &QLineEdit::textChanged,
-          this, &CubePrimitiveDataModel::onTextEdited);
-
-  _lineEdit->setText("0.0");
 }
 
-
-void
-CubePrimitiveDataModel::
-save(Properties &p) const
+void CubePrimitiveDataModel::save(Properties &p) const
 {
-  p.put("model_name", CubePrimitiveDataModel::name());
+  p.put("Cube_size", CubePrimitiveDataModel::name());
 
-  if (_number)
-    p.put("number", _number->number());
 }
 
-
-void
-CubePrimitiveDataModel::
-restore(Properties const &p)
-{
-  double number;
-
-  if (bool ok = p.get("number", &number))
-  {
-    _number = std::make_shared<NumberData>(number);
-    _lineEdit->setText(QString::number(number));
-  }
-}
-
-
-unsigned int
-CubePrimitiveDataModel::
-nPorts(PortType portType) const
+unsigned int CubePrimitiveDataModel::nPorts(PortType portType) const
 {
   unsigned int result = 1;
 
   switch (portType)
   {
     case PortType::In:
-      result = 0;
+      result = 1;
       break;
 
     case PortType::Out:
-      result = 1;
+      result = 0;
 
     default:
       break;
@@ -64,41 +32,52 @@ nPorts(PortType portType) const
   return result;
 }
 
-
-void
-CubePrimitiveDataModel::
-onTextEdited(QString const &string)
+NodeDataType CubePrimitiveDataModel::dataType(PortType portType, PortIndex portIndex) const
 {
-  Q_UNUSED(string);
-
-  bool ok = false;
-
-  double number = _lineEdit->text().toDouble(&ok);
-
-  if (ok)
+  switch (portType)
   {
-    _number = std::make_shared<NumberData>(number);
+    case PortType::In:
+      switch (portIndex)
+      {
+        case 0:
+          return MyNodeData().type();
+          break;
 
-    emit dataUpdated(0);
+        case 1:
+          return SimpleNodeData().type();
+          break;
+      }
+      break;
+
+    case PortType::Out:
+      return MyNodeData().type();
+      break;
+
+    default:
+      break;
   }
-  else
-  {
-    emit dataInvalidated(0);
-  }
+
 }
 
-
-NodeDataType
-CubePrimitiveDataModel::
-dataType(PortType, PortIndex) const
+std::shared_ptr<NodeData> CubePrimitiveDataModel::outData(PortIndex port)
 {
-  return NumberData().type();
+  return nullptr;
 }
 
-
-std::shared_ptr<NodeData>
-CubePrimitiveDataModel::
-outData(PortIndex)
+void CubePrimitiveDataModel::setInData(std::shared_ptr<NodeData>, int)
 {
-  return _number;
+
 }
+
+QWidget* CubePrimitiveDataModel::embeddedWidget()
+{
+  return nullptr;
+}
+
+void CubePrimitiveDataModel::print(float &_cubeSize)
+{
+  std::cout << _cubeSize << "\n";
+
+}
+
+
