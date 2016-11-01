@@ -59,7 +59,7 @@ public:
   bool
   resizable() const { return false; }
 
-  virtual char* getShaderCode() { return "cube(_position + vec3(1.0f, 0.0f, 1.0f), 0.5f)"; }
+  virtual QString getShaderCode() { return QString("cube(_position + vec3(1.0f, 0.0f, 1.0f), 0.5f)"); }
 
 signals:
 

@@ -43,7 +43,7 @@ public:
 
   QString caption() const override
   {
-    return QString("Cube Data Model");
+    return QString("Cube");
   }
 
   static QString name()

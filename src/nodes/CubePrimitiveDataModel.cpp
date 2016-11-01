@@ -37,26 +37,13 @@ NodeDataType CubePrimitiveDataModel::dataType(PortType portType, PortIndex portI
   switch (portType)
   {
     case PortType::In:
-      switch (portIndex)
-      {
-        case 0:
-          return MyNodeData().type();
-          break;
-
-        case 1:
-          return SimpleNodeData().type();
-          break;
-      }
-      break;
-
-    case PortType::Out:
       return MyNodeData().type();
-      break;
+    break;
 
     default:
       break;
   }
-
+  return MyNodeData().type();
 }
 
 std::shared_ptr<NodeData> CubePrimitiveDataModel::outData(PortIndex port)
