@@ -16,7 +16,7 @@ public:
 
   NodeDataType
   type() const override
-  { return NodeDataType {"Cube", "Cube Data"}; }
+	{ return NodeDataType {"DistanceFieldData", "Cube Data"}; }
 
 };
 

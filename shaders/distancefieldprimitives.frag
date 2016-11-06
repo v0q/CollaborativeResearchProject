@@ -186,49 +186,58 @@ vec4 map(vec3 _position)
 {
   vec4 pos = vec4(4.0, 3.0, 4.0, 0.0);
 //  pos = opRepetition(_position, pos.xyz);
-//  _position = opRepetition(_position, vec3(4.0, 4.0, 4.0));
+  _position = opRepetition(_position, vec3(4.0, 4.0, 4.0));
 //  pos = opUnion(pos, sdPlane(_position, vec4(0.0, 1.0, 0.0, 1.0), vec3(0.85, 0.85, 0.85)));
-  float sg = u_GlobalTime/75.f*180;
-  float gg = u_GlobalTime/50.f*90;
+  float sg = sin(u_GlobalTime/300.f)*180;
+  float gg = cos(u_GlobalTime/200.f)*90;
 //  pos = opUnion(pos, sdSphere(_position, 0.6, vec3(1.0, 0.078, 0.576)));
-  pos = opUnion(pos, sdSphere(vec3(mat4x4(1, 0, 0, 0,
-                                           0, 1, 0, 0,
-                                           0, 0, 1, 0,
-                                           0, sin(sg)*-0.6, 0, 1)*
-                                    mat4x4(cos(sg), -sin(sg), 0, 0,
-                                           sin(sg), cos(sg), 0, 0,
-                                           0, 0, 1, 0,
-                                           0, 0, 0, 1)*
-                                    mat4x4(cos(gg), 0, -sin(gg), 0,
-                                           0, 1, 0, 0,
-                                           sin(gg), 0, cos(gg), 0,
-                                           0, 0, 0, 1)*
-                                    mat4x4(1, 0, 0, 0,
-                                           0, 1, 0, 0,
-                                           0, 0, 1, 0,
-                                           0, sin(sg)*0.6, 0, 1)*
-                                    vec4(_position + vec3(0.0, 0.0, 0.0), 1.0)), 0.6, vec3(1.0, 0.078, 0.576)));
-  pos = smin(pos, sdSphere(vec3(mat4x4(1, 0, 0, 0,
-                                       0, 1, 0, 0,
-                                       0, 0, 1, 0,
-                                       0, sin(sg)*-0.6, 0, 1)*
-                                mat4x4(cos(gg), -sin(gg), 0, 0,
-                                       sin(gg), cos(gg), 0, 0,
-                                       0, 0, 1, 0,
-                                       0, 0, 0, 1)*
-                                mat4x4(cos(sg), 0, -sin(sg), 0,
-                                       0, 1, 0, 0,
-                                       sin(sg), 0, cos(sg), 0,
-                                       0, 0, 0, 1)*
-                                mat4x4(1, 0, 0, 0,
-                                       0, 1, 0, 0,
-                                       0, 0, 1, 0,
-                                       0, sin(sg)*0.6, 0, 1)*
-                                vec4(_position, 1.0)) + vec3(0.0, 0.0, 0.0), 0.6, vec3(0.0, 1.0, 0.576)), 0.3);
-  pos = smin(pos, sdSphere(_position, 0.5, vec3(0.0, 0.0, 1.0)), 0.5);
-//  pos = smin(pos, sdBox(_position + vec3(0.0, 0.0, 0.0), vec3(4.0, 0.15, 0.15), vec3(0.5, 0.0 ,0.0)), 0.9);
-//  pos = smin(pos, sdBox(_position + vec3(0.0, 0.0, 0.0), vec3(0.15, 0.15, 4.0), vec3(0.5, 0.0 ,0.0)), 0.9);
-//  pos = smin(pos, sdBox(_position + vec3(0.0, 0.0, 0.0), vec3(0.15, 4.0, 0.15), vec3(0.5, 0.0 ,0.0)), 0.9);
+//  pos = opUnion(pos, sdSphere(vec3(mat4x4(1, 0, 0, 0,
+//                                           0, 1, 0, 0,
+//                                           0, 0, 1, 0,
+//                                           0, sin(sg)*-0.6, 0, 1)*
+//                                    mat4x4(cos(sg), -sin(sg), 0, 0,
+//                                           sin(sg), cos(sg), 0, 0,
+//                                           0, 0, 1, 0,
+//                                           0, 0, 0, 1)*
+//                                    mat4x4(cos(gg), 0, -sin(gg), 0,
+//                                           0, 1, 0, 0,
+//                                           sin(gg), 0, cos(gg), 0,
+//                                           0, 0, 0, 1)*
+//                                    mat4x4(1, 0, 0, 0,
+//                                           0, 1, 0, 0,
+//                                           0, 0, 1, 0,
+//                                           0, sin(sg)*0.6, 0, 1)*
+//                                    vec4(_position + vec3(0.0, 0.0, 0.0), 1.0)), 0.6, vec3(1.0, 0.078, 0.576)));
+//  pos = smin(pos, sdSphere(vec3(mat4x4(1, 0, 0, 0,
+//                                       0, 1, 0, 0,
+//                                       0, 0, 1, 0,
+//                                       0, sin(sg)*-0.6, 0, 1)*
+//                                mat4x4(cos(gg), -sin(gg), 0, 0,
+//                                       sin(gg), cos(gg), 0, 0,
+//                                       0, 0, 1, 0,
+//                                       0, 0, 0, 1)*
+//                                mat4x4(cos(sg), 0, -sin(sg), 0,
+//                                       0, 1, 0, 0,
+//                                       sin(sg), 0, cos(sg), 0,
+//                                       0, 0, 0, 1)*
+//                                mat4x4(1, 0, 0, 0,
+//                                       0, 1, 0, 0,
+//                                       0, 0, 1, 0,
+//                                       0, sin(sg)*0.6, 0, 1)*
+//                                vec4(_position, 1.0)) + vec3(0.0, 0.0, 0.0), 0.6, vec3(0.0, 1.0, 0.576)), 0.3);
+//  pos = smin(pos, sdSphere(_position, 0.5, vec3(0.0, 0.0, 1.0)), 0.5);
+  float l = length(_position);
+  _position = vec3(mat4x4(cos(sg*l), -sin(sg*l), 0, 0,
+                          sin(sg*l), cos(sg*l), 0, 0,
+                          0, 0, 1, 0,
+                          0, 0, 0, 1)*
+                   mat4x4(cos(gg*l), 0, -sin(gg*l), 0,
+                          0, 1, 0, 0,
+                          sin(gg*l), 0, cos(gg*l), 0,
+                          0, 0, 0, 1) * vec4(_position, 1.0));
+  pos = smin(pos, sdBox(_position + vec3(0.0, 0.0, 0.0), vec3(4.0, 0.15, 0.15), vec3(0.5, 0.0 ,0.0)), 0.9);
+  pos = smin(pos, sdBox(_position + vec3(0.0, 0.0, 0.0), vec3(0.15, 0.15, 4.0), vec3(0.5, 0.0 ,0.0)), 0.9);
+  pos = smin(pos, sdBox(_position + vec3(0.0, 0.0, 0.0), vec3(0.15, 4.0, 0.15), vec3(0.5, 0.0 ,0.0)), 0.9);
 
 //  pos = opUnion(pos, sdBox(_position + vec3(0.0, 0.0, 0.0), vec3(0.15, 4.0, 0.15), vec3(0.5, 0.0 ,0.0)));
 //  pos = opUnion(pos, sdBox(_position + vec3(0.0, 0.0, 0.0), vec3(0.15, 0.15, 4.0), vec3(0.5, 0.0 ,0.0)));
@@ -330,13 +339,13 @@ vec3 render(mat2x3 _ray)
     float intensity = clamp(dot(n, lightDir), 0.0, 1.0);
     float shadow = softshadow(p, lightPos, 0.01, 2.5);
     shadow = 1.0f;
-//    trace.color = applyFog(trace.color, trace.t/150.f);
+    trace.color = applyFog(trace.color, trace.t/150.f);
 
     // Vigneting
-//    vec2 q = o_FragCoord.xy / u_Resolution.xy;
-//    trace.color *= 0.5 + 0.5*pow( 16.0*q.x*q.y*(1.0-q.x)*(1.0-q.y), 0.25 );
-    trace.color *= 1.4 * intensity * vec3(1.0, 1.0, 1.0);
-//    trace.color *= shadow;
+    vec2 q = o_FragCoord.xy / u_Resolution.xy;
+    trace.color *= 0.5 + 0.5*pow( 16.0*q.x*q.y*(1.0-q.x)*(1.0-q.y), 0.25 );
+    trace.color *= 1.4 /** intensity*/ * vec3(1.0, 1.0, 1.0);
+    trace.color *= shadow;
 
     return clamp(trace.color, 0.0, 1.0);
   }
@@ -346,11 +355,11 @@ vec3 render(mat2x3 _ray)
 void main()
 {
   // Moving camera
-//  vec3 cameraPosition = vec3(sin(u_GlobalTime/10.f)*5.f, 2.5f, cos(u_GlobalTime/10.f)*5.f);
-//  vec3 lookAt = vec3(cameraPosition.x - sin(u_GlobalTime/10.f)*5.f, cameraPosition.y + sin(u_GlobalTime/5.f)*7.f, cameraPosition.z - cos(u_GlobalTime/10.f)*5.f);
+  vec3 cameraPosition = vec3(sin(u_GlobalTime/10.f)*5.f, 2.5f, cos(u_GlobalTime/10.f)*5.f);
+  vec3 lookAt = vec3(cameraPosition.x - sin(u_GlobalTime/10.f)*5.f, cameraPosition.y + sin(u_GlobalTime/5.f)*7.f, cameraPosition.z - cos(u_GlobalTime/10.f)*5.f);
   // Static camera
-  vec3 cameraPosition = vec3(5.f, 2.5f, 5.f);
-  vec3 lookAt = vec3(0.f);
+//  vec3 cameraPosition = vec3(5.f, 2.5f, 5.f);
+//  vec3 lookAt = vec3(0.f);
   vec3 upVector = vec3(0.f, 1.f, 0.f);
   float aspectRatio = u_Resolution.x / u_Resolution.y;
 

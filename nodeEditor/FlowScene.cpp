@@ -96,9 +96,9 @@ deleteConnection(std::shared_ptr<Connection> connection)
 
 std::shared_ptr<Node>
 FlowScene::
-createNode(std::unique_ptr<NodeDataModel> && dataModel)
+createNode(std::unique_ptr<NodeDataModel> && dataModel, bool _m)
 {
-  auto node = std::make_shared<Node>(std::move(dataModel));
+	auto node = std::make_shared<Node>(std::move(dataModel), _m);
   auto ngo  = std::make_unique<NodeGraphicsObject>(*this, node);
 
   node->setGraphicsObject(std::move(ngo));

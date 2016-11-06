@@ -14,7 +14,7 @@ NodeGeometry(std::unique_ptr<NodeDataModel> const &dataModel)
   , _inputPortWidth(70)
   , _outputPortWidth(70)
   , _entryHeight(20)
-  , _spacing(20)
+	, _spacing(20)
   , _connectionPointDiameter(8)
   , _hovered(false)
   , _nSources(dataModel->nPorts(PortType::Out))
@@ -55,7 +55,7 @@ void
 NodeGeometry::
 recalculateSize() const
 {
-  _entryHeight = _fontMetrics.height();
+	_entryHeight = _fontMetrics.height();
 
   {
     unsigned int maxNumOfEntries = std::max(_nSinks, _nSources);
@@ -75,12 +75,12 @@ recalculateSize() const
 
   _width = _inputPortWidth +
            _outputPortWidth +
-           2 * _spacing;
+					 2 * _spacing;
 
   if (auto w = _dataModel->embeddedWidget())
   {
     _width += w->width();
-  }
+	}
 }
 
 
@@ -224,7 +224,7 @@ portWidth(PortType portType) const
 
   for (auto i = 0ul; i < _dataModel->nPorts(portType); ++i)
   {
-    auto const &name = _dataModel->dataType(PortType::In, i).name;
+		auto const &name = _dataModel->dataType(PortType::In, i).name;
     width = std::max(unsigned(_fontMetrics.width(name)),
                      width);
   }

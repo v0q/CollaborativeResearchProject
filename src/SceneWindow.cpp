@@ -120,7 +120,7 @@ namespace hsitho
       "  float pos = 1.f;";
 
     for(auto _node : _nodes)
-    {
+		{
       fragmentShader += "pos = p_union(pos, ";
       fragmentShader += qPrintable(_node.second.get()->nodeDataModel()->getShaderCode());
       fragmentShader += ");";
@@ -184,6 +184,6 @@ namespace hsitho
                       "  o_FragColor = vec4(color, 1.f);"
                       "}";
 
-    m_shaderMan->updateShader(fragmentShader.c_str());
+//    m_shaderMan->updateShader(fragmentShader.c_str());
   }
 }

@@ -53,7 +53,7 @@ public:
   deleteConnection(std::shared_ptr<Connection> connection);
 
   std::shared_ptr<Node>
-  createNode(std::unique_ptr<NodeDataModel> && dataModel);
+	createNode(std::unique_ptr<NodeDataModel> && dataModel, bool _m = true);
 
   std::shared_ptr<Node>
   restoreNode(Properties const &p);

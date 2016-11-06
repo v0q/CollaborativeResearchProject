@@ -23,7 +23,7 @@ unsigned int CubePrimitiveDataModel::nPorts(PortType portType) const
       break;
 
     case PortType::Out:
-      result = 0;
+			result = 1;
 
     default:
       break;
@@ -39,6 +39,9 @@ NodeDataType CubePrimitiveDataModel::dataType(PortType portType, PortIndex portI
     case PortType::In:
       return MyNodeData().type();
     break;
+		case PortType::Out:
+			return MyNodeData().type();
+		break;
 
     default:
       break;

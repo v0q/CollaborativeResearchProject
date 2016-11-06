@@ -2,6 +2,9 @@
 
 #include <QMainWindow>
 
+#include "nodeEditor/Node.hpp"
+#include "nodeEditor/NodeGraphicsObject.hpp"
+#include "nodeEditor/FlowView.hpp"
 #include "nodeEditor/FlowScene.hpp"
 #include "SceneWindow.hpp"
 #include "CubePrimitiveDataModel.hpp"
@@ -30,6 +33,7 @@ private:
 
   hsitho::SceneWindow *m_gl;
   FlowScene *m_nodes;
+	FlowView *m_flowView;
 
 public slots:
   void nodeChanged() { emit(nodeEditorModified(getNodes())); }

@@ -40,6 +40,8 @@ public:
   void
   moveConnections() const;
 
+	void test();
+
 protected:
   void
   paint(QPainter*                       painter,

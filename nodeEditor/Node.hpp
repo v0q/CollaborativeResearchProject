@@ -26,7 +26,7 @@ class Node
 public:
 
   /// NodeDataModel should be an rvalue and is moved into the Node
-  Node(std::unique_ptr<NodeDataModel> && dataModel);
+	Node(std::unique_ptr<NodeDataModel> && dataModel, bool _m = true);
 
   ~Node();
 
@@ -76,6 +76,8 @@ public:
   std::unique_ptr<NodeDataModel> const &
   nodeDataModel() const;
 
+	bool isMovable() const { return m_movable; }
+
 public slots: // data propagation
 
   // propagates incoming data to the underlying model
@@ -89,6 +91,8 @@ public slots: // data propagation
   onDataUpdated(PortIndex index);
 
 private:
+
+	bool m_movable;
 
   // addressing
 
