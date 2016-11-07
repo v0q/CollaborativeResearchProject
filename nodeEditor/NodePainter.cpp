@@ -123,7 +123,7 @@ drawConnectionPoints(QPainter* painter,
 
       double r = 1.0;
       if (state.isReacting() &&
-          !state.getEntries(portType)[i].lock() &&
+//					!state.getEntries(portType)[i].lock() &&
           portType == state.reactingPortType())
       {
 
@@ -177,12 +177,16 @@ drawFilledConnectionPoints(QPainter * painter,
     {
       QPointF p = geom.portScenePosition(i, portType);
 
-      if (state.getEntries(portType)[i].lock())
-      {
-        painter->drawEllipse(p,
-                             diameter * 0.4,
-                             diameter * 0.4);
-      }
+			for(auto const &conn : state.getEntries(portType)[i])
+			{
+				if(conn.lock())
+				{
+					painter->drawEllipse(p,
+															 diameter * 0.4,
+															 diameter * 0.4);
+					break;
+				}
+			}
     }
   };
 
@@ -255,10 +259,13 @@ drawEntryLabels(QPainter * painter,
 
       QPointF p = geom.portScenePosition(i, portType);
 
-			if (entries[i].expired())
-				painter->setPen(Qt::darkGray);
-      else
-        painter->setPen(Qt::white);
+			painter->setPen(Qt::darkGray);
+			for(auto &e : entries[i]){
+				if(!e.expired()) {
+					painter->setPen(Qt::white);
+					break;
+				}
+			}
 
       QString s = model->dataType(portType, i).name;
 

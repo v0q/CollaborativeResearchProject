@@ -4,6 +4,9 @@
 #include "nodeEditor/NodeData.hpp"
 #include "nodeEditor/DataModelRegistry.hpp"
 
+#include "calculator/NumberSourceDataModel.hpp"
+#include "calculator/NumberDisplayDataModel.hpp"
+#include "calculator/MultiplicationModel.hpp"
 #include "CubePrimitiveDataModel.hpp"
 #include "UnionDataModel.hpp"
 #include "DistanceFieldOutputDataModel.hpp"
@@ -20,6 +23,9 @@ MainWindow::MainWindow(QWidget *_parent) :
 
 	DataModelRegistry::registerModel<CubePrimitiveDataModel>();
 	DataModelRegistry::registerModel<UnionDataModel>();
+	DataModelRegistry::registerModel<NumberSourceDataModel>();
+	DataModelRegistry::registerModel<NumberDisplayDataModel>();
+	DataModelRegistry::registerModel<MultiplicationModel>();
 
   connect(this, SIGNAL(nodeEditorModified(std::unordered_map<QUuid, std::shared_ptr<Node>>)), m_gl, SLOT(nodeChanged(std::unordered_map<QUuid, std::shared_ptr<Node>>)));
 

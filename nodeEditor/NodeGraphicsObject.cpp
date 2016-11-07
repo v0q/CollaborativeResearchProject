@@ -121,11 +121,14 @@ moveConnections() const
   {
     auto const & connectionsWeak = nodeState.getEntries(portType);
 
-    for (auto const & connection : connectionsWeak)
-    {
-      if (auto con = connection.lock())
-        con->getConnectionGraphicsObject()->move();
-    }
+		for(auto &ports : connectionsWeak)
+		{
+			for(auto const &connection : ports)
+			{
+				if (auto con = connection.lock())
+					con->getConnectionGraphicsObject()->move();
+			}
+		}
   };
 
   moveConnections(PortType::In);
@@ -171,7 +174,7 @@ mousePressEvent(QGraphicsSceneMouseEvent * event)
     _scene.clearSelection();
   }
 
-  auto clickPort =
+	auto clickPort =
   [&](PortType portToCheck)
   {
     auto node = _node.lock();
@@ -187,19 +190,19 @@ mousePressEvent(QGraphicsSceneMouseEvent * event)
     {
       NodeState const & nodeState = node->nodeState();
 
-      std::shared_ptr<Connection> connection =
-        nodeState.connection(portToCheck, portIndex);
+			std::vector<std::shared_ptr<Connection>> connections =
+				nodeState.connection(portToCheck, portIndex);
 
       // start dragging existing connection
-      if (connection)
-      {
-        NodeConnectionInteraction interaction(node, connection);
+			if(connections.size() && connections[0] && portToCheck == PortType::In)
+			{
+				NodeConnectionInteraction interaction(node, connections[0]);
 
-        interaction.disconnect(portToCheck);
-      }
-      // initialize new Connection
-      else
-      {
+				interaction.disconnect(portToCheck);
+			}
+			// initialize new Connection
+			else
+			{
         // todo add to FlowScene
         auto connection = _scene.createConnection(portToCheck,
                                                   node,
@@ -210,12 +213,12 @@ mousePressEvent(QGraphicsSceneMouseEvent * event)
                                         connection);
 
         connection->getConnectionGraphicsObject()->grabMouse();
-      }
+			}
     }
-  };
+	};
 
-  clickPort(PortType::In);
-  clickPort(PortType::Out);
+	clickPort(PortType::In);
+	clickPort(PortType::Out);
 
   auto pos     = event->pos();
   auto node    = _node.lock();

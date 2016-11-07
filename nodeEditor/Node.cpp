@@ -190,8 +190,11 @@ onDataUpdated(PortIndex index)
 {
   auto nodeData = _nodeDataModel->outData(index);
 
-  auto connection = _nodeState.connection(PortType::Out, index);
+	auto connections = _nodeState.connection(PortType::Out, index);
 
-  if (connection)
-    connection->propagateData(nodeData);
+	for(auto const &connection : connections)
+	{
+		if(connection)
+			connection->propagateData(nodeData);
+	}
 }
