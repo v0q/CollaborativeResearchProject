@@ -213,6 +213,7 @@ mousePressEvent(QGraphicsSceneMouseEvent * event)
                                         connection);
 
         connection->getConnectionGraphicsObject()->grabMouse();
+
 			}
     }
 	};

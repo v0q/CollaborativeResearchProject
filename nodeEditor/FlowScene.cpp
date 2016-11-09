@@ -34,8 +34,7 @@ createConnection(PortType connectedPort,
   // after this function connection points are set to node port
   connection->setGraphicsObject(std::move(cgo));
 
-  _connections[connection->id()] = connection;
-  emit nodeEditorChanged();
+	_connections[connection->id()] = connection;
 
   return connection;
 }
@@ -78,7 +77,7 @@ restoreConnection(Properties const &p)
   // after this function connection points are set to node port
   connection->setGraphicsObject(std::move(cgo));
 
-  _connections[connection->id()] = connection;
+	_connections[connection->id()] = connection;
   emit nodeEditorChanged();
 
   return connection;
@@ -92,8 +91,9 @@ deleteConnection(std::shared_ptr<Connection> connection)
 	if(connection.get()->getPortIndex(PortType::Out) != -1)
 		connection.get()->getNode(PortType::Out).lock().get()->nodeState().removeConnection(PortType::Out, connection);
 
-  _connections.erase(connection->id());
-  emit nodeEditorChanged();
+	_connections.erase(connection->id());
+	std::cout << "Deleted connection\n";
+	emit nodeEditorChanged();
 }
 
 
@@ -106,8 +106,7 @@ createNode(std::unique_ptr<NodeDataModel> && dataModel, bool _m)
 
   node->setGraphicsObject(std::move(ngo));
 
-  _nodes[node->id()] = node;
-  emit nodeEditorChanged();
+	_nodes[node->id()] = node;
 
   return node;
 }
@@ -135,8 +134,9 @@ restoreNode(Properties const &p)
 
   node->restore(p);
 
-  _nodes[node->id()] = node;
+	_nodes[node->id()] = node;
   emit nodeEditorChanged();
+
   return node;
 }
 
@@ -169,8 +169,9 @@ removeNode(QGraphicsItem* item)
 	deleteConnections(PortType::Out);
   deleteConnections(PortType::In);
 
-  _nodes.erase(node->id());
-  emit nodeEditorChanged();
+	_nodes.erase(node->id());
+	std::cout << "Deleted Node\n";
+	emit nodeEditorChanged();
 }
 
 

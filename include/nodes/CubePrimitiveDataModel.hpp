@@ -64,23 +64,7 @@ public:
 
   QWidget *embeddedWidget() override;
 
-
-  QString getOutData()
-  {
-    return QString("Blah");
-  }
-
-//  float getCubeSize()
-//  {
-//    return m_cubeSize;
-//  }
-
+	QString getShaderCode() { return QString("cube(_position + vec3(1.0f, 1.0f, 1.0f), 0.5f)"); }
 
   void print(float &_cubeSize);
-
-private:
-
-  float m_cubeSize;
-
-
 };

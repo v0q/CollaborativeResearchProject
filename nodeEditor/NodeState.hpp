@@ -38,7 +38,7 @@ public:
 
 	std::vector<std::shared_ptr<Connection>>
   connection(PortType portType,
-             PortIndex portIndex) const;
+						 PortIndex portIndex = -1) const;
 
 	void
 	removeConnection(PortType portType,

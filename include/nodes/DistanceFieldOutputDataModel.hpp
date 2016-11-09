@@ -24,10 +24,7 @@ public:
 
 	virtual ~DistanceFieldOutputDataModel();
 
-	QString caption() const override
-	{
-		return QString("");
-	}
+	QString caption() const override { return QString(""); }
 
 	static QString name()
 	{
@@ -44,12 +41,7 @@ public:
 
 	void setInData(std::shared_ptr<NodeData>, int) override;
 
-
 	QWidget *embeddedWidget() override;
 
-
-	QString getOutData()
-	{
-		return QString("Blah");
-	}
+	QString getShaderCode() { return QString("final"); }
 };

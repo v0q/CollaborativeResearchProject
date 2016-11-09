@@ -13,12 +13,13 @@ QT += core
 # Project specific files
 SOURCES += ./src/*.cpp \
            ./src/nodes/*.cpp \
-           ./nodeEditor/*.cpp \
-           ./calculator/*.cpp
+           ./nodeEditor/*.cpp
 HEADERS += ./include/*.hpp \
            ./include/nodes/*.hpp \
-           ./nodeEditor/*.hpp \
-           ./calculator/*.hpp
+           ./nodeEditor/*.hpp
+
+#SOURCES += ./calculator/*.cpp
+#HEADERS += ./calculator/*.hpp
 
 FORMS += ./ui/mainwindow.ui
 

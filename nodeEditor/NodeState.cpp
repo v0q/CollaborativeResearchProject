@@ -5,14 +5,12 @@
 
 NodeState::
 NodeState(std::unique_ptr<NodeDataModel> const &model)
-  : _inConnections(model->nPorts(PortType::In))
-  , _outConnections(model->nPorts(PortType::Out))
-  , _reaction(NOT_REACTING)
-  , _reactingPortType(PortType::None)
-  , _resizing(false)
+	: _inConnections(model->nPorts(PortType::In))
+	, _outConnections(model->nPorts(PortType::Out))
+	, _reaction(NOT_REACTING)
+	, _reactingPortType(PortType::None)
+	, _resizing(false)
 {
-	for(unsigned int i = 0; i < _inConnections.size(); ++i)
-		_inConnections[i].resize(1);
 }
 
 std::vector<std::vector<std::weak_ptr<Connection>>> const&
@@ -40,19 +38,35 @@ getEntries(PortType portType)
 		return _inConnections;
 }
 
+#include <iostream>
+#include "nodeEditor/Connection.hpp"
+
 std::vector<std::shared_ptr<Connection>>
 NodeState::
 connection(PortType portType, PortIndex portIndex) const
 {
 	auto const &connections = getEntries(portType);
 	std::vector<std::shared_ptr<Connection>> c;
-	for(auto const &conn : connections[portIndex]) {
-		c.push_back(conn.lock());
+	if(portIndex != -1 && connections.size())
+	{
+		for(auto const &conn : connections[portIndex]) {
+			c.push_back(conn.lock());
+		}
+	}
+	else
+	{
+		for(auto const &port : connections)
+		{
+			for(auto const &conn : port) {
+				c.push_back(conn.lock());
+			}
+		}
 	}
 
 	return c;
 }
 
+#include <iostream>
 void
 NodeState::
 setConnection(PortType portType,
@@ -61,18 +75,22 @@ setConnection(PortType portType,
 {
 	auto &connections = getEntries(portType);
 
-	if(portType == PortType::Out) {
-		unsigned int i = 0;
-		for(auto &conn : connections[portIndex])
-		{
-			if(!conn.lock()) {
-				connections[portIndex].erase(connections[portIndex].begin() + i);
-			}
-			++i;
+	unsigned int i = 0;
+	for(auto &conn : connections[portIndex])
+	{
+		if(!conn.lock()) {
+			connections[portIndex].erase(connections[portIndex].begin() + i);
 		}
+		++i;
+	}
 
+	if(portType == PortType::Out) {
 		connections[portIndex].push_back(connection);
 	} else {
+		if(!connections[portIndex].size())
+		{
+			connections[portIndex].resize(1);
+		}
 		connections[portIndex][0] = connection;
 	}
 }
