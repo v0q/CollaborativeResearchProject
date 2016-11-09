@@ -8,7 +8,7 @@ CubePrimitiveDataModel::~CubePrimitiveDataModel()
 
 void CubePrimitiveDataModel::save(Properties &p) const
 {
-  p.put("Cube_size", CubePrimitiveDataModel::name());
+  p.put("Cube", CubePrimitiveDataModel::name());
 
 }
 
@@ -19,11 +19,11 @@ unsigned int CubePrimitiveDataModel::nPorts(PortType portType) const
   switch (portType)
   {
     case PortType::In:
-      result = 1;
+      result = 0;
       break;
 
     case PortType::Out:
-      result = 0;
+      result = 1;
 
     default:
       break;
@@ -39,18 +39,18 @@ NodeDataType CubePrimitiveDataModel::dataType(PortType portType, PortIndex portI
     case PortType::In:
       switch (portIndex)
       {
-        case 0:
-          return MyNodeData().type();
+        case 1:
+          return CubeDataModel().type();
           break;
 
-        case 1:
-          return SimpleNodeData().type();
+        case 0:
+          return SimpleCubeData().type();
           break;
       }
       break;
 
     case PortType::Out:
-      return MyNodeData().type();
+      return CubeDataModel().type();
       break;
 
     default:

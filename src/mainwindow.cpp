@@ -6,6 +6,7 @@
 #include "nodeEditor/DataModelRegistry.hpp"
 
 #include "CubePrimitiveDataModel.hpp"
+#include "ViewerDataModel.hpp"
 
 #include <iostream>
 
@@ -18,6 +19,8 @@ MainWindow::MainWindow(QWidget *_parent) :
   m_gl = new hsitho::SceneWindow(this);
 
   DataModelRegistry::registerModel<CubePrimitiveDataModel>();
+  DataModelRegistry::registerModel<ViewerDataModel>();
+
 
   connect(this, SIGNAL(nodeEditorModified(std::unordered_map<QUuid, std::shared_ptr<Node>>)), m_gl, SLOT(nodeChanged(std::unordered_map<QUuid, std::shared_ptr<Node>>)));
 

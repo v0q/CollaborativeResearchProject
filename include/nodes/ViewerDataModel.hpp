@@ -10,17 +10,17 @@
 
 /// The class can potentially incapsulate any user data which
 /// need to be transferred within the Node Editor graph
-class CubeDataModel : public NodeData
+class ViewerNodeDataModel : public NodeData
 {
 public:
 
   NodeDataType
   type() const override
-  { return NodeDataType {"Cube", "Cube Data"}; }
+  { return NodeDataType {"Viewer", "Viewer Data"}; }
 
 };
 
-class SimpleCubeData : public NodeData
+class SimpleViewerData : public NodeData
 {
 public:
 
@@ -33,22 +33,22 @@ public:
 
 /// The model dictates the number of inputs and outputs for the Node.
 /// In this example it has no logic.
-class CubePrimitiveDataModel : public NodeDataModel
+class ViewerDataModel : public NodeDataModel
 {
   Q_OBJECT
 
 public:
 
-  virtual ~CubePrimitiveDataModel();
+  virtual ~ViewerDataModel();
 
   QString caption() const override
   {
-    return QString("Cube Data Model");
+    return QString("Viewer Data Model");
   }
 
   static QString name()
   {
-    return QString("CubePrimitiveDataModel");
+    return QString("ViewerDataModel");
   }
 
   void save(Properties &p) const override;
@@ -64,23 +64,7 @@ public:
 
   QWidget *embeddedWidget() override;
 
-
-  QString getOutData()
-  {
-    return QString("Blah");
-  }
-
-//  float getCubeSize()
-//  {
-//    return m_cubeSize;
-//  }
-
-
-  void print(float &_cubeSize);
-
 private:
-
-  float m_cubeSize;
 
 
 };
