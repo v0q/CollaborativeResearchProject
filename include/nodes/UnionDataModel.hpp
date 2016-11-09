@@ -10,45 +10,46 @@
 
 /// The class can potentially incapsulate any user data which
 /// need to be transferred within the Node Editor graph
-class MyNodeData : public NodeData
+class UnionInput : public NodeData
 {
 public:
 
   NodeDataType
   type() const override
-  { return NodeDataType {"DistanceFieldData", "Cube Data"}; }
+	{ return NodeDataType {"DistanceFieldData", "     "}; }
 
 };
 
-class SimpleNodeData : public NodeData
+class UnionOutput : public NodeData
 {
 public:
 
-  NodeDataType
-  type() const override
-  { return NodeDataType {"SimpleData", "Simple Data"}; }
+	NodeDataType
+	type() const override
+	{ return NodeDataType {"DistanceFieldData", "Result"}; }
+
 };
 
 //------------------------------------------------------------------------------
 
 /// The model dictates the number of inputs and outputs for the Node.
 /// In this example it has no logic.
-class CubePrimitiveDataModel : public NodeDataModel
+class UnionDataModel : public NodeDataModel
 {
   Q_OBJECT
 
 public:
 
-  virtual ~CubePrimitiveDataModel();
+	virtual ~UnionDataModel();
 
   QString caption() const override
   {
-    return QString("Cube");
+		return QString("Union");
   }
 
   static QString name()
   {
-    return QString("CubePrimitiveDataModel");
+		return QString("Union");
   }
 
   void save(Properties &p) const override;
@@ -61,26 +62,10 @@ public:
 
   void setInData(std::shared_ptr<NodeData>, int) override;
 
-
   QWidget *embeddedWidget() override;
-
 
   QString getOutData()
   {
     return QString("Blah");
   }
-
-//  float getCubeSize()
-//  {
-//    return m_cubeSize;
-//  }
-
-
-  void print(float &_cubeSize);
-
-private:
-
-  float m_cubeSize;
-
-
 };

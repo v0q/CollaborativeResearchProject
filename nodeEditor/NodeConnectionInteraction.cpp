@@ -54,7 +54,7 @@ bool NodeConnectionInteraction::tryConnect() const
   // 1) Check conditions from 'canConnect'
   PortIndex portIndex = INVALID;
 
-  if (!canConnect(portIndex))
+	if(!canConnect(portIndex))
   {
     return false;
   }
@@ -86,7 +86,6 @@ bool NodeConnectionInteraction::tryConnect() const
   return true;
 }
 
-
 /// 1) Node and Connection should be already connected
 /// 2) If so, clear Connection entry in the NodeState
 /// 3) Set Connection end to 'requiring a port'
@@ -96,8 +95,12 @@ bool NodeConnectionInteraction::disconnect(PortType portToDisconnect) const
 
   NodeState &state = _node->nodeState();
 
-  // clear pointer to Connection in the NodeState
-  state.getEntries(portToDisconnect)[portIndex].reset();
+	// clear pointer to Connection in the NodeState
+	if(portToDisconnect == PortType::In) {
+		state.getEntries(portToDisconnect)[portIndex][0].reset();
+	} else {
+		state.removeConnection(PortType::Out, _connection);
+	}
 
    //4) Propagate invalid data to IN node
   _connection->propagateEmptyData();
@@ -180,6 +183,11 @@ nodePortIsEmpty(PortType portType, PortIndex portIndex) const
   NodeState const & nodeState = _node->nodeState();
 
   auto const & entries = nodeState.getEntries(portType);
+	bool empty = true;
+	for(auto &e : entries[portIndex]) {
+		if(e.lock())
+			empty = false;
+	}
 
-  return (!entries[portIndex].lock());
+	return empty;
 }

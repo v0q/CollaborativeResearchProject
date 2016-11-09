@@ -70,7 +70,7 @@ contextMenuEvent(QContextMenuEvent *event)
     {
       auto node = _scene->createNode(it->second->create() );
 
-      QPoint pos = event->pos();
+			QPoint pos = event->pos();
 
       QPointF posView = this->mapToScene(pos);
 

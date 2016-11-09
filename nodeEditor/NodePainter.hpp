@@ -43,7 +43,8 @@ public:
   drawEntryLabels(QPainter* painter,
                   NodeGeometry const& geom,
                   NodeState const& state,
-                  std::unique_ptr<NodeDataModel> const & model);
+									std::unique_ptr<NodeDataModel> const & model,
+									bool const & movable);
 
   static
   void

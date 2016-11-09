@@ -28,7 +28,7 @@ namespace hsitho
 	}
 
   void GLWindow::paintGL()
-  {
+	{
   }
 
   void GLWindow::resizeGL(const int _w, const int _h)

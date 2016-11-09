@@ -8,7 +8,7 @@ CubePrimitiveDataModel::~CubePrimitiveDataModel()
 
 void CubePrimitiveDataModel::save(Properties &p) const
 {
-  p.put("Cube", CubePrimitiveDataModel::name());
+  p.put("Cube_size", CubePrimitiveDataModel::name());
 
 }
 
@@ -37,26 +37,16 @@ NodeDataType CubePrimitiveDataModel::dataType(PortType portType, PortIndex portI
   switch (portType)
   {
     case PortType::In:
-      switch (portIndex)
-      {
-        case 1:
-          return CubeDataModel().type();
-          break;
-
-        case 0:
-          return SimpleCubeData().type();
-          break;
-      }
-      break;
-
+      return MyNodeData().type();
+    break;
     case PortType::Out:
-      return CubeDataModel().type();
-      break;
+      return MyNodeData().type();
+    break;
 
     default:
       break;
   }
-
+  return MyNodeData().type();
 }
 
 std::shared_ptr<NodeData> CubePrimitiveDataModel::outData(PortIndex port)
@@ -76,8 +66,7 @@ QWidget* CubePrimitiveDataModel::embeddedWidget()
 
 void CubePrimitiveDataModel::print(float &_cubeSize)
 {
-  std::cout << _cubeSize << "\n";
+  std::cout << "Derrrp" << "\n";
 
 }
-
 

@@ -15,8 +15,9 @@
 //------------------------------------------------------------------------------
 
 Node::
-Node(std::unique_ptr<NodeDataModel> && dataModel)
-  : _id(QUuid::createUuid())
+Node(std::unique_ptr<NodeDataModel> && dataModel, bool _m)
+	: m_movable(_m)
+	,	_id(QUuid::createUuid())
   , _nodeDataModel(std::move(dataModel))
   , _nodeState(_nodeDataModel)
   , _nodeGeometry(_nodeDataModel)
@@ -189,8 +190,11 @@ onDataUpdated(PortIndex index)
 {
   auto nodeData = _nodeDataModel->outData(index);
 
-  auto connection = _nodeState.connection(PortType::Out, index);
+	auto connections = _nodeState.connection(PortType::Out, index);
 
-  if (connection)
-    connection->propagateData(nodeData);
+	for(auto const &connection : connections)
+	{
+		if(connection)
+			connection->propagateData(nodeData);
+	}
 }

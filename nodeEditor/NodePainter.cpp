@@ -18,23 +18,39 @@ paint(QPainter* painter,
 
   NodeState const& state = node->nodeState();
 
-  std::unique_ptr<NodeGraphicsObject> const& graphicsObject = node->nodeGraphicsObject();
+	std::unique_ptr<NodeGraphicsObject> const& graphicsObject = node->nodeGraphicsObject();
 
-  geom.recalculateSize(painter->fontMetrics());
+	if(!node->isMovable())
+	{
+		QFont f = painter->font(), fo = painter->font();
+		f.setBold(true);
+		f.setPixelSize(36);
+		painter->setFont(f);
+		QFontMetrics metrics(f);
 
-  //--------------------------------------------
+		geom.recalculateSize(painter->fontMetrics());
 
-  drawNodeRect(painter, geom, graphicsObject);
+		painter->setFont(fo);
+	}
+	else
+	{
+		geom.recalculateSize(painter->fontMetrics());
+	}
 
-  auto const &model = node->nodeDataModel();
+	//--------------------------------------------
 
-  drawConnectionPoints(painter, geom, state, model);
 
-  drawFilledConnectionPoints(painter, geom, state);
+	drawNodeRect(painter, geom, graphicsObject);
 
-  drawModelName(painter, geom, state, model);
+	auto const &model = node->nodeDataModel();
 
-  drawEntryLabels(painter, geom, state, model);
+	drawConnectionPoints(painter, geom, state, model);
+
+	drawFilledConnectionPoints(painter, geom, state);
+
+	drawModelName(painter, geom, state, model);
+
+	drawEntryLabels(painter, geom, state, model, node->isMovable());
 
   drawResizeRect(painter, geom, model);
 }
@@ -107,7 +123,7 @@ drawConnectionPoints(QPainter* painter,
 
       double r = 1.0;
       if (state.isReacting() &&
-          !state.getEntries(portType)[i].lock() &&
+//					!state.getEntries(portType)[i].lock() &&
           portType == state.reactingPortType())
       {
 
@@ -161,12 +177,16 @@ drawFilledConnectionPoints(QPainter * painter,
     {
       QPointF p = geom.portScenePosition(i, portType);
 
-      if (state.getEntries(portType)[i].lock())
-      {
-        painter->drawEllipse(p,
-                             diameter * 0.4,
-                             diameter * 0.4);
-      }
+			for(auto const &conn : state.getEntries(portType)[i])
+			{
+				if(conn.lock())
+				{
+					painter->drawEllipse(p,
+															 diameter * 0.4,
+															 diameter * 0.4);
+					break;
+				}
+			}
     }
   };
 
@@ -214,10 +234,18 @@ NodePainter::
 drawEntryLabels(QPainter * painter,
                 NodeGeometry const & geom,
                 NodeState const & state,
-                std::unique_ptr<NodeDataModel> const & model)
+								std::unique_ptr<NodeDataModel> const & model,
+								bool const & movable)
 {
-  QFontMetrics const & metrics =
-    painter->fontMetrics();
+	if(!movable)
+	{
+		QFont f = painter->font();
+		f.setBold(true);
+		f.setPixelSize(36);
+		painter->setFont(f);
+	}
+	QFontMetrics const &metrics = painter->fontMetrics();
+	geom.recalculateSize(metrics);
 
   auto drawPoints =
   [&](PortType portType)
@@ -231,14 +259,17 @@ drawEntryLabels(QPainter * painter,
 
       QPointF p = geom.portScenePosition(i, portType);
 
-      if (entries[i].expired())
-        painter->setPen(Qt::darkGray);
-      else
-        painter->setPen(Qt::white);
+			painter->setPen(Qt::darkGray);
+			for(auto &e : entries[i]){
+				if(!e.expired()) {
+					painter->setPen(Qt::white);
+					break;
+				}
+			}
 
       QString s = model->dataType(portType, i).name;
 
-      auto rect = metrics.boundingRect(s);
+			auto rect = metrics.boundingRect(s);
 
       p.setY(p.y() + rect.height() / 4.0);
 

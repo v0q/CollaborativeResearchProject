@@ -70,7 +70,7 @@ restoreConnection(Properties const &p)
   auto cgo = std::make_unique<ConnectionGraphicsObject>(*this, connection);
 
   nodeIn->nodeState().setConnection(PortType::In, portIndexIn, connection);
-  nodeOut->nodeState().setConnection(PortType::Out, portIndexOut, connection);
+	nodeOut->nodeState().setConnection(PortType::Out, portIndexOut, connection);
 
   // trigger data propagation
   nodeOut->onDataUpdated(portIndexOut);
@@ -89,6 +89,9 @@ void
 FlowScene::
 deleteConnection(std::shared_ptr<Connection> connection)
 {
+	if(connection.get()->getPortIndex(PortType::Out) != -1)
+		connection.get()->getNode(PortType::Out).lock().get()->nodeState().removeConnection(PortType::Out, connection);
+
   _connections.erase(connection->id());
   emit nodeEditorChanged();
 }
@@ -96,9 +99,9 @@ deleteConnection(std::shared_ptr<Connection> connection)
 
 std::shared_ptr<Node>
 FlowScene::
-createNode(std::unique_ptr<NodeDataModel> && dataModel)
+createNode(std::unique_ptr<NodeDataModel> && dataModel, bool _m)
 {
-  auto node = std::make_shared<Node>(std::move(dataModel));
+	auto node = std::make_shared<Node>(std::move(dataModel), _m);
   auto ngo  = std::make_unique<NodeGraphicsObject>(*this, node);
 
   node->setGraphicsObject(std::move(ngo));
@@ -147,19 +150,24 @@ removeNode(QGraphicsItem* item)
   std::shared_ptr<Node> const& node = ngo->node().lock();
 
   auto deleteConnections = [&node, this] (PortType portType)
-  {
+	{
     auto nodeState = node->nodeState();
-    auto const & nodeEntries = nodeState.getEntries(portType);
+		auto const & nodeEntries = nodeState.getEntries(portType);
 
-    for (std::weak_ptr<Connection> conn : nodeEntries)
-    {
-      if (auto c = conn.lock())
-        this->deleteConnection(c);
+		for(std::vector<std::weak_ptr<Connection>> ports : nodeEntries)
+		{
+			for(auto &conn : ports)
+			{
+				if(auto c = conn.lock()) {
+					nodeState.removeConnection(portType, c);
+					this->deleteConnection(c);
+				}
+			}
     }
   };
 
+	deleteConnections(PortType::Out);
   deleteConnections(PortType::In);
-  deleteConnections(PortType::Out);
 
   _nodes.erase(node->id());
   emit nodeEditorChanged();
