@@ -8,7 +8,6 @@ CubePrimitiveDataModel::~CubePrimitiveDataModel()
 
 void CubePrimitiveDataModel::save(Properties &p) const
 {
-  p.put("Cube_size", CubePrimitiveDataModel::name());
 
 }
 
@@ -19,7 +18,7 @@ unsigned int CubePrimitiveDataModel::nPorts(PortType portType) const
   switch (portType)
   {
     case PortType::In:
-      result = 1;
+			result = 0;
       break;
 
     case PortType::Out:
@@ -34,19 +33,18 @@ unsigned int CubePrimitiveDataModel::nPorts(PortType portType) const
 
 NodeDataType CubePrimitiveDataModel::dataType(PortType portType, PortIndex portIndex) const
 {
-  switch (portType)
-  {
-    case PortType::In:
-      return MyNodeData().type();
-    break;
-		case PortType::Out:
-			return MyNodeData().type();
-		break;
+//  switch (portType)
+//  {
+//    case PortType::In:
+//      return MyNodeData().type();
+//    break;
+//		case PortType::Out:
+			return DistanceFieldOutput().type();
+//		break;
 
-    default:
-      break;
-  }
-  return MyNodeData().type();
+//    default:
+//      break;
+//  }
 }
 
 std::shared_ptr<NodeData> CubePrimitiveDataModel::outData(PortIndex port)
@@ -64,10 +62,11 @@ QWidget* CubePrimitiveDataModel::embeddedWidget()
   return nullptr;
 }
 
-void CubePrimitiveDataModel::print(float &_cubeSize)
+std::string CubePrimitiveDataModel::getShaderCode()
 {
-  std::cout << _cubeSize << "\n";
-
+	if(m_transform == "")
+	{
+		m_transform = "vec3(0.0, 0.0, 0.0)";
+	}
+	return "cube(_position + " + m_transform + ", 0.6f)";
 }
-
-

@@ -10,6 +10,8 @@
 
 #include "Export.hpp"
 
+#include "nodes/DistanceFieldData.hpp"
+
 class NODE_EDITOR_PUBLIC NodeDataModel
   : public QObject
   , public Serializable
@@ -59,7 +61,10 @@ public:
   bool
   resizable() const { return false; }
 
-	virtual QString getShaderCode() = 0;
+	virtual std::string getShaderCode() = 0;
+	virtual DFNodeType getNodeType() const = 0;
+	virtual Vec4f addTranslation() {}
+	virtual void setTransform(const Vec4f &_t) {}
 
 signals:
 

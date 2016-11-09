@@ -4,30 +4,28 @@
 #include <QtWidgets/QLineEdit>
 
 #include "nodeEditor/NodeDataModel.hpp"
+#include "nodes/DistanceFieldData.hpp"
 
-#include <iostream>
+//------------------------------------------------------------------------------
 
-class OutputData : public NodeData
-{
-public:
-	NodeDataType type() const override {
-		return NodeDataType {"DistanceFieldData", "DISTANCE"};
-	}
-};
-
-class DistanceFieldOutputDataModel : public NodeDataModel
+/// The model dictates the number of inputs and outputs for the Node.
+/// In this example it has no logic.
+class TranslateDataModel : public NodeDataModel
 {
 	Q_OBJECT
 
 public:
 
-	virtual ~DistanceFieldOutputDataModel();
+	virtual ~TranslateDataModel();
 
-	QString caption() const override { return QString(""); }
+	QString caption() const override
+	{
+		return QString("Translate");
+	}
 
 	static QString name()
 	{
-		return QString("");
+		return QString("Translate");
 	}
 
 	void save(Properties &p) const override;
@@ -42,6 +40,8 @@ public:
 
 	QWidget *embeddedWidget() override;
 
-	std::string getShaderCode() { return "final"; }
 	DFNodeType getNodeType() const { return DFNodeType::TRANSFORM; }
+	Vec4f addTranslation() { return Vec4f(0.0f, -1.0f, 0.0f, 1.0f); }
+
+	std::string getShaderCode();
 };

@@ -17,7 +17,7 @@ unsigned int UnionDataModel::nPorts(PortType portType) const
   switch (portType)
   {
     case PortType::In:
-			result = 3;
+			result = 2;
       break;
 
     case PortType::Out:
@@ -35,10 +35,10 @@ NodeDataType UnionDataModel::dataType(PortType portType, PortIndex portIndex) co
   switch (portType)
   {
     case PortType::In:
-			return UnionInput().type();
+			return DistanceFieldInput().type();
     break;
 		case PortType::Out:
-			return UnionOutput().type();
+			return DistanceFieldOutput().type();
 		break;
 
     default:
@@ -60,3 +60,7 @@ QWidget* UnionDataModel::embeddedWidget()
 {
   return nullptr;
 }
+
+ std::string UnionDataModel::getShaderCode() {
+	 return "U";
+ }

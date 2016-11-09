@@ -4,31 +4,9 @@
 #include <QtWidgets/QLineEdit>
 
 #include "nodeEditor/NodeDataModel.hpp"
+#include "nodes/DistanceFieldData.hpp"
 
 #include <iostream>
-
-
-/// The class can potentially incapsulate any user data which
-/// need to be transferred within the Node Editor graph
-class UnionInput : public NodeData
-{
-public:
-
-  NodeDataType
-  type() const override
-	{ return NodeDataType {"DistanceFieldData", "     "}; }
-
-};
-
-class UnionOutput : public NodeData
-{
-public:
-
-	NodeDataType
-	type() const override
-	{ return NodeDataType {"DistanceFieldData", "Result"}; }
-
-};
 
 //------------------------------------------------------------------------------
 
@@ -64,5 +42,6 @@ public:
 
   QWidget *embeddedWidget() override;
 
-	QString getShaderCode();
+	DFNodeType getNodeType() const { return DFNodeType::MIX; }
+	std::string getShaderCode();
 };

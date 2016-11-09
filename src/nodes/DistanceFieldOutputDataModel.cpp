@@ -33,7 +33,7 @@ unsigned int DistanceFieldOutputDataModel::nPorts(PortType portType) const
 
 NodeDataType DistanceFieldOutputDataModel::dataType(PortType, PortIndex) const
 {
-	return DistanceFieldData().type();
+	return OutputData().type();
 }
 
 std::shared_ptr<NodeData> DistanceFieldOutputDataModel::outData(PortIndex port)

@@ -9,6 +9,7 @@
 //#include "calculator/MultiplicationModel.hpp"
 #include "CubePrimitiveDataModel.hpp"
 #include "UnionDataModel.hpp"
+#include "TranslateDataModel.hpp"
 #include "DistanceFieldOutputDataModel.hpp"
 
 #include <iostream>
@@ -23,6 +24,7 @@ MainWindow::MainWindow(QWidget *_parent) :
 
 	DataModelRegistry::registerModel<CubePrimitiveDataModel>();
 	DataModelRegistry::registerModel<UnionDataModel>();
+	DataModelRegistry::registerModel<TranslateDataModel>();
 //	DataModelRegistry::registerModel<NumberSourceDataModel>();
 //	DataModelRegistry::registerModel<NumberDisplayDataModel>();
 //	DataModelRegistry::registerModel<MultiplicationModel>();

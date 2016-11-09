@@ -2,32 +2,11 @@
 
 #include <QtCore/QObject>
 #include <QtWidgets/QLineEdit>
-
-#include "nodeEditor/NodeDataModel.hpp"
-
 #include <iostream>
 
+#include "nodeEditor/NodeDataModel.hpp"
+#include "nodes/DistanceFieldData.hpp"
 
-/// The class can potentially incapsulate any user data which
-/// need to be transferred within the Node Editor graph
-class MyNodeData : public NodeData
-{
-public:
-
-  NodeDataType
-  type() const override
-	{ return NodeDataType {"DistanceFieldData", "Cube Data"}; }
-
-};
-
-class SimpleNodeData : public NodeData
-{
-public:
-
-  NodeDataType
-  type() const override
-  { return NodeDataType {"SimpleData", "Simple Data"}; }
-};
 
 //------------------------------------------------------------------------------
 
@@ -48,7 +27,7 @@ public:
 
   static QString name()
   {
-    return QString("CubePrimitiveDataModel");
+		return QString("Cube Primitive");
   }
 
   void save(Properties &p) const override;
@@ -61,10 +40,12 @@ public:
 
   void setInData(std::shared_ptr<NodeData>, int) override;
 
-
   QWidget *embeddedWidget() override;
 
-	QString getShaderCode() { return QString("cube(_position + vec3(1.0f, 1.0f, 1.0f), 0.5f)"); }
+	DFNodeType getNodeType() const { return DFNodeType::PRIMITIVE; }
+	std::string getShaderCode();
+	void setTransform(const Vec4f &_t) { m_transform = "vec3(" + std::to_string(_t.m_x) + ", " + std::to_string(_t.m_y) + ", " + std::to_string(_t.m_z) + ")"; }
 
-  void print(float &_cubeSize);
+private:
+	std::string m_transform;
 };
