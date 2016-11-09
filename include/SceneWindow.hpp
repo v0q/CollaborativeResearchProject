@@ -19,7 +19,9 @@ namespace hsitho
     void paintGL();
 
 	private:
+		std::string recurseNodeTree(std::shared_ptr<Node> _node);
     std::shared_ptr<ShaderManager> m_shaderMan;
+		Node *m_outputNode;
 		QOpenGLVertexArrayObject *m_vao;
     QOpenGLBuffer m_vbo;
 

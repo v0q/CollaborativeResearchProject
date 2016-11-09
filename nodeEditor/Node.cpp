@@ -155,7 +155,10 @@ nodeState() const
 }
 
 
-NodeState &
+NodeState &//		for(auto connections : m_outputNode.get()->nodeState().connection(PortType::In, 0))
+//		{
+//			std::cout << qPrintable(connections->getNode(PortType::Out).lock()->nodeDataModel()->getShaderCode()) << "\n";
+//		}
 Node::
 nodeState()
 {

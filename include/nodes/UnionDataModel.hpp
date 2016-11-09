@@ -64,8 +64,5 @@ public:
 
   QWidget *embeddedWidget() override;
 
-  QString getOutData()
-  {
-    return QString("Blah");
-  }
+	QString getShaderCode();
 };

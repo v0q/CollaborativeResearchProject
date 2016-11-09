@@ -9,6 +9,8 @@ obj/
 moc/
 moc_*
 ui_*
+*.debug
+*.autosave
 # shadow build directories
 build-*
 Makefile

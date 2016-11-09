@@ -27,7 +27,7 @@ namespace hsitho
 		std::unordered_map<std::string, QOpenGLShaderProgram*> m_shaders;
 		QOpenGLShaderProgram *m_program;
 
-    ShaderManager() {}
+		ShaderManager() : m_program(nullptr) {}
     ShaderManager(const ShaderManager &_rhs) = delete;
 		ShaderManager& operator= (const ShaderManager &_rhs) = delete;
   };

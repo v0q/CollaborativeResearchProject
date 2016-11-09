@@ -4,9 +4,9 @@
 #include "nodeEditor/NodeData.hpp"
 #include "nodeEditor/DataModelRegistry.hpp"
 
-#include "calculator/NumberSourceDataModel.hpp"
-#include "calculator/NumberDisplayDataModel.hpp"
-#include "calculator/MultiplicationModel.hpp"
+//#include "calculator/NumberSourceDataModel.hpp"
+//#include "calculator/NumberDisplayDataModel.hpp"
+//#include "calculator/MultiplicationModel.hpp"
 #include "CubePrimitiveDataModel.hpp"
 
 #include "UnionDataModel.hpp"
@@ -20,7 +20,7 @@ MainWindow::MainWindow(QWidget *_parent) :
   m_ui(new Ui::MainWindow)
 {
   m_ui->setupUi(this);
-  m_gl = new hsitho::SceneWindow(this);
+	m_gl = new hsitho::SceneWindow(this);
 
 
 	DataModelRegistry::registerModel<CubePrimitiveDataModel>();
@@ -29,9 +29,9 @@ MainWindow::MainWindow(QWidget *_parent) :
 //	DataModelRegistry::registerModel<NumberDisplayDataModel>();
 //	DataModelRegistry::registerModel<MultiplicationModel>();
 
-  connect(this, SIGNAL(nodeEditorModified(std::unordered_map<QUuid, std::shared_ptr<Node>>)), m_gl, SLOT(nodeChanged(std::unordered_map<QUuid, std::shared_ptr<Node>>)));
+	connect(this, SIGNAL(nodeEditorModified(std::unordered_map<QUuid, std::shared_ptr<Node>>)), m_gl, SLOT(nodeChanged(std::unordered_map<QUuid, std::shared_ptr<Node>>)));
 
-  m_nodes = new FlowScene(this);
+	m_nodes = new FlowScene(this);
 	m_flowView = new FlowView(m_nodes);
 
 	m_ui->m_sceneLayout->addWidget(m_gl, 0, 0, 1, 1);

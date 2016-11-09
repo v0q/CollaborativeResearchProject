@@ -321,7 +321,7 @@ dataType() const
     auto const &model = validNode->nodeDataModel();
 
     return model->dataType(portType, index);
-  }
+	}
 }
 
 

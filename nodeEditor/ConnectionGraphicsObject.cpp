@@ -204,12 +204,13 @@ mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
 
   if (node && interaction.tryConnect())
   {
-    node->resetReactionToConnection();
-  }
-  else
-  {
-    _scene.deleteConnection(connection);
-  }
+		node->resetReactionToConnection();
+		emit _scene.nodeEditorChanged();
+	}
+	else
+	{
+		_scene.deleteConnection(connection);
+	}
 }
 
 
