@@ -32,15 +32,13 @@ public:
   QRectF
   boundingRect() const override;
 
-  void
-  setGeometryChanged();
+	void setGeometryChanged();
 
   /// Visits all attached connections and corrects
   /// their corresponding end points.
-  void
-  moveConnections() const;
+	void moveConnections() const;
 
-	void test();
+	FlowScene &getScene() const { return _scene; }
 
 protected:
   void

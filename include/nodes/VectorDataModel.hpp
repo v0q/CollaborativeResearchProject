@@ -17,7 +17,7 @@ class VectorDataModel : public NodeDataModel
 public:
 
 	VectorDataModel();
-	~VectorDataModel();
+	virtual ~VectorDataModel() {}
 
 	QString caption() const override {
 		return QString("Vector");
@@ -27,23 +27,23 @@ public:
 		return QString("Vector");
 	}
 
-	void save(Properties &p) const override;
+	void save(Properties &p) const override {}
+	void setInData(std::shared_ptr<NodeData>, int) override {}
 
 	unsigned int nPorts(PortType portType) const override;
-
 	NodeDataType dataType(PortType, PortIndex) const override;
-
-	std::shared_ptr<NodeData> outData(PortIndex port) override;
-
-	void setInData(std::shared_ptr<NodeData>, int) override;
+	std::shared_ptr<NodeData> outData(PortIndex) override;
 
 	std::vector<QWidget *> embeddedWidget() override;
 
-	DFNodeType getNodeType() const { return DFNodeType::TRANSFORM; }
-
+	DFNodeType getNodeType() const { return DFNodeType::VECTOR; }
 	std::string getShaderCode();
 
+private slots:
+	void vectorEdit(QString const);
+
 private:
+	std::shared_ptr<VectorData> m_v;
 	QLineEdit *m_x;
 	QLineEdit *m_y;
 	QLineEdit *m_z;

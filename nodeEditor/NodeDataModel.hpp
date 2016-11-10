@@ -61,20 +61,13 @@ public:
 
 	virtual std::string getShaderCode() = 0;
 	virtual DFNodeType getNodeType() const = 0;
-	virtual Vec4f addTranslation() {}
+	virtual Vec4f addTranslation() { return Vec4f(); }
 	virtual void setTransform(const Vec4f &_t) {}
 
 signals:
 
-  void
-  dataUpdated(PortIndex index);
-
-  void
-  dataInvalidated(PortIndex index);
-
-  void
-  computingStarted();
-
-  void
-  computingFinished();
+	void dataUpdated(PortIndex index);
+	void dataInvalidated(PortIndex index);
+	void computingStarted();
+	void computingFinished();
 };

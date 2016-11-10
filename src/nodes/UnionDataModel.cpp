@@ -44,6 +44,7 @@ NodeDataType UnionDataModel::dataType(PortType portType, PortIndex portIndex) co
     default:
       break;
 	}
+	return DistanceFieldInput().type();
 }
 
 std::shared_ptr<NodeData> UnionDataModel::outData(PortIndex port)

@@ -1,9 +1,5 @@
 #include "TranslateDataModel.hpp"
 
-TranslateDataModel::~TranslateDataModel()
-{
-}
-
 void TranslateDataModel::save(Properties &p) const
 {
 }
@@ -33,7 +29,15 @@ NodeDataType TranslateDataModel::dataType(PortType portType, PortIndex portIndex
 	switch (portType)
 	{
 		case PortType::In:
-			return DistanceFieldInput().type();
+			switch(portIndex)
+			{
+				case 0:
+					return DistanceFieldInput().type();
+				break;
+				case 1:
+					return VectorData().type();
+				break;
+			}
 		break;
 		case PortType::Out:
 			return DistanceFieldOutput().type();
@@ -42,6 +46,7 @@ NodeDataType TranslateDataModel::dataType(PortType portType, PortIndex portIndex
 		default:
 			break;
 	}
+	return DistanceFieldInput().type();
 }
 
 std::shared_ptr<NodeData> TranslateDataModel::outData(PortIndex port)
@@ -49,9 +54,16 @@ std::shared_ptr<NodeData> TranslateDataModel::outData(PortIndex port)
 	return nullptr;
 }
 
-void TranslateDataModel::setInData(std::shared_ptr<NodeData>, int)
+void TranslateDataModel::setInData(std::shared_ptr<NodeData> _data, PortIndex portIndex)
 {
-
+	if(portIndex == 1)
+	{
+		auto vec = std::dynamic_pointer_cast<VectorData>(_data);
+		if(vec)
+		{
+			m_t = vec->vector();
+		}
+	}
 }
 
 std::vector<QWidget *> TranslateDataModel::embeddedWidget()

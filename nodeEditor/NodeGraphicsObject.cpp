@@ -75,20 +75,22 @@ embedQWidget()
 	for(auto w : node->nodeDataModel()->embeddedWidget())
   {
 		auto proxyWidget = new QGraphicsProxyWidget(this);
-		_proxyWidgets.push_back(proxyWidget);
-
 		proxyWidget->setWidget(w);
 
 		proxyWidget->setPreferredWidth(5);
 
-    geom.recalculateSize();
+		geom.recalculateSize();
 
-		proxyWidget->setPos(geom.widgetPosition());
+		proxyWidget->setPos(geom.widgetPosition() + w->pos());
 
-    update();
+
+		update();
 
 		proxyWidget->setOpacity(1.0);
 		proxyWidget->setFlag(QGraphicsItem::ItemIgnoresParentOpacity);
+
+		_proxyWidgets.push_back(proxyWidget);
+
   }
 }
 
@@ -322,17 +324,6 @@ hoverLeaveEvent(QGraphicsSceneHoverEvent * event)
 	update();
 	event->accept();
 }
-
-void NodeGraphicsObject::test()
-{
-	auto node    = _node.lock();
-	auto & geom  = node->nodeGeometry();
-	geom.recalculateSize();
-	update();
-
-	moveConnections();
-}
-
 
 void
 NodeGraphicsObject::
