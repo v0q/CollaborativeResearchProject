@@ -16,7 +16,7 @@ class TranslateDataModel : public NodeDataModel
 
 public:
 
-	virtual ~TranslateDataModel();
+	virtual ~TranslateDataModel() {}
 
 	QString caption() const override
 	{
@@ -36,12 +36,14 @@ public:
 
 	std::shared_ptr<NodeData> outData(PortIndex port) override;
 
-	void setInData(std::shared_ptr<NodeData>, int) override;
+	void setInData(std::shared_ptr<NodeData>, PortIndex) override;
 
-	QWidget *embeddedWidget() override;
+	std::vector<QWidget *> embeddedWidget() override;
 
 	DFNodeType getNodeType() const { return DFNodeType::TRANSFORM; }
-	Vec4f addTranslation() { return Vec4f(0.0f, -1.0f, 0.0f, 1.0f); }
+	Vec4f addTranslation() { return m_t; }
 
 	std::string getShaderCode();
+private:
+	Vec4f m_t;
 };

@@ -2,41 +2,15 @@
 
 #include "nodeEditor/NodeData.hpp"
 
-class DistanceFieldInput : public NodeData
-{
-public:
-
-	NodeDataType
-	type() const override
-	{ return NodeDataType {"DistanceFieldData", "     "}; }
-
-};
-
-class DistanceFieldOutput : public NodeData
-{
-public:
-
-	NodeDataType
-	type() const override
-	{ return NodeDataType {"DistanceFieldData", "Result"}; }
-
-};
-
 struct Vec4f
 {
-	float m_x = 0.0f;
-	float m_y = 0.0f;
-	float m_z = 0.0f;
-	float m_w = 0.0f;
-
 	Vec4f() {}
-	Vec4f(float _x, float _y, float _z, float _w)
-	{
-		m_x = _x;
-		m_y = _y;
-		m_z = _z;
-		m_w = _w;
-	}
+	Vec4f(float _x, float _y, float _z, float _w) :
+		m_x(_x),
+		m_y(_y),
+		m_z(_z),
+		m_w(_w)
+	{}
 
 	Vec4f operator +(const Vec4f &_rhs) {
 		m_x += _rhs.m_x;
@@ -53,13 +27,19 @@ struct Vec4f
 		m_z = _rhs.m_z;
 		m_w = _rhs.m_w;
 	}
+
+	float m_x = 0.0f;
+	float m_y = 0.0f;
+	float m_z = 0.0f;
+	float m_w = 0.0f;
 };
 
 enum DFNodeType
 {
 	PRIMITIVE,
 	TRANSFORM,
-	MIX
+	MIX,
+	VECTOR
 };
 
 class Mat4f
@@ -102,3 +82,45 @@ private:
 		};
 	};
 };
+
+
+class DistanceFieldInput : public NodeData
+{
+public:
+	NodeDataType type() const override
+	{
+		return NodeDataType {"DistanceFieldData", "     "};
+	}
+};
+
+class DistanceFieldOutput : public NodeData
+{
+public:
+	NodeDataType type() const override
+	{
+		return NodeDataType {"DistanceFieldData", "Result"};
+	}
+};
+
+class VectorData : public NodeData
+{
+public:
+	VectorData() : m_v(Vec4f()) {}
+	VectorData(const float _x, const float _y, const float _z) :
+		m_v(Vec4f(_x, _y, _z, 1.0f))
+	{}
+
+	NodeDataType type() const override
+	{
+		return NodeDataType {"Vector", "Vec"};
+	}
+
+	Vec4f vector() const
+	{
+		return m_v;
+	}
+
+private:
+	Vec4f m_v;
+};
+

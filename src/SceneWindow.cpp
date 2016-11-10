@@ -134,6 +134,7 @@ namespace hsitho
 //					branches.m_branches.push_back(recurseNodeTree(connection->getNode(PortType::Out).lock()));
 				}
 			}
+			std::cout << shadercode << "\n";
 
 			if(shadercode != "")
 			{
@@ -220,7 +221,7 @@ namespace hsitho
 
 															"void main()"
 															"{"
-															"  vec3 cameraPosition = vec3(sin(u_GlobalTime/10.f)*5.f, 2.5f, cos(u_GlobalTime/10.f)*5.f);"
+															"  vec3 cameraPosition = vec3(5.f, 2.5f, 5.f);"
 															"  vec3 lookAt = vec3(0.f);"
 															"  vec3 upVector = vec3(0.f, 1.f, 0.f);"
 															"  float aspectRatio = u_Resolution.x / u_Resolution.y;"

@@ -44,6 +44,7 @@ NodeDataType UnionDataModel::dataType(PortType portType, PortIndex portIndex) co
 		default:
 			break;
 	}
+	return DistanceFieldInput().type();
 }
 
 std::shared_ptr<NodeData> UnionDataModel::outData(PortIndex port)
@@ -56,11 +57,11 @@ void UnionDataModel::setInData(std::shared_ptr<NodeData>, int)
 
 }
 
-QWidget* UnionDataModel::embeddedWidget()
+std::vector<QWidget *> UnionDataModel::embeddedWidget()
 {
-	return nullptr;
+	return std::vector<QWidget *>();
 }
 
 std::string UnionDataModel::getShaderCode() {
-	return "p_union(";
+ return "p_union(";
 }

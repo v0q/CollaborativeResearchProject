@@ -46,9 +46,9 @@ void DistanceFieldOutputDataModel::setInData(std::shared_ptr<NodeData>, int)
 
 }
 
-QWidget* DistanceFieldOutputDataModel::embeddedWidget()
+std::vector<QWidget *> DistanceFieldOutputDataModel::embeddedWidget()
 {
-	return nullptr;
+	return std::vector<QWidget *>();
 }
 
 

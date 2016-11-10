@@ -57,9 +57,9 @@ void CubePrimitiveDataModel::setInData(std::shared_ptr<NodeData>, int)
 
 }
 
-QWidget* CubePrimitiveDataModel::embeddedWidget()
+std::vector<QWidget *> CubePrimitiveDataModel::embeddedWidget()
 {
-  return nullptr;
+	return std::vector<QWidget *>();
 }
 
 std::string CubePrimitiveDataModel::getShaderCode()
