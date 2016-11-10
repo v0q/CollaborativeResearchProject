@@ -12,43 +12,43 @@ void UnionDataModel::save(Properties &p) const
 
 unsigned int UnionDataModel::nPorts(PortType portType) const
 {
-  unsigned int result = 1;
+	unsigned int result = 1;
 
-  switch (portType)
-  {
-    case PortType::In:
+	switch (portType)
+	{
+		case PortType::In:
 			result = 2;
-      break;
+			break;
 
-    case PortType::Out:
+		case PortType::Out:
 			result = 1;
 
-    default:
-      break;
-  }
+		default:
+			break;
+	}
 
-  return result;
+	return result;
 }
 
 NodeDataType UnionDataModel::dataType(PortType portType, PortIndex portIndex) const
 {
-  switch (portType)
-  {
-    case PortType::In:
+	switch (portType)
+	{
+		case PortType::In:
 			return DistanceFieldInput().type();
-    break;
+		break;
 		case PortType::Out:
 			return DistanceFieldOutput().type();
 		break;
 
-    default:
-      break;
+		default:
+			break;
 	}
 }
 
 std::shared_ptr<NodeData> UnionDataModel::outData(PortIndex port)
 {
-  return nullptr;
+	return nullptr;
 }
 
 void UnionDataModel::setInData(std::shared_ptr<NodeData>, int)
@@ -58,9 +58,9 @@ void UnionDataModel::setInData(std::shared_ptr<NodeData>, int)
 
 QWidget* UnionDataModel::embeddedWidget()
 {
-  return nullptr;
+	return nullptr;
 }
 
- std::string UnionDataModel::getShaderCode() {
-	 return "U";
- }
+std::string UnionDataModel::getShaderCode() {
+	return "p_union(";
+}

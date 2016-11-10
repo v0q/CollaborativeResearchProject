@@ -247,11 +247,25 @@ namespace hsitho
 			_node->nodeDataModel()->setTransform(_t);
 			shadercode += _node->nodeDataModel()->getShaderCode();
 		}
-
-		for(auto connection : _node->nodeState().connection(PortType::In))
+		else if(_node->nodeDataModel()->getNodeType() == DFNodeType::MIX)
 		{
-			if(connection.get() && connection->getNode(PortType::Out).lock())
+			shadercode += _node->nodeDataModel()->getShaderCode();
+		}
+
+		std::vector<std::shared_ptr<Connection>> inConns = _node->nodeState().connection(PortType::In);
+		unsigned int i = 0;
+		for(auto connection : inConns)
+		{
+			if(connection.get() && connection->getNode(PortType::Out).lock()) {
+				++i;
 				shadercode += recurseNodeTree(connection->getNode(PortType::Out).lock(), _t);
+				if(_node->nodeDataModel()->getNodeType() == DFNodeType::MIX) {
+					if(i < inConns.size())
+						shadercode += ",";
+					else
+						shadercode += ")";
+				}
+			}
 		}
 		return shadercode;
 	}
