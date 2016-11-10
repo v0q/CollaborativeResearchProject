@@ -10,6 +10,7 @@
 #include "CubePrimitiveDataModel.hpp"
 #include "UnionDataModel.hpp"
 #include "TranslateDataModel.hpp"
+#include "VectorDataModel.hpp"
 #include "DistanceFieldOutputDataModel.hpp"
 
 #include <iostream>
@@ -25,6 +26,7 @@ MainWindow::MainWindow(QWidget *_parent) :
 	DataModelRegistry::registerModel<CubePrimitiveDataModel>();
 	DataModelRegistry::registerModel<UnionDataModel>();
 	DataModelRegistry::registerModel<TranslateDataModel>();
+	DataModelRegistry::registerModel<VectorDataModel>();
 //	DataModelRegistry::registerModel<NumberSourceDataModel>();
 //	DataModelRegistry::registerModel<NumberDisplayDataModel>();
 //	DataModelRegistry::registerModel<MultiplicationModel>();

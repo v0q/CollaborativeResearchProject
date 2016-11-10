@@ -40,7 +40,7 @@ public:
 
   void setInData(std::shared_ptr<NodeData>, int) override;
 
-  QWidget *embeddedWidget() override;
+	std::vector<QWidget *> embeddedWidget() override;
 
 	DFNodeType getNodeType() const { return DFNodeType::MIX; }
 	std::string getShaderCode();

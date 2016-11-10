@@ -56,11 +56,11 @@ void UnionDataModel::setInData(std::shared_ptr<NodeData>, int)
 
 }
 
-QWidget* UnionDataModel::embeddedWidget()
+std::vector<QWidget *> UnionDataModel::embeddedWidget()
 {
-  return nullptr;
+	return std::vector<QWidget *>();
 }
 
  std::string UnionDataModel::getShaderCode() {
-	 return "U";
+	 return "p_union(";
  }

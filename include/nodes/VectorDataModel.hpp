@@ -10,29 +10,28 @@
 
 /// The model dictates the number of inputs and outputs for the Node.
 /// In this example it has no logic.
-class TranslateDataModel : public NodeDataModel
+class VectorDataModel : public NodeDataModel
 {
 	Q_OBJECT
 
 public:
 
-	virtual ~TranslateDataModel();
+	VectorDataModel();
+	~VectorDataModel();
 
-	QString caption() const override
-	{
-		return QString("Translate");
+	QString caption() const override {
+		return QString("Vector");
 	}
 
-	static QString name()
-	{
-		return QString("Translate");
+	static QString name() {
+		return QString("Vector");
 	}
 
 	void save(Properties &p) const override;
 
 	unsigned int nPorts(PortType portType) const override;
 
-	NodeDataType dataType(PortType portType, PortIndex portIndex) const override;
+	NodeDataType dataType(PortType, PortIndex) const override;
 
 	std::shared_ptr<NodeData> outData(PortIndex port) override;
 
@@ -41,7 +40,11 @@ public:
 	std::vector<QWidget *> embeddedWidget() override;
 
 	DFNodeType getNodeType() const { return DFNodeType::TRANSFORM; }
-	Vec4f addTranslation() { return Vec4f(0.0f, -1.0f, 0.0f, 1.0f); }
 
 	std::string getShaderCode();
+
+private:
+	QLineEdit *m_x;
+	QLineEdit *m_y;
+	QLineEdit *m_z;
 };

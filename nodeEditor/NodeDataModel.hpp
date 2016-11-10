@@ -53,9 +53,7 @@ public:
   std::shared_ptr<NodeData>
   outData(PortIndex port) = 0;
 
-  virtual
-  QWidget *
-  embeddedWidget() = 0;
+	virtual std::vector<QWidget *> embeddedWidget() = 0;
 
   virtual
   bool

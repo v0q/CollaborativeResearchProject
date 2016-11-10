@@ -2,26 +2,6 @@
 
 #include "nodeEditor/NodeData.hpp"
 
-class DistanceFieldInput : public NodeData
-{
-public:
-
-	NodeDataType
-	type() const override
-	{ return NodeDataType {"DistanceFieldData", "     "}; }
-
-};
-
-class DistanceFieldOutput : public NodeData
-{
-public:
-
-	NodeDataType
-	type() const override
-	{ return NodeDataType {"DistanceFieldData", "Result"}; }
-
-};
-
 struct Vec4f
 {
 	float m_x = 0.0f;
@@ -102,3 +82,35 @@ private:
 		};
 	};
 };
+
+
+class DistanceFieldInput : public NodeData
+{
+public:
+
+	NodeDataType
+	type() const override
+	{ return NodeDataType {"DistanceFieldData", "     "}; }
+
+};
+
+class DistanceFieldOutput : public NodeData
+{
+public:
+
+	NodeDataType
+	type() const override
+	{ return NodeDataType {"DistanceFieldData", "Result"}; }
+};
+
+class VectorData : public NodeData
+{
+public:
+	NodeDataType
+	type() const override
+	{ return NodeDataType {"Vector", "Vec"}; }
+
+private:
+	Vec4f m_v;
+};
+

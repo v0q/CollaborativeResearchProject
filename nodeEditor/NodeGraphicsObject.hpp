@@ -80,5 +80,5 @@ private:
   std::weak_ptr<Node> _node;
 
   // either nullptr or owned by parent QGraphicsItem
-  QGraphicsProxyWidget * _proxyWidget;
+	std::vector<QGraphicsProxyWidget*> _proxyWidgets;
 };

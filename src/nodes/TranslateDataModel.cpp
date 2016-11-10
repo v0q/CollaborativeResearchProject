@@ -54,9 +54,9 @@ void TranslateDataModel::setInData(std::shared_ptr<NodeData>, int)
 
 }
 
-QWidget* TranslateDataModel::embeddedWidget()
+std::vector<QWidget *> TranslateDataModel::embeddedWidget()
 {
-	return nullptr;
+	return std::vector<QWidget *>();
 }
 
 std::string TranslateDataModel::getShaderCode() {

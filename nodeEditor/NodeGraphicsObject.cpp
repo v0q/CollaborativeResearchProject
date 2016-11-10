@@ -21,7 +21,7 @@ NodeGraphicsObject(FlowScene &scene,
                    std::shared_ptr<Node>& node)
   : _scene(scene)
   , _node(node)
-  , _proxyWidget(nullptr)
+	, _proxyWidgets(0)
 {
   _scene.addItem(this);
 
@@ -72,22 +72,23 @@ embedQWidget()
   auto node = _node.lock();
   NodeGeometry & geom = node->nodeGeometry();
 
-  if (auto w = node->nodeDataModel()->embeddedWidget())
+	for(auto w : node->nodeDataModel()->embeddedWidget())
   {
-    _proxyWidget = new QGraphicsProxyWidget(this);
+		auto proxyWidget = new QGraphicsProxyWidget(this);
+		_proxyWidgets.push_back(proxyWidget);
 
-    _proxyWidget->setWidget(w);
+		proxyWidget->setWidget(w);
 
-    _proxyWidget->setPreferredWidth(5);
+		proxyWidget->setPreferredWidth(5);
 
     geom.recalculateSize();
 
-    _proxyWidget->setPos(geom.widgetPosition());
+		proxyWidget->setPos(geom.widgetPosition());
 
     update();
 
-    _proxyWidget->setOpacity(1.0);
-    _proxyWidget->setFlag(QGraphicsItem::ItemIgnoresParentOpacity);
+		proxyWidget->setOpacity(1.0);
+		proxyWidget->setFlag(QGraphicsItem::ItemIgnoresParentOpacity);
   }
 }
 
@@ -246,7 +247,8 @@ mouseMoveEvent(QGraphicsSceneMouseEvent * event)
 	{
 		auto diff = event->pos() - event->lastPos();
 
-		if (auto w = node->nodeDataModel()->embeddedWidget())
+		int i = 0;
+		for(auto w : node->nodeDataModel()->embeddedWidget())
 		{
 			prepareGeometryChange();
 
@@ -256,9 +258,9 @@ mouseMoveEvent(QGraphicsSceneMouseEvent * event)
 
 			w->setFixedSize(oldSize);
 
-			_proxyWidget->setMinimumSize(oldSize);
-			_proxyWidget->setMaximumSize(oldSize);
-			_proxyWidget->setPos(geom.widgetPosition());
+			_proxyWidgets[i]->setMinimumSize(oldSize);
+			_proxyWidgets[i]->setMaximumSize(oldSize);
+			_proxyWidgets[i]->setPos(geom.widgetPosition());
 
 			geom.recalculateSize();
 			update();

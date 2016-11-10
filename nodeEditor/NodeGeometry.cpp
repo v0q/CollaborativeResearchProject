@@ -63,7 +63,7 @@ recalculateSize() const
     _height = step * maxNumOfEntries;
   }
 
-  if (auto w = _dataModel->embeddedWidget())
+	for(auto w : _dataModel->embeddedWidget())
   {
     _height = std::max(_height, static_cast<unsigned>(w->height()));
   }
@@ -77,7 +77,7 @@ recalculateSize() const
            _outputPortWidth +
 					 2 * _spacing;
 
-  if (auto w = _dataModel->embeddedWidget())
+	for(auto w : _dataModel->embeddedWidget())
   {
     _width += w->width();
 	}
@@ -192,7 +192,7 @@ QPointF
 NodeGeometry::
 widgetPosition() const
 {
-  if (auto w = _dataModel->embeddedWidget())
+	for(auto w : _dataModel->embeddedWidget())
   {
 
     return QPointF(_spacing + portWidth(PortType::In),
