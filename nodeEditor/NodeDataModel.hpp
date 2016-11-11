@@ -61,8 +61,8 @@ public:
 
 	virtual std::string getShaderCode() = 0;
 	virtual DFNodeType getNodeType() const = 0;
-	virtual Vec4f addTranslation() { return Vec4f(); }
-	virtual void setTransform(const Vec4f &_t) {}
+	virtual Mat4f addTranslation() { return Mat4f(); }
+	virtual void setTransform(const Mat4f &_t) {}
 
 signals:
 

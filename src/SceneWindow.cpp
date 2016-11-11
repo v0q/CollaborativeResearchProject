@@ -125,7 +125,7 @@ namespace hsitho
 		{
 			Branch branches;
 			std::string shadercode;
-			Vec4f translation;
+			Mat4f translation;
 			for(auto connection : m_outputNode->nodeState().connection(PortType::In, 0))
 			{
 				if(connection.get() && connection->getNode(PortType::Out).lock())
@@ -236,12 +236,12 @@ namespace hsitho
 		}
   }
 
-	std::string SceneWindow::recurseNodeTree(std::shared_ptr<Node> _node, Vec4f _t)
+	std::string SceneWindow::recurseNodeTree(std::shared_ptr<Node> _node, Mat4f _t)
 	{
 		std::string shadercode;
 		if(_node->nodeDataModel()->getNodeType() == DFNodeType::TRANSFORM)
 		{
-			_t = _t + _node->nodeDataModel()->addTranslation();
+			_t = _node->nodeDataModel()->addTranslation() * _t;
 		}
 		else if(_node->nodeDataModel()->getNodeType() == DFNodeType::PRIMITIVE)
 		{

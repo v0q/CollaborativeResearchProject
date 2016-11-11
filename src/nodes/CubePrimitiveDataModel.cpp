@@ -66,7 +66,7 @@ std::string CubePrimitiveDataModel::getShaderCode()
 {
 	if(m_transform == "")
 	{
-		m_transform = "vec3(0.0, 0.0, 0.0)";
+		m_transform = "mat4x4(cos(u_GlobalTime)*1.0+0, sin(u_GlobalTime)*1.0+0, 0, 2.5,	-sin(u_GlobalTime)*1.0+0, cos(u_GlobalTime)*1.0+0, 0, 0.600000024, 0, 0, 1, 0, 0, 0, 0, 1)";
 	}
-	return "cube(_position + " + m_transform + ", 0.6f)";
+	return "cube(vec3(" + m_transform + " * vec4(_position, 1.0)).xyz, 0.6f)";
 }

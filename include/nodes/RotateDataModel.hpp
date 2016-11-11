@@ -10,22 +10,22 @@
 
 /// The model dictates the number of inputs and outputs for the Node.
 /// In this example it has no logic.
-class TranslateDataModel : public NodeDataModel
+class RotateDataModel : public NodeDataModel
 {
 	Q_OBJECT
 
 public:
 
-	virtual ~TranslateDataModel() {}
+	virtual ~RotateDataModel() {}
 
 	QString caption() const override
 	{
-		return QString("Translate");
+		return QString("Rotate");
 	}
 
 	static QString name()
 	{
-		return QString("Translate");
+		return QString("Rotate");
 	}
 
 	void save(Properties &p) const override;

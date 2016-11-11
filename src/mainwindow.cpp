@@ -1,3 +1,6 @@
+#include <iostream>
+#include <boost/lexical_cast.hpp>
+
 #include "mainwindow.hpp"
 #include "ui_mainwindow.h"
 
@@ -7,13 +10,15 @@
 //#include "calculator/NumberSourceDataModel.hpp"
 //#include "calculator/NumberDisplayDataModel.hpp"
 //#include "calculator/MultiplicationModel.hpp"
-#include "CubePrimitiveDataModel.hpp"
-#include "UnionDataModel.hpp"
-#include "TranslateDataModel.hpp"
-#include "VectorDataModel.hpp"
-#include "DistanceFieldOutputDataModel.hpp"
+#include "ExpressionEvaluator.hpp"
+#include "nodes/CubePrimitiveDataModel.hpp"
+#include "nodes/UnionDataModel.hpp"
+#include "nodes/TranslateDataModel.hpp"
+#include "nodes/RotateDataModel.hpp"
+#include "nodes/VectorDataModel.hpp"
+#include "nodes/ScalarDataModel.hpp"
+#include "nodes/DistanceFieldOutputDataModel.hpp"
 
-#include <iostream>
 
 
 MainWindow::MainWindow(QWidget *_parent) :
@@ -26,7 +31,9 @@ MainWindow::MainWindow(QWidget *_parent) :
 	DataModelRegistry::registerModel<CubePrimitiveDataModel>();
 	DataModelRegistry::registerModel<UnionDataModel>();
 	DataModelRegistry::registerModel<TranslateDataModel>();
+	DataModelRegistry::registerModel<RotateDataModel>();
 	DataModelRegistry::registerModel<VectorDataModel>();
+	DataModelRegistry::registerModel<ScalarDataModel>();
 //	DataModelRegistry::registerModel<NumberSourceDataModel>();
 //	DataModelRegistry::registerModel<NumberDisplayDataModel>();
 //	DataModelRegistry::registerModel<MultiplicationModel>();
@@ -57,7 +64,21 @@ MainWindow::MainWindow(QWidget *_parent) :
 	node->nodeGeometry().recalculateSize(QFontMetrics(f));
 	node->nodeGraphicsObject()->setPos(posView);
 
-	m_flowView->scaleDown();
+//	std::string expr("cos(u_GlobalTime) * 1.0 + sin(u_GlobalTime) * 0.0 + 0.0 * 0.0 + 0.0 * 0.0");
+//	std::cout << hsitho::Expressions::evaluate(expr) << "\n";
+	Mat4f m("cos(u_GlobalTime)", "-sin(u_GlobalTime)", "0.0", "0.0",
+					"sin(u_GlobalTime)", "cos(u_GlobalTime)", "0.0", "0.0",
+					"0.0", "0.0", "1.0", "0.0",
+					"0.0", "0.0", "0.0", "1.0");
+	Mat4f y("1.0", "0.0", "0.0", "0.0",
+					"0.0", "1.0", "0.0", "0.0",
+					"0.0", "0.0", "1.0", "0.0",
+					"2.5", "0.6", "0.0", "1.0");
+	Mat4f r;
+	r = m*y;
+	r.print();
+//	hsitho::evalExp::evaluate(std::string("5.0 * 2.0 + sin(u_GlobalTime) * 1.0"));
+//	std::cout << std::atof("5.0f") << " " << std::atof("u_GlobalTime") << " " << derp << "\n";
 }
 
 MainWindow::~MainWindow()

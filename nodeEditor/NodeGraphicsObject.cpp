@@ -79,10 +79,9 @@ embedQWidget()
 
 		proxyWidget->setPreferredWidth(5);
 
-		geom.recalculateSize();
-
 		proxyWidget->setPos(geom.widgetPosition() + w->pos());
 
+		geom.recalculateSize();
 
 		update();
 

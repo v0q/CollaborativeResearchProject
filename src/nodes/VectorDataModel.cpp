@@ -8,9 +8,9 @@ VectorDataModel::VectorDataModel() :
 	m_y(new QLineEdit()),
 	m_z(new QLineEdit())
 {
-	int margin = 4;
+	int margin = 12;
 	int y = 0, x = 0;
-	int w = (m_x->sizeHint().width()*1.5)/3;
+	int w = m_x->sizeHint().width()/2;
 	int h = m_x->sizeHint().height();
 
 	m_x->setValidator(new QDoubleValidator);
@@ -23,7 +23,7 @@ VectorDataModel::VectorDataModel() :
 
 	m_y->setValidator(new QDoubleValidator);
 	m_y->setMaximumSize(m_y->sizeHint());
-	m_y->setGeometry(x + w + margin, y, w, h);
+	m_y->setGeometry(x, y + h + margin, w, h);
 	connect(m_y, &QLineEdit::textChanged, this, &VectorDataModel::vectorEdit);
 
 	m_y->setText("0.0");
@@ -31,7 +31,7 @@ VectorDataModel::VectorDataModel() :
 
 	m_z->setValidator(new QDoubleValidator);
 	m_z->setMaximumSize(m_z->sizeHint());
-	m_z->setGeometry(x + (w + margin)*2, y, w, h);
+	m_z->setGeometry(x, y + (h + margin)*2, w, h);
 	connect(m_z, &QLineEdit::textChanged, this, &VectorDataModel::vectorEdit);
 
 	m_z->setText("0.0");
@@ -59,7 +59,9 @@ void VectorDataModel::vectorEdit(QString const)
 		return;
 	}
 
-	m_v = std::make_shared<VectorData>(x, y, z);
+	m_v = std::make_shared<VectorData>(boost::lexical_cast<std::string>(x),
+																		 boost::lexical_cast<std::string>(y),
+																		 boost::lexical_cast<std::string>(z));
 	emit dataUpdated(0);
 }
 
@@ -70,7 +72,7 @@ unsigned int VectorDataModel::nPorts(PortType portType) const
 	switch (portType)
 	{
 		case PortType::In:
-			result = 0;
+			result = 3;
 			break;
 
 		case PortType::Out:
@@ -83,8 +85,29 @@ unsigned int VectorDataModel::nPorts(PortType portType) const
 	return result;
 }
 
-NodeDataType VectorDataModel::dataType(PortType, PortIndex) const
+NodeDataType VectorDataModel::dataType(PortType portType, PortIndex portIndex) const
 {
+	switch(portType) {
+		case PortType::In:
+			switch(portIndex)
+			{
+				case 0:
+					return NodeDataType{"Scalar", "x"};
+				break;
+				case 1:
+					return NodeDataType{"Scalar", "y"};
+				break;
+				case 2:
+					return NodeDataType{"Scalar", "z"};
+				break;
+			}
+		break;
+		case PortType::Out:
+			return VectorData().type();
+		break;
+		default:
+			break;
+	}
 	return VectorData().type();
 }
 
@@ -94,6 +117,18 @@ std::shared_ptr<NodeData> VectorDataModel::outData(PortIndex)
 		return m_v;
 	else
 		return nullptr;
+}
+
+void VectorDataModel::setInData(std::shared_ptr<NodeData> _data, PortIndex portIndex)
+{
+	auto data = std::dynamic_pointer_cast<ScalarData>(_data);
+	if(data) {
+		m_inputs[portIndex]->setVisible(false);
+		m_inputs[portIndex]->setText(data->value().c_str());
+	} else {
+		m_inputs[portIndex]->setVisible(true);
+		m_inputs[portIndex]->setText("0.0");
+	}
 }
 
 std::vector<QWidget *> VectorDataModel::embeddedWidget()

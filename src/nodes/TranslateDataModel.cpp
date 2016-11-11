@@ -61,7 +61,13 @@ void TranslateDataModel::setInData(std::shared_ptr<NodeData> _data, PortIndex po
 		auto vec = std::dynamic_pointer_cast<VectorData>(_data);
 		if(vec)
 		{
-			m_t = vec->vector();
+			Vec4f v = vec->vector();
+			m_t = Mat4f("1.0", "0.0", "0.0", "0.0",
+									"0.0", "1.0", "0.0", "0.0",
+									"0.0", "0.0", "1.0", "0.0",
+									v.m_x, v.m_y, v.m_z, "1.0");
+		} else {
+			std::cout << "Failed to get here\n";
 		}
 	}
 }
