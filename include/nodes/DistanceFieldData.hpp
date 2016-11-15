@@ -48,18 +48,30 @@ class Mat4f
 {
 public:
 	Mat4f() {}
-	Mat4f(const std::string &_m00, const std::string &_m01, const std::string &_m02, const std::string &_m03,
-				const std::string &_m10, const std::string &_m11, const std::string &_m12, const std::string &_m13,
-				const std::string &_m20, const std::string &_m21, const std::string &_m22, const std::string &_m23,
-				const std::string &_m30, const std::string &_m31, const std::string &_m32, const std::string &_m33) :
-		m_m4f({
-					{_m00, _m10, _m20, _m30},
-					{_m01, _m11, _m21, _m31},
-					{_m02, _m12, _m22, _m32},
-					{_m03, _m13, _m23, _m33}
-					})
+  Mat4f(const std::string &_m00, const std::string &_m10, const std::string &_m20, const std::string &_m30,
+        const std::string &_m01, const std::string &_m11, const std::string &_m21, const std::string &_m31,
+        const std::string &_m02, const std::string &_m12, const std::string &_m22, const std::string &_m32,
+        const std::string &_m03, const std::string &_m13, const std::string &_m23, const std::string &_m33)
 	{
+    m_m4f[0][0] = _m00;
+    m_m4f[0][1] = _m01;
+    m_m4f[0][2] = _m02;
+    m_m4f[0][3] = _m03;
 
+    m_m4f[1][0] = _m10;
+    m_m4f[1][1] = _m11;
+    m_m4f[1][2] = _m12;
+    m_m4f[1][3] = _m13;
+
+    m_m4f[2][0] = _m20;
+    m_m4f[2][1] = _m21;
+    m_m4f[2][2] = _m22;
+    m_m4f[2][3] = _m23;
+
+    m_m4f[3][0] = _m30;
+    m_m4f[3][1] = _m31;
+    m_m4f[3][2] = _m32;
+    m_m4f[3][3] = _m33;
 	}
 	~Mat4f() {}
 

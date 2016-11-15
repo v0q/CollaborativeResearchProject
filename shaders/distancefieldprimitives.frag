@@ -19,20 +19,20 @@ vec3 lightPos = vec3(1.0f, 2.5f, 1.0f);
  */
 
 // Sphere
-vec4 sdSphere(vec3 p, float s, vec3 color = vec3(1.0, 0.2, 0.2))
+vec4 sdSphere(vec3 p, float s, vec3 color)
 {
   return vec4(length(p)-s, color);
 }
 
 // Box signed exact
-vec4 sdBox(vec3 p, vec3 b, vec3 color = vec3(1.0, 0.2, 0.2))
+vec4 sdBox(vec3 p, vec3 b, vec3 color)
 {
   vec3 d = abs(p) - b;
   return vec4(min(max(d.x,max(d.y,d.z)),0.0) + length(max(d,0.0)), color);
 }
 
 // Box fast
-vec4 sdFastBox(vec3 _position, float _w = 0.6f, vec3 color = vec3(1.0, 0.2, 0.2))
+vec4 sdFastBox(vec3 _position, float _w, vec3 color)
 {
   vec3 pos = abs(_position);
   float dx = pos.x - _w;
@@ -43,20 +43,20 @@ vec4 sdFastBox(vec3 _position, float _w = 0.6f, vec3 color = vec3(1.0, 0.2, 0.2)
 }
 
 // Torus - signed - exact
-vec4 sdTorus(vec4 p, vec2 t, vec3 color = vec3(1.0, 0.2, 0.2))
+vec4 sdTorus(vec4 p, vec2 t, vec3 color)
 {
   vec2 q = vec2(length(p.xz)-t.x,p.y);
   return vec4(length(q)-t.y, color);
 }
 
 // Cylinder - signed - exact
-vec4 sdCylinder(vec3 p, vec3 c, vec3 color = vec3(1.0, 0.2, 0.2))
+vec4 sdCylinder(vec3 p, vec3 c, vec3 color)
 {
   return vec4(length(p.xz-c.xy)-c.z, color);
 }
 
 //Cone - signed - exact
-vec4 sdCone(vec3 p, vec2 c, vec3 color = vec3(1.0, 0.2, 0.2))
+vec4 sdCone(vec3 p, vec2 c, vec3 color)
 {
   // c must be normalized
   float q = length(p.xy);
@@ -64,28 +64,28 @@ vec4 sdCone(vec3 p, vec2 c, vec3 color = vec3(1.0, 0.2, 0.2))
 }
 
 // Plane - signed - exact
-vec4 sdPlane(vec3 p, vec4 n, vec3 color = vec3(1.0, 0.2, 0.2))
+vec4 sdPlane(vec3 p, vec4 n, vec3 color)
 {
   // n must be normalized
   return vec4(dot(p,n.xyz) + n.w, color);
 }
 
 // Hexagonal Prism - signed - exact
-vec4 sdHexPrism(vec3 p, vec2 h, vec3 color = vec3(1.0, 0.2, 0.2))
+vec4 sdHexPrism(vec3 p, vec2 h, vec3 color)
 {
   vec3 q = abs(p);
   return vec4(max(q.z-h.y,max((q.x*0.866025+q.y*0.5),q.y)-h.x), color);
 }
 
 // Triangular Prism - signed - exact
-vec4 sdTriPrism(vec3 p, vec2 h, vec3 color = vec3(1.0, 0.2, 0.2))
+vec4 sdTriPrism(vec3 p, vec2 h, vec3 color)
 {
   vec3 q = abs(p);
   return vec4(max(q.z-h.y,max(q.x*0.866025+p.y*0.5,-p.y)-h.x*0.5), color);
 }
 
 // Capsule / Line - signed - exact
-vec4 sdCapsule(vec3 p, vec3 a, vec3 b, float r, vec3 color = vec3(1.0, 0.2, 0.2))
+vec4 sdCapsule(vec3 p, vec3 a, vec3 b, float r, vec3 color)
 {
   vec3 pa = p - a, ba = b - a;
   float h = clamp( dot(pa,ba)/dot(ba,ba), 0.0, 1.0 );
@@ -93,14 +93,14 @@ vec4 sdCapsule(vec3 p, vec3 a, vec3 b, float r, vec3 color = vec3(1.0, 0.2, 0.2)
 }
 
 // Capped cylinder - signed - exact
-vec4 sdCappedCylinder(vec3 p, vec2 h, vec3 color = vec3(1.0, 0.2, 0.2))
+vec4 sdCappedCylinder(vec3 p, vec2 h, vec3 color)
 {
   vec2 d = abs(vec2(length(p.xz),p.y)) - h;
   return vec4(min(max(d.x,d.y),0.0) + length(max(d,0.0)), color);
 }
 
 // Capped Cone - signed - bound
-vec4 sdCappedCone(vec3 p, vec3 c, vec3 color = vec3(1.0, 0.2, 0.2))
+vec4 sdCappedCone(vec3 p, vec3 c, vec3 color)
 {
   vec2 q = vec2( length(p.xz), p.y );
   vec2 v = vec2( c.z*c.y/c.x, -c.z );
@@ -112,7 +112,7 @@ vec4 sdCappedCone(vec3 p, vec3 c, vec3 color = vec3(1.0, 0.2, 0.2))
 }
 
 // Ellipsoid - signed - bound
-vec4 sdEllipsoid(vec3 p, vec3 r, vec3 color = vec3(1.0, 0.2, 0.2))
+vec4 sdEllipsoid(vec3 p, vec3 r, vec3 color)
 {
   return vec4((length( p/r ) - 1.0) * min(min(r.x,r.y),r.z), color);
 }
@@ -121,14 +121,14 @@ vec4 sdEllipsoid(vec3 p, vec3 r, vec3 color = vec3(1.0, 0.2, 0.2))
  * Unsigned distance fields
  */
 // Box unsigned exact
-vec4 udBox(vec3 p, vec3 b, vec3 color = vec3(1.0, 0.2, 0.2))
+vec4 udBox(vec3 p, vec3 b, vec3 color)
 {
   return vec4(length(max(abs(p)-b,0.0)), color);
 }
 
 // Round Box unsigned exact
 
-vec4 udRoundBox(vec3 p, vec3 b, float r, vec3 color = vec3(1.0, 0.2, 0.2))
+vec4 udRoundBox(vec3 p, vec3 b, float r, vec3 color)
 {
   return vec4(length(max(abs(p)-b,0.0))-r, color);
 }
@@ -191,7 +191,7 @@ vec4 map(vec3 _position)
   float sg = sin(u_GlobalTime/300.f)*180;
   float gg = cos(u_GlobalTime/200.f)*90;
   pos = opUnion(pos, sdSphere(_position, 0.6, vec3(1.0, 1.078, 0.576)));
-  pos = opUnion(pos, sdSphere(vec3(mat4x4(1, 0, 0, 0,
+  pos = smin(pos, sdSphere(vec3(mat4x4(1, 0, 0, 0,
                                            0, 1, 0, 0,
                                            0, 0, 1, 0,
                                            0, sin(sg)*-0.6, 0, 1)*
@@ -207,7 +207,7 @@ vec4 map(vec3 _position)
                                            0, 1, 0, 0,
                                            0, 0, 1, 0,
                                            0, sin(sg)*0.6, 0, 1)*
-                                    vec4(_position + vec3(0.0, 0.0, 0.0), 1.0)), 0.6, vec3(1.0, 0.078, 0.576)));
+                                    vec4(_position + vec3(0.0, 0.0, 0.0), 1.0)), 0.6, vec3(1.0, 0.078, 0.576)), 0.6);
 //  pos = smin(pos, sdSphere(vec3(mat4x4(1, 0, 0, 0,
 //                                       0, 1, 0, 0,
 //                                       0, 0, 1, 0,

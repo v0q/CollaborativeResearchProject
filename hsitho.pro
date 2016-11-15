@@ -25,7 +25,8 @@ FORMS += ./ui/mainwindow.ui
 
 INCLUDEPATH += . ./include \
                ./include/nodes \
-               ./nodeEditor
+               ./nodeEditor \
+               /usr/local/include
 OTHER_FILES += ./shaders/* \
                ./libs/*
 

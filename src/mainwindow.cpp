@@ -13,6 +13,7 @@
 #include "ExpressionEvaluator.hpp"
 #include "nodes/CubePrimitiveDataModel.hpp"
 #include "nodes/UnionDataModel.hpp"
+#include "nodes/TimeDataModel.hpp"
 #include "nodes/TranslateDataModel.hpp"
 #include "nodes/RotateDataModel.hpp"
 #include "nodes/VectorDataModel.hpp"
@@ -25,9 +26,11 @@ MainWindow::MainWindow(QWidget *_parent) :
   QMainWindow(_parent),
   m_ui(new Ui::MainWindow)
 {
+  std::locale::global(std::locale("en_GB"));
   m_ui->setupUi(this);
 	m_gl = new hsitho::SceneWindow(this);
 
+  DataModelRegistry::registerModel<TimeDataModel>();
 	DataModelRegistry::registerModel<CubePrimitiveDataModel>();
 	DataModelRegistry::registerModel<UnionDataModel>();
 	DataModelRegistry::registerModel<TranslateDataModel>();
@@ -64,19 +67,8 @@ MainWindow::MainWindow(QWidget *_parent) :
 	node->nodeGeometry().recalculateSize(QFontMetrics(f));
 	node->nodeGraphicsObject()->setPos(posView);
 
-//	std::string expr("cos(u_GlobalTime) * 1.0 + sin(u_GlobalTime) * 0.0 + 0.0 * 0.0 + 0.0 * 0.0");
-//	std::cout << hsitho::Expressions::evaluate(expr) << "\n";
-	Mat4f m("cos(u_GlobalTime)", "-sin(u_GlobalTime)", "0.0", "0.0",
-					"sin(u_GlobalTime)", "cos(u_GlobalTime)", "0.0", "0.0",
-					"0.0", "0.0", "1.0", "0.0",
-					"0.0", "0.0", "0.0", "1.0");
-	Mat4f y("1.0", "0.0", "0.0", "0.0",
-					"0.0", "1.0", "0.0", "0.0",
-					"0.0", "0.0", "1.0", "0.0",
-					"2.5", "0.6", "0.0", "1.0");
-	Mat4f r;
-	r = m*y;
-	r.print();
+  std::string expr("cos(u_GlobalTime) * 1.0 + sin(u_GlobalTime) * 0.0 + 0.0 * 0.0 + 0.0 * 0.0");
+  std::cout << hsitho::Expressions::evaluate(expr) << "\n";
 //	hsitho::evalExp::evaluate(std::string("5.0 * 2.0 + sin(u_GlobalTime) * 1.0"));
 //	std::cout << std::atof("5.0f") << " " << std::atof("u_GlobalTime") << " " << derp << "\n";
 }
