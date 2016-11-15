@@ -60,3 +60,8 @@ QWidget* UnionDataModel::embeddedWidget()
 {
   return nullptr;
 }
+
+QString UnionDataModel::getShaderCode()
+{
+
+}

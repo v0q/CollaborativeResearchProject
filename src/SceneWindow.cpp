@@ -8,10 +8,11 @@
 
 namespace hsitho
 {
-  SceneWindow::SceneWindow(QWidget *_parent) :
+  SceneWindow::SceneWindow(QWidget *_parent, std::list<Node> m_priorityStatus) :
     GLWindow(_parent),
 		m_shaderMan(ShaderManager::instance()),
-		m_outputNode(nullptr)
+    m_outputNode(nullptr),
+    m_priorityStatus(_priorityStatus)
   {
 	}
 
@@ -122,6 +123,21 @@ namespace hsitho
 
 //		m_shaderMan->updateShader(fragmentShader.c_str());
 		}
+  }
+
+  int SceneWindow::getPriorityQueueStatus()
+  {
+    return m_priorityStatus;
+  }
+
+  void SceneWindow::setPriorityHigh()
+  {
+    m_priorityStatus.push_front(m_queuePlace);
+  }
+
+  void SceneWindow::setPriorityLow()
+  {
+    m_priorityStatus.push_back(m_queuePlace);
   }
 
 	std::string SceneWindow::recurseNodeTree(std::shared_ptr<Node> _node)
