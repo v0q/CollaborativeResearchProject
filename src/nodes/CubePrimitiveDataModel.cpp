@@ -8,7 +8,6 @@ CubePrimitiveDataModel::~CubePrimitiveDataModel()
 
 void CubePrimitiveDataModel::save(Properties &p) const
 {
-  p.put("Cube_size", CubePrimitiveDataModel::name());
 
 }
 
@@ -34,19 +33,18 @@ unsigned int CubePrimitiveDataModel::nPorts(PortType portType) const
 
 NodeDataType CubePrimitiveDataModel::dataType(PortType portType, PortIndex portIndex) const
 {
-  switch (portType)
-  {
-    case PortType::In:
-      return MyNodeData().type();
-    break;
-    case PortType::Out:
-      return MyNodeData().type();
-    break;
+//  switch (portType)
+//  {
+//    case PortType::In:
+//      return MyNodeData().type();
+//    break;
+//		case PortType::Out:
+      return DistanceFieldOutput().type();
+//		break;
 
-    default:
-      break;
-  }
-  return MyNodeData().type();
+//    default:
+//      break;
+//  }
 }
 
 std::shared_ptr<NodeData> CubePrimitiveDataModel::outData(PortIndex port)
@@ -59,14 +57,16 @@ void CubePrimitiveDataModel::setInData(std::shared_ptr<NodeData>, int)
 
 }
 
-QWidget* CubePrimitiveDataModel::embeddedWidget()
+std::vector<QWidget *> CubePrimitiveDataModel::embeddedWidget()
 {
-  return nullptr;
+  return std::vector<QWidget *>();
 }
 
-void CubePrimitiveDataModel::print(float &_cubeSize)
+std::string CubePrimitiveDataModel::getShaderCode()
 {
-  std::cout << "Derrrp" << "\n";
-
+  if(m_transform == "")
+  {
+    m_transform = "mat4x4(cos(u_GlobalTime)*1.0+0, sin(u_GlobalTime)*1.0+0, 0, 2.5,	-sin(u_GlobalTime)*1.0+0, cos(u_GlobalTime)*1.0+0, 0, 0.600000024, 0, 0, 1, 0, 0, 0, 0, 1)";
+  }
+  return "cube(vec3(" + m_transform + " * vec4(_position, 1.0)).xyz, 0.6f)";
 }
-

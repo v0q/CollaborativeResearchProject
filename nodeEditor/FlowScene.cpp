@@ -91,8 +91,7 @@ deleteConnection(std::shared_ptr<Connection> connection)
 	if(connection.get()->getPortIndex(PortType::Out) != -1)
 		connection.get()->getNode(PortType::Out).lock().get()->nodeState().removeConnection(PortType::Out, connection);
 
-	_connections.erase(connection->id());
-	std::cout << "Deleted connection\n";
+  _connections.erase(connection->id());
 	emit nodeEditorChanged();
 }
 
@@ -120,24 +119,28 @@ restoreNode(Properties const &p)
 
   p.get("model_name", &modelName);
 
-  auto const &models = DataModelRegistry::registeredModels();
-  auto it = models.find(modelName);
+  for(auto const &category : DataModelRegistry::registeredModels())
+  {
+    auto it = category.second.find(modelName);
 
-  if (it == models.end())
-    throw std::logic_error(std::string("No registered model with name ") +
-                           modelName.toLocal8Bit().data());
+    if(it != category.second.end())
+    {
+      auto dataModel = it->second->create();
+      auto node      = std::make_shared<Node>(std::move(dataModel));
+      auto ngo       = std::make_unique<NodeGraphicsObject>(*this, node);
+      node->setGraphicsObject(std::move(ngo));
 
-  auto dataModel = it->second->create();
-  auto node      = std::make_shared<Node>(std::move(dataModel));
-  auto ngo       = std::make_unique<NodeGraphicsObject>(*this, node);
-  node->setGraphicsObject(std::move(ngo));
+      node->restore(p);
 
-  node->restore(p);
+      _nodes[node->id()] = node;
+      emit nodeEditorChanged();
+      return node;
+    }
+  }
+  throw std::logic_error(std::string("No registered model with name ") +
+                         modelName.toLocal8Bit().data());
 
-	_nodes[node->id()] = node;
-  emit nodeEditorChanged();
-
-  return node;
+  return nullptr;
 }
 
 

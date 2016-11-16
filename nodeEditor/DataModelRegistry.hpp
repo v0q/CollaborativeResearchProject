@@ -10,6 +10,32 @@
 #include "QStringStdHash.hpp"
 
 /// Base abstract class for Model Registry items
+///
+
+//class RegistryCategory
+//{
+//public:
+//  RegistryCategory() {}
+
+//  virtual ~RegistryCategory() {}
+
+//  virtual std::unique_ptr<NodeDataModel> createCat() const = 0;
+
+//  virtual QString nameCat() const = 0;
+
+//};
+
+//template<typename C>
+//class RegistryCategoryImpl : public RegistryCategory
+//{
+//public:
+
+//  std::unique_ptr<NodeDataModel>createCat() const override { return std::make_unique<C>(); }
+
+//  QString nameCat() const override {return C::nameCat(); }
+//};
+
+
 class RegistryItem
 {
 public:
@@ -18,11 +44,9 @@ public:
   virtual
   ~RegistryItem() {}
 
-  virtual std::unique_ptr<NodeDataModel>
-  create() const = 0;
+  virtual std::unique_ptr<NodeDataModel> create() const = 0;
 
-  virtual QString
-  name() const = 0;
+  virtual QString name() const = 0;
 };
 
 //------------------------------------------------------------------------------
@@ -35,13 +59,9 @@ class RegistryItemImpl : public RegistryItem
 public:
 
   /// Gives derived classes the ability to create instances of T
-  std::unique_ptr<NodeDataModel>
-  create() const override
-  { return std::make_unique<T>(); }
+  std::unique_ptr<NodeDataModel>create() const override { return std::make_unique<T>(); }
 
-  QString
-  name() const override
-  { return T::name(); }
+  QString name() const override { return T::name(); }
 };
 
 //------------------------------------------------------------------------------
@@ -53,33 +73,28 @@ class NODE_EDITOR_PUBLIC DataModelRegistry
 public:
 
   using RegistryItemPtr     = std::unique_ptr<RegistryItem>;
-  using RegisteredModelsMap =
-          std::unordered_map<QString, RegistryItemPtr>;
+  using RegisteredModelsMap = std::map<QString, std::map<QString ,RegistryItemPtr>>;
 
 public:
 
   template<typename ModelType>
   static void
-  registerModel(QString menuName = QString())
+  registerModel(QString category = QString(), QString menuName = QString())
   {
     QString const name = ModelType::name();
 
     if (_registeredModels.count(name) == 0)
     {
-      auto uniqueModel =
-        std::make_unique<RegistryItemImpl<ModelType> > ();
+      auto uniqueModel = std::make_unique<RegistryItemImpl<ModelType> > ();
 
-      _registeredModels[uniqueModel->name()] = std::move(uniqueModel);
+      _registeredModels[category][uniqueModel->name()] = std::move(uniqueModel);
     }
   }
 
-  static std::unique_ptr<NodeDataModel>
-  create(QString const &modelName);
+  static std::unique_ptr<NodeDataModel> create(const QString &catName, QString const &modelName);
+  static RegisteredModelsMap const &registeredModels();
 
-  static RegisteredModelsMap const &
-  registeredModels();
 
 private:
-
   static RegisteredModelsMap _registeredModels;
 };

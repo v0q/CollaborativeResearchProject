@@ -10,6 +10,8 @@
 
 #include "Export.hpp"
 
+#include "nodes/DistanceFieldData.hpp"
+
 class NODE_EDITOR_PUBLIC NodeDataModel
   : public QObject
   , public Serializable
@@ -51,27 +53,22 @@ public:
   std::shared_ptr<NodeData>
   outData(PortIndex port) = 0;
 
-  virtual
-  QWidget *
-  embeddedWidget() = 0;
+	virtual std::vector<QWidget *> embeddedWidget() = 0;
 
   virtual
   bool
   resizable() const { return false; }
 
-	virtual QString getShaderCode() = 0;
+	virtual std::string getShaderCode() = 0;
+	virtual DFNodeType getNodeType() const = 0;
+	virtual Mat4f addTranslation() { return Mat4f(); }
+	virtual void setTransform(const Mat4f &_t) {}
+  static QString nodeCategory() { return QString("Primitive"); }
 
 signals:
 
-  void
-  dataUpdated(PortIndex index);
-
-  void
-  dataInvalidated(PortIndex index);
-
-  void
-  computingStarted();
-
-  void
-  computingFinished();
+	void dataUpdated(PortIndex index);
+	void dataInvalidated(PortIndex index);
+	void computingStarted();
+	void computingFinished();
 };

@@ -183,7 +183,8 @@ propagateData(std::shared_ptr<NodeData> nodeData,
 
   _nodeGeometry.recalculateSize();
   _nodeGraphicsObject->setGeometryChanged();
-  _nodeGraphicsObject->update();
+	_nodeGraphicsObject->update();
+	emit _nodeGraphicsObject->getScene().nodeEditorChanged();
 }
 
 

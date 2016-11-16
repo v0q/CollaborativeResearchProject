@@ -7,10 +7,9 @@
 
 #include <iostream>
 
-class DistanceFieldData : public NodeData
+class OutputData : public NodeData
 {
 public:
-
 	NodeDataType type() const override {
 		return NodeDataType {"DistanceFieldData", "DISTANCE"};
 	}
@@ -41,7 +40,8 @@ public:
 
 	void setInData(std::shared_ptr<NodeData>, int) override;
 
-	QWidget *embeddedWidget() override;
+	std::vector<QWidget *> embeddedWidget() override;
 
-	QString getShaderCode() { return QString("final"); }
+	std::string getShaderCode() { return "final"; }
+	DFNodeType getNodeType() const { return DFNodeType::TRANSFORM; }
 };

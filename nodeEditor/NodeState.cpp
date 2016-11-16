@@ -1,4 +1,3 @@
-#include <algorithm>
 #include "NodeState.hpp"
 
 #include "NodeDataModel.hpp"
@@ -38,9 +37,6 @@ getEntries(PortType portType)
 		return _inConnections;
 }
 
-#include <iostream>
-#include "nodeEditor/Connection.hpp"
-
 std::vector<std::shared_ptr<Connection>>
 NodeState::
 connection(PortType portType, PortIndex portIndex) const
@@ -66,7 +62,6 @@ connection(PortType portType, PortIndex portIndex) const
 	return c;
 }
 
-#include <iostream>
 void
 NodeState::
 setConnection(PortType portType,

@@ -2,10 +2,10 @@
 
 #include <QtCore/QObject>
 #include <QtWidgets/QLineEdit>
+#include <iostream>
 
 #include "nodeEditor/NodeDataModel.hpp"
-
-#include <iostream>
+#include "nodes/DistanceFieldData.hpp"
 
 
 /// The class can potentially incapsulate any user data which
@@ -48,8 +48,9 @@ public:
 
   static QString name()
   {
-    return QString("CubePrimitiveDataModel");
+    return QString("Cube");
   }
+
 
   void save(Properties &p) const override;
 
@@ -61,10 +62,24 @@ public:
 
   void setInData(std::shared_ptr<NodeData>, int) override;
 
+	std::vector<QWidget *> embeddedWidget() override;
 
-  QWidget *embeddedWidget() override;
+	DFNodeType getNodeType() const { return DFNodeType::PRIMITIVE; }
+	std::string getShaderCode();
+	void setTransform(const Mat4f &_t) {
+		std::ostringstream ss;
+		for(int y = 0; y < 4; ++y)
+		{
+			for(int x = 0; x < 4; ++x)
+			{
+				if(x || y)
+					ss << ", ";
+				ss << _t.matrix(x, y);
+			}
+		}
+		m_transform = "mat4x4(" + ss.str() + ")";
+  }
 
-	QString getShaderCode() { return QString("cube(_position + vec3(1.0f, 1.0f, 1.0f), 0.5f)"); }
-
-  void print(float &_cubeSize);
+private:
+	std::string m_transform;
 };

@@ -49,37 +49,39 @@ contextMenuEvent(QContextMenuEvent *event)
 {
   QMenu modelMenu;
 
-  for (auto const &modelRegistry : DataModelRegistry::registeredModels())
+  for(auto const &category : DataModelRegistry::registeredModels())
   {
-    QString const &modelName = modelRegistry.first;
-    modelMenu.addAction(modelName);
+//    auto catMenu = modelMenu.addMenu(category.first);
+    modelMenu.addSection(category.first);
+
+    for(auto const &modelRegistry : category.second)
+    {
+      QString const &modelName = modelRegistry.first;
+//      catMenu->addAction(modelName);
+      modelMenu.addAction(modelName);
+    }
   }
 
-  if (QAction * action = modelMenu.exec(event->globalPos()))
+  if(QAction * action = modelMenu.exec(event->globalPos()))
   {
-    //qDebug() << action->text();
-
     QString modelName = action->text();
 
-    auto const &models =
-      DataModelRegistry::registeredModels();
-
-    auto it = models.find(modelName);
-
-    if (it != models.end())
+    for(auto const &category : DataModelRegistry::registeredModels())
     {
-      auto node = _scene->createNode(it->second->create() );
+      auto it = category.second.find(modelName);
 
-			QPoint pos = event->pos();
+      if(it != category.second.end())
+      {
+        auto node = _scene->createNode(it->second->create() );
 
-      QPointF posView = this->mapToScene(pos);
+        QPoint pos = event->pos();
+        QPointF posView = this->mapToScene(pos);
 
-      node->nodeGraphicsObject()->setPos(posView);
+        node->nodeGraphicsObject()->setPos(posView);
+        return;
+      }
     }
-    else
-    {
-      qDebug() << "Model not found";
-    }
+    qDebug() << "Model not found";
   }
 }
 

@@ -21,7 +21,7 @@ NodeGraphicsObject(FlowScene &scene,
                    std::shared_ptr<Node>& node)
   : _scene(scene)
   , _node(node)
-  , _proxyWidget(nullptr)
+	, _proxyWidgets(0)
 {
   _scene.addItem(this);
 
@@ -72,22 +72,24 @@ embedQWidget()
   auto node = _node.lock();
   NodeGeometry & geom = node->nodeGeometry();
 
-  if (auto w = node->nodeDataModel()->embeddedWidget())
+	for(auto w : node->nodeDataModel()->embeddedWidget())
   {
-    _proxyWidget = new QGraphicsProxyWidget(this);
+		auto proxyWidget = new QGraphicsProxyWidget(this);
+		proxyWidget->setWidget(w);
 
-    _proxyWidget->setWidget(w);
+		proxyWidget->setPreferredWidth(5);
 
-    _proxyWidget->setPreferredWidth(5);
+		proxyWidget->setPos(geom.widgetPosition() + w->pos());
 
-    geom.recalculateSize();
+		geom.recalculateSize();
 
-    _proxyWidget->setPos(geom.widgetPosition());
+		update();
 
-    update();
+		proxyWidget->setOpacity(1.0);
+		proxyWidget->setFlag(QGraphicsItem::ItemIgnoresParentOpacity);
 
-    _proxyWidget->setOpacity(1.0);
-    _proxyWidget->setFlag(QGraphicsItem::ItemIgnoresParentOpacity);
+		_proxyWidgets.push_back(proxyWidget);
+
   }
 }
 
@@ -246,7 +248,8 @@ mouseMoveEvent(QGraphicsSceneMouseEvent * event)
 	{
 		auto diff = event->pos() - event->lastPos();
 
-		if (auto w = node->nodeDataModel()->embeddedWidget())
+		int i = 0;
+		for(auto w : node->nodeDataModel()->embeddedWidget())
 		{
 			prepareGeometryChange();
 
@@ -256,9 +259,9 @@ mouseMoveEvent(QGraphicsSceneMouseEvent * event)
 
 			w->setFixedSize(oldSize);
 
-			_proxyWidget->setMinimumSize(oldSize);
-			_proxyWidget->setMaximumSize(oldSize);
-			_proxyWidget->setPos(geom.widgetPosition());
+			_proxyWidgets[i]->setMinimumSize(oldSize);
+			_proxyWidgets[i]->setMaximumSize(oldSize);
+			_proxyWidgets[i]->setPos(geom.widgetPosition());
 
 			geom.recalculateSize();
 			update();
@@ -320,17 +323,6 @@ hoverLeaveEvent(QGraphicsSceneHoverEvent * event)
 	update();
 	event->accept();
 }
-
-void NodeGraphicsObject::test()
-{
-	auto node    = _node.lock();
-	auto & geom  = node->nodeGeometry();
-	geom.recalculateSize();
-	update();
-
-	moveConnections();
-}
-
 
 void
 NodeGraphicsObject::

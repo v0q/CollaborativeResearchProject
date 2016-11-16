@@ -81,6 +81,7 @@ bool NodeConnectionInteraction::tryConnect() const
   {
     PortIndex outPortIndex = _connection->getPortIndex(PortType::Out);
 		outNode->onDataUpdated(outPortIndex);
+
   }
 
   return true;

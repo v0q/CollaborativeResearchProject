@@ -1,3 +1,6 @@
+#include <iostream>
+#include <boost/lexical_cast.hpp>
+
 #include "mainwindow.hpp"
 #include "ui_mainwindow.h"
 
@@ -12,19 +15,34 @@
 #include "UnionDataModel.hpp"
 #include "DistanceFieldOutputDataModel.hpp"
 
-#include <iostream>
+#include "ExpressionEvaluator.hpp"
+#include "nodes/CubePrimitiveDataModel.hpp"
+#include "nodes/UnionDataModel.hpp"
+#include "nodes/TimeDataModel.hpp"
+#include "nodes/TranslateDataModel.hpp"
+#include "nodes/RotateDataModel.hpp"
+#include "nodes/VectorDataModel.hpp"
+#include "nodes/ScalarDataModel.hpp"
+#include "nodes/DistanceFieldOutputDataModel.hpp"
+
 
 
 MainWindow::MainWindow(QWidget *_parent) :
   QMainWindow(_parent),
   m_ui(new Ui::MainWindow)
 {
+  std::locale::global(std::locale("en_GB"));
   m_ui->setupUi(this);
 	m_gl = new hsitho::SceneWindow(this);
 
 
-	DataModelRegistry::registerModel<CubePrimitiveDataModel>();
-	DataModelRegistry::registerModel<UnionDataModel>();
+  DataModelRegistry::registerModel<TimeDataModel>("Misc");
+  DataModelRegistry::registerModel<CubePrimitiveDataModel>("Primitives");
+  DataModelRegistry::registerModel<UnionDataModel>("Distance operations");
+  DataModelRegistry::registerModel<TranslateDataModel>("Transforms");
+  DataModelRegistry::registerModel<RotateDataModel>("Transforms");
+  DataModelRegistry::registerModel<VectorDataModel>("Maths");
+  DataModelRegistry::registerModel<ScalarDataModel>("Maths");
 //	DataModelRegistry::registerModel<NumberSourceDataModel>();
 //	DataModelRegistry::registerModel<NumberDisplayDataModel>();
 //	DataModelRegistry::registerModel<MultiplicationModel>();
@@ -55,7 +73,10 @@ MainWindow::MainWindow(QWidget *_parent) :
 	node->nodeGeometry().recalculateSize(QFontMetrics(f));
 	node->nodeGraphicsObject()->setPos(posView);
 
-	m_flowView->scaleDown();
+  std::string expr("cos(u_GlobalTime) * 1.0 + sin(u_GlobalTime) * 0.0 + 0.0 * 0.0 + 0.0 * 0.0");
+  std::cout << hsitho::Expressions::evaluate(expr) << "\n";
+//	hsitho::evalExp::evaluate(std::string("5.0 * 2.0 + sin(u_GlobalTime) * 1.0"));
+//	std::cout << std::atof("5.0f") << " " << std::atof("u_GlobalTime") << " " << derp << "\n";
 }
 
 MainWindow::~MainWindow()
