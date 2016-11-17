@@ -164,11 +164,11 @@ namespace hsitho {
 						stack.push_back(boost::lexical_cast<std::string>(result));
 					} catch(const boost::bad_lexical_cast &) {
 						if(o == "*") {
-							if(val2 != "" && val1 != "0.0") {
+							if(val2 != "" && val1 != "0.0" && val2 != "0.0" && val1 != "0" && val2 != "0") {
 								stack.push_back(std::string(val2 + "*" + val1));
 							}
 						} else if(o == "/") {
-							if(val2 != "" && val1 != "0.0") {
+							if(val2 != "" && val1 != "0.0" && val2 != "0.0" && val1 != "0" && val2 != "0") {
 								stack.push_back(std::string(val2 + "/" + val1));
 							}
 						} else if(o == "+") {
