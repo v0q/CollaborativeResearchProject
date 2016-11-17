@@ -146,3 +146,5 @@ std::vector<QWidget *> VectorDataModel::embeddedWidget()
 std::string VectorDataModel::getShaderCode() {
 	return "";
 }
+
+

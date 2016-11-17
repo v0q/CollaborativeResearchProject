@@ -18,11 +18,11 @@ unsigned int CubePrimitiveDataModel::nPorts(PortType portType) const
   switch (portType)
   {
     case PortType::In:
-			result = 0;
+      result = 0;
       break;
 
     case PortType::Out:
-			result = 1;
+      result = 1;
 
     default:
       break;
@@ -39,7 +39,7 @@ NodeDataType CubePrimitiveDataModel::dataType(PortType portType, PortIndex portI
 //      return MyNodeData().type();
 //    break;
 //		case PortType::Out:
-			return DistanceFieldOutput().type();
+      return DistanceFieldOutput().type();
 //		break;
 
 //    default:
@@ -59,14 +59,14 @@ void CubePrimitiveDataModel::setInData(std::shared_ptr<NodeData>, int)
 
 std::vector<QWidget *> CubePrimitiveDataModel::embeddedWidget()
 {
-	return std::vector<QWidget *>();
+  return std::vector<QWidget *>();
 }
 
 std::string CubePrimitiveDataModel::getShaderCode()
 {
-	if(m_transform == "")
-	{
-		m_transform = "mat4x4(cos(u_GlobalTime)*1.0+0, sin(u_GlobalTime)*1.0+0, 0, 2.5,	-sin(u_GlobalTime)*1.0+0, cos(u_GlobalTime)*1.0+0, 0, 0.600000024, 0, 0, 1, 0, 0, 0, 0, 1)";
-	}
-	return "cube(vec3(" + m_transform + " * vec4(_position, 1.0)).xyz, 0.6f)";
+  if(m_transform == "")
+  {
+    m_transform = "mat4x4(cos(u_GlobalTime)*1.0+0, sin(u_GlobalTime)*1.0+0, 0, 2.5,	-sin(u_GlobalTime)*1.0+0, cos(u_GlobalTime)*1.0+0, 0, 0.600000024, 0, 0, 1, 0, 0, 0, 0, 1)";
+  }
+  return "cube(vec3(" + m_transform + " * vec4(_position, 1.0)).xyz, 0.6f)";
 }

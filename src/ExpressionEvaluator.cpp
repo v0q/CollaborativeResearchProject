@@ -172,10 +172,10 @@ namespace hsitho {
 								stack.push_back(std::string(val2 + "/" + val1));
 							}
 						} else if(o == "+") {
-							if(val2 != "") {
+              if(val2 != "") {
 								stack.push_back(std::string(val2 + "+" + val1));
 							}
-							else if(val1 != "0.0")
+              else if(val1 != "0.0")
 								stack.push_back(std::string(val1));
 						} else if(o == "-") {
 							if(val2 != "")

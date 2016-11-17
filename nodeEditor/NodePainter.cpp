@@ -241,7 +241,7 @@ drawEntryLabels(QPainter * painter,
 	{
 		QFont f = painter->font();
 		f.setBold(true);
-		f.setPixelSize(36);
+    f.setPixelSize(36);
 		painter->setFont(f);
 	}
 	QFontMetrics const &metrics = painter->fontMetrics();

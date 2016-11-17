@@ -23,7 +23,7 @@ public:
 		return QString("Vector");
 	}
 
-	static QString name() {
+  static QString name() {
 		return QString("Vector");
 	}
 

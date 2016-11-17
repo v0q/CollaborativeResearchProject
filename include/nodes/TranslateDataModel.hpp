@@ -41,7 +41,7 @@ public:
 	std::vector<QWidget *> embeddedWidget() override;
 
 	DFNodeType getNodeType() const { return DFNodeType::TRANSFORM; }
-	Mat4f addTranslation() { return m_t; }
+  Mat4f addTranslation() { return m_t; }
 
 	std::string getShaderCode();
 private:

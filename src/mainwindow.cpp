@@ -10,6 +10,11 @@
 //#include "calculator/NumberSourceDataModel.hpp"
 //#include "calculator/NumberDisplayDataModel.hpp"
 //#include "calculator/MultiplicationModel.hpp"
+#include "CubePrimitiveDataModel.hpp"
+
+#include "UnionDataModel.hpp"
+#include "DistanceFieldOutputDataModel.hpp"
+
 #include "ExpressionEvaluator.hpp"
 #include "nodes/CubePrimitiveDataModel.hpp"
 #include "nodes/UnionDataModel.hpp"
@@ -30,13 +35,14 @@ MainWindow::MainWindow(QWidget *_parent) :
   m_ui->setupUi(this);
 	m_gl = new hsitho::SceneWindow(this);
 
-  DataModelRegistry::registerModel<TimeDataModel>();
-	DataModelRegistry::registerModel<CubePrimitiveDataModel>();
-	DataModelRegistry::registerModel<UnionDataModel>();
-	DataModelRegistry::registerModel<TranslateDataModel>();
-	DataModelRegistry::registerModel<RotateDataModel>();
-	DataModelRegistry::registerModel<VectorDataModel>();
-	DataModelRegistry::registerModel<ScalarDataModel>();
+
+  DataModelRegistry::registerModel<TimeDataModel>("Misc");
+  DataModelRegistry::registerModel<CubePrimitiveDataModel>("Primitives");
+  DataModelRegistry::registerModel<UnionDataModel>("Distance operations");
+  DataModelRegistry::registerModel<TranslateDataModel>("Transforms");
+  DataModelRegistry::registerModel<RotateDataModel>("Transforms");
+  DataModelRegistry::registerModel<VectorDataModel>("Maths");
+  DataModelRegistry::registerModel<ScalarDataModel>("Maths");
 //	DataModelRegistry::registerModel<NumberSourceDataModel>();
 //	DataModelRegistry::registerModel<NumberDisplayDataModel>();
 //	DataModelRegistry::registerModel<MultiplicationModel>();

@@ -26,6 +26,8 @@ namespace hsitho
     void paintGL();
 
 	private:
+
+
 		std::string recurseNodeTree(std::shared_ptr<Node> _node, Mat4f _t);
     std::shared_ptr<ShaderManager> m_shaderMan;
 		Node *m_outputNode;

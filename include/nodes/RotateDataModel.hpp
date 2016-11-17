@@ -43,7 +43,7 @@ public:
 	DFNodeType getNodeType() const { return DFNodeType::TRANSFORM; }
 	Mat4f addTranslation() { return m_t; }
 
-	std::string getShaderCode();
+  std::string getShaderCode();
 private:
 	Mat4f m_t;
 };

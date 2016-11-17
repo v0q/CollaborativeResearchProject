@@ -8,6 +8,27 @@
 #include "nodes/DistanceFieldData.hpp"
 
 
+/// The class can potentially incapsulate any user data which
+/// need to be transferred within the Node Editor graph
+class MyNodeData : public NodeData
+{
+public:
+
+  NodeDataType
+  type() const override
+  { return NodeDataType {"DistanceFieldData", "Cube Data"}; }
+
+};
+
+class SimpleNodeData : public NodeData
+{
+public:
+
+  NodeDataType
+  type() const override
+  { return NodeDataType {"SimpleData", "Simple Data"}; }
+};
+
 //------------------------------------------------------------------------------
 
 /// The model dictates the number of inputs and outputs for the Node.
@@ -27,8 +48,9 @@ public:
 
   static QString name()
   {
-		return QString("Cube Primitive");
+    return QString("Cube");
   }
+
 
   void save(Properties &p) const override;
 
@@ -56,7 +78,7 @@ public:
 			}
 		}
 		m_transform = "mat4x4(" + ss.str() + ")";
-	}
+  }
 
 private:
 	std::string m_transform;

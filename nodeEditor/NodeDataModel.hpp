@@ -63,6 +63,7 @@ public:
 	virtual DFNodeType getNodeType() const = 0;
 	virtual Mat4f addTranslation() { return Mat4f(); }
 	virtual void setTransform(const Mat4f &_t) {}
+  static QString nodeCategory() { return QString("Primitive"); }
 
 signals:
 

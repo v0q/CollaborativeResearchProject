@@ -37,7 +37,7 @@ public:
 	std::vector<QWidget *> embeddedWidget() override;
 
 	DFNodeType getNodeType() const { return DFNodeType::SCALAR; }
-	std::string getShaderCode();
+  std::string getShaderCode();
 
 private:
   std::shared_ptr<ScalarData> m_v;
