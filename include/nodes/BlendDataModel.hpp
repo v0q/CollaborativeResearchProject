@@ -6,26 +6,28 @@
 #include "nodeEditor/NodeDataModel.hpp"
 #include "nodes/DistanceFieldData.hpp"
 
+#include <iostream>
+
 //------------------------------------------------------------------------------
 
 /// The model dictates the number of inputs and outputs for the Node.
 /// In this example it has no logic.
-class TranslateDataModel : public NodeDataModel
+class BlendDataModel : public NodeDataModel
 {
 	Q_OBJECT
 
 public:
 
-	virtual ~TranslateDataModel() {}
+	virtual ~BlendDataModel();
 
 	QString caption() const override
 	{
-		return QString("Translate");
+		return QString("Blend");
 	}
 
 	static QString name()
 	{
-		return QString("Translate");
+		return QString("Blend");
 	}
 
 	void save(Properties &p) const override;
@@ -36,14 +38,11 @@ public:
 
 	std::shared_ptr<NodeData> outData(PortIndex port) override;
 
-	void setInData(std::shared_ptr<NodeData>, PortIndex) override;
+	void setInData(std::shared_ptr<NodeData>, int) override;
 
 	std::vector<QWidget *> embeddedWidget() override;
 
-	DFNodeType getNodeType() const { return DFNodeType::TRANSFORM; }
+	DFNodeType getNodeType() const { return DFNodeType::MIX; }
 	std::string getShaderCode();
-	Mat4f getTransform() { return m_t; }
-
-private:
-	Mat4f m_t;
+	std::string getExtraParams() const override { return ", 0.6"; }
 };

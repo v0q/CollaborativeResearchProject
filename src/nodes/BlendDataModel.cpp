@@ -1,16 +1,16 @@
-#include "UnionDataModel.hpp"
+#include "BlendDataModel.hpp"
 
 
-UnionDataModel::~UnionDataModel()
+BlendDataModel::~BlendDataModel()
 {
 
 }
 
-void UnionDataModel::save(Properties &p) const
+void BlendDataModel::save(Properties &p) const
 {
 }
 
-unsigned int UnionDataModel::nPorts(PortType portType) const
+unsigned int BlendDataModel::nPorts(PortType portType) const
 {
   unsigned int result = 1;
 
@@ -30,7 +30,7 @@ unsigned int UnionDataModel::nPorts(PortType portType) const
   return result;
 }
 
-NodeDataType UnionDataModel::dataType(PortType portType, PortIndex portIndex) const
+NodeDataType BlendDataModel::dataType(PortType portType, PortIndex portIndex) const
 {
   switch (portType)
   {
@@ -47,21 +47,21 @@ NodeDataType UnionDataModel::dataType(PortType portType, PortIndex portIndex) co
   return DistanceFieldInput().type();
 }
 
-std::shared_ptr<NodeData> UnionDataModel::outData(PortIndex port)
+std::shared_ptr<NodeData> BlendDataModel::outData(PortIndex port)
 {
   return nullptr;
 }
 
-void UnionDataModel::setInData(std::shared_ptr<NodeData>, int)
+void BlendDataModel::setInData(std::shared_ptr<NodeData>, int)
 {
 
 }
 
-std::vector<QWidget *> UnionDataModel::embeddedWidget()
+std::vector<QWidget *> BlendDataModel::embeddedWidget()
 {
   return std::vector<QWidget *>();
 }
 
-std::string UnionDataModel::getShaderCode() {
- return "opUnion(";
+std::string BlendDataModel::getShaderCode() {
+ return "opBlend(";
 }

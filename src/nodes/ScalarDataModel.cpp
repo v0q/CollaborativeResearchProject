@@ -14,12 +14,12 @@ ScalarDataModel::ScalarDataModel() :
 	m_value->setMaximumSize(m_value->sizeHint());
 	m_value->setGeometry(x, y, w, h);
 	m_value->setContentsMargins(0, 0, 0, 0);
-	connect(m_value, &QLineEdit::textChanged, this, &ScalarDataModel::vectorEdit);
+	connect(m_value, &QLineEdit::textChanged, this, &ScalarDataModel::scalarEdit);
 
 	m_value->setText("0.0");
 }
 
-void ScalarDataModel::vectorEdit(QString const)
+void ScalarDataModel::scalarEdit(QString const)
 {
 	bool valid = false;
 

@@ -7,25 +7,22 @@
 #include "nodeEditor/NodeData.hpp"
 #include "nodeEditor/DataModelRegistry.hpp"
 
-//#include "calculator/NumberSourceDataModel.hpp"
-//#include "calculator/NumberDisplayDataModel.hpp"
-//#include "calculator/MultiplicationModel.hpp"
 #include "CubePrimitiveDataModel.hpp"
 
 #include "UnionDataModel.hpp"
 #include "DistanceFieldOutputDataModel.hpp"
 
 #include "ExpressionEvaluator.hpp"
+#include "nodes/SpherePrimitiveDataModel.hpp"
 #include "nodes/CubePrimitiveDataModel.hpp"
 #include "nodes/UnionDataModel.hpp"
+#include "nodes/BlendDataModel.hpp"
 #include "nodes/TimeDataModel.hpp"
 #include "nodes/TranslateDataModel.hpp"
 #include "nodes/RotateDataModel.hpp"
 #include "nodes/VectorDataModel.hpp"
 #include "nodes/ScalarDataModel.hpp"
 #include "nodes/DistanceFieldOutputDataModel.hpp"
-
-
 
 MainWindow::MainWindow(QWidget *_parent) :
   QMainWindow(_parent),
@@ -35,17 +32,15 @@ MainWindow::MainWindow(QWidget *_parent) :
   m_ui->setupUi(this);
 	m_gl = new hsitho::SceneWindow(this);
 
-
   DataModelRegistry::registerModel<TimeDataModel>("Misc");
   DataModelRegistry::registerModel<CubePrimitiveDataModel>("Primitives");
-  DataModelRegistry::registerModel<UnionDataModel>("Distance operations");
+	DataModelRegistry::registerModel<SpherePrimitiveDataModel>("Primitives");
+	DataModelRegistry::registerModel<UnionDataModel>("Operations");
+	DataModelRegistry::registerModel<BlendDataModel>("Operations");
   DataModelRegistry::registerModel<TranslateDataModel>("Transforms");
   DataModelRegistry::registerModel<RotateDataModel>("Transforms");
   DataModelRegistry::registerModel<VectorDataModel>("Maths");
   DataModelRegistry::registerModel<ScalarDataModel>("Maths");
-//	DataModelRegistry::registerModel<NumberSourceDataModel>();
-//	DataModelRegistry::registerModel<NumberDisplayDataModel>();
-//	DataModelRegistry::registerModel<MultiplicationModel>();
 
 	connect(this, SIGNAL(nodeEditorModified(std::unordered_map<QUuid, std::shared_ptr<Node>>)), m_gl, SLOT(nodeChanged(std::unordered_map<QUuid, std::shared_ptr<Node>>)));
 
@@ -73,8 +68,14 @@ MainWindow::MainWindow(QWidget *_parent) :
 	node->nodeGeometry().recalculateSize(QFontMetrics(f));
 	node->nodeGraphicsObject()->setPos(posView);
 
-  std::string expr("cos(u_GlobalTime) * 1.0 + sin(u_GlobalTime) * 0.0 + 0.0 * 0.0 + 0.0 * 0.0");
+//  std::string expr("cos(u_GlobalTime) * 1.0 + sin(u_GlobalTime) * 0.0 + 0.0 * 0.0 + 0.0 * 0.0");
+	std::string expr("( cos(u_GlobalTime) + 2 ) * ( cos(u_GlobalTime) + 6 )");
+//	std::string expr("cos(u_GlobalTime)+3 * 6");
+//	std::string expr("2 * ( cos(u_GlobalTime) + 6 * 4 )");
+
   std::cout << hsitho::Expressions::evaluate(expr) << "\n";
+	std::cout << hsitho::Expressions::evaluate("cos(u_GlobalTime) * cos(u_GlobalTime) + 2 * cos(u_GlobalTime) + cos(u_GlobalTime) * 6 + 2 * 6") << "\n";
+	exit(EXIT_SUCCESS);
 //	hsitho::evalExp::evaluate(std::string("5.0 * 2.0 + sin(u_GlobalTime) * 1.0"));
 //	std::cout << std::atof("5.0f") << " " << std::atof("u_GlobalTime") << " " << derp << "\n";
 }

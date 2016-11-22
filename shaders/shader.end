@@ -1,0 +1,117 @@
+  return pos;
+}
+
+// Ray for tracing
+mat2x3 createRay(vec3 _origin, vec3 _lookAt, vec3 _upV, vec2 _uv, float _fov, float _aspect)
+{
+  mat2x3 ray;
+  vec3 direction, rayUpV, rightV;
+  vec2 uv;
+  float fieldOfViewRad;
+
+  ray[0] = _origin;
+  direction = normalize(_lookAt - _origin);
+  rayUpV = normalize( _upV - direction * dot(direction, _upV));
+  rightV = cross(direction, rayUpV);
+  uv = _uv * 2 - vec2(1.);
+  fieldOfViewRad = _fov * 3.1415 / 180;
+
+  ray[1] = direction + tan(fieldOfViewRad / 2.f) * rightV * uv.x + tan(fieldOfViewRad / 2.f) / _aspect * rayUpV * uv.y;
+  ray[1] = normalize(ray[1]);
+
+  return ray;
+}
+
+TraceResult castRay(mat2x3 _ray)
+{
+  TraceResult trace;
+  trace.t = 1.f;
+  for(int i = 0; i < 80; ++i)
+  {
+    vec4 r = map(_ray[0] + trace.t * _ray[1]);
+    trace.d = r.x;
+    trace.color = r.yzw;
+    if(trace.d <= traceprecision) {
+      break;
+    }
+    trace.t += trace.d;
+  }
+
+  return trace;
+}
+
+vec3 calcNormal(vec3 _position)
+{
+  vec3 offset = vec3(0.001, 0.0, 0.0);
+  vec3 normal = vec3(
+    map(_position + offset.xyy).x - map(_position - offset.xyy).x,
+    map(_position + offset.yxy).x - map(_position - offset.yxy).x,
+    map(_position + offset.yyx).x - map(_position - offset.yyx).x
+  );
+  return normalize(normal);
+}
+
+vec3 applyFog(vec3 color, float distance)
+{
+  float fogAmount = 1.0 - exp(-distance*2);
+  vec3 fogColor = vec3(0.5,0.6,0.7);
+  return mix(color, fogColor, fogAmount);
+}
+
+float softshadow(vec3 ro, vec3 rd, float mint, float tmax)
+{
+  float res = 1.0;
+  float t = mint;
+  for(int i = 0; i < 16; ++i)
+  {
+    float h = map(ro + rd*t).x;
+    res = min(res, 8.0*h/t);
+    t += clamp(h, 0.02, 0.10);
+    if(h < traceprecision || t > tmax) break;
+  }
+  return clamp(res, 0.0, 1.0);
+}
+
+// Rendering function
+vec3 render(mat2x3 _ray)
+{
+  TraceResult trace = castRay(_ray);
+  if(trace.d <= traceprecision)
+  {
+    vec3 p = _ray[0] + trace.t * _ray[1];
+    vec3 n = calcNormal(p);
+    vec3 lightDir = normalize(lightPos - p);
+//    vec3 ref = reflect(_ray[1], n);
+    float intensity = clamp(dot(n, lightDir), 0.0, 1.0);
+    float shadow = softshadow(p, lightPos, 0.01, 2.5);
+    shadow = 1.0f;
+    trace.color = applyFog(trace.color, trace.t/150.f);
+
+    // Vigneting
+    vec2 q = o_FragCoord.xy / u_Resolution.xy;
+    trace.color *= 0.5 + 0.5*pow( 16.0*q.x*q.y*(1.0-q.x)*(1.0-q.y), 0.25 );
+    trace.color *= 1.4 * intensity * vec3(1.0, 1.0, 1.0);
+    trace.color *= shadow;
+
+    return clamp(trace.color, 0.0, 1.0);
+  }
+  return vec3(0.529, 0.807, 0.9215);
+}
+
+void main()
+{
+  // Moving camera
+//  vec3 cameraPosition = vec3(sin(u_GlobalTime/10.f)*5.f, 2.5f, cos(u_GlobalTime/10.f)*5.f);
+//  vec3 lookAt = vec3(cameraPosition.x - sin(u_GlobalTime/10.f)*5.f, cameraPosition.y + sin(u_GlobalTime/5.f)*7.f, cameraPosition.z - cos(u_GlobalTime/10.f)*5.f);
+  // Static camera
+  vec3 cameraPosition = vec3(5.f, 2.5f, 5.f);
+  vec3 lookAt = vec3(0.f);
+  vec3 upVector = vec3(0.f, 1.f, 0.f);
+  float aspectRatio = u_Resolution.x / u_Resolution.y;
+
+  mat2x3 ray = createRay(cameraPosition, lookAt, upVector, o_FragCoord, 90.f, aspectRatio);
+  vec3 color = render(ray);
+  // Gamma correction
+  o_FragColor = vec4(pow(color, vec3(0.4545)), 1.f);
+//  o_FragColor = vec4(color, 1.f);
+}

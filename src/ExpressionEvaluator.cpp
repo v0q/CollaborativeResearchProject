@@ -5,15 +5,15 @@
  */
 namespace hsitho {
 	namespace Expressions {
-		std::string evaluate(const std::string &_expression)
+		std::string evaluate(const std::string &_expression, const std::string &_prev)
 		{
 			// Generate postfix notation for the expression
 			std::string exp = _expression;
 			std::vector<std::string> expElements;
 			size_t poss = 0;
 			while((poss = exp.find(" ")) != std::string::npos) {
-					expElements.push_back(exp.substr(0, poss));
-					exp.erase(0, poss + 1);
+				expElements.push_back(exp.substr(0, poss));
+				exp.erase(0, poss + 1);
 			}
 			expElements.push_back(exp.substr(0, poss));
 			exp.erase(0, poss + 1);
@@ -35,13 +35,27 @@ namespace hsitho {
 						}
 					}
 					stack.push_back(i);
-				} else if( i == "+" || i == "-") {
+				} else if(i == "+" || i == "-") {
 					if(stack.size()) {
 						std::string op = stack.back();
+						if(op == "+" || op == "-") {
+							outputQueue.push_back(op);
+							stack.pop_back();
+						}
+					}
+					stack.push_back(i);
+				} else if(i == "(") {
+					stack.push_back(i);
+				} else if(i == ")") {
+					while(stack.back() != "(" && stack.size()) {
+						std::string op = stack.back();while((poss = exp.find(" ")) != std::string::npos) {
+							expElements.push_back(exp.substr(0, poss));
+							exp.erase(0, poss + 1);
+						}
 						outputQueue.push_back(op);
 						stack.pop_back();
 					}
-					stack.push_back(i);
+					if(stack.size()) stack.pop_back();
 				} else {
 					outputQueue.push_back(i);
 				}
@@ -59,10 +73,11 @@ namespace hsitho {
 			{
 				output << s;
 			}
-			return reorganiseExpression(output.str());
+
+			return reorganiseExpression(output.str(), _prev);
 		}
 
-		std::string reorganiseExpression(const std::string &_expression)
+		std::string reorganiseExpression(const std::string &_expression, const std::string &_prev)
 		{
 			std::string exp = _expression;
 			std::vector<std::string> expElements;
@@ -125,6 +140,38 @@ namespace hsitho {
 				else
 					output << uoperands[i] << unknowns[i];
 			}
+			std::string o = output.str();
+			std::ostringstream newOutput;
+			bool parsed = false;
+			do {
+				size_t plus = o.find("+");
+				size_t minus = o.find("-");
+				size_t multiply = o.find("*");
+				size_t divide = o.find("/");
+				if(plus == std::string::npos && minus == std::string::npos && multiply == std::string::npos && divide == std::string::npos) {
+					parsed = true;
+					break;
+				}
+				if(plus < minus && plus < multiply && plus < divide) {
+					newOutput << o.substr(0, plus) << " + ";
+					o.erase(0, plus + 1);
+				} else if(minus < plus && minus < multiply && minus < divide) {
+					newOutput << o.substr(0, minus) << " - ";
+					o.erase(0, minus + 1);
+				} else if(multiply < plus && multiply < minus && multiply < divide) {
+					newOutput << o.substr(0, multiply) <<  " * ";
+					o.erase(0, multiply + 1);
+				} else if(divide < plus && divide < multiply && divide < minus) {
+					newOutput << o.substr(0, divide) << " / ";
+					o.erase(0, divide + 1);
+				}
+			} while(!parsed);
+			newOutput << o;
+			std::string finalOutput;
+//			if(newOutput.str() != _prev) {
+//				finalOutput = evaluate(newOutput.str(), newOutput.str());
+//			}
+			std::cout << newOutput.str() << "\n";
 			return output.str();
 		}
 
@@ -165,7 +212,69 @@ namespace hsitho {
 					} catch(const boost::bad_lexical_cast &) {
 						if(o == "*") {
 							if(val2 != "" && val1 != "0.0" && val2 != "0.0" && val1 != "0" && val2 != "0") {
-								stack.push_back(std::string(val2 + "*" + val1));
+								if(val1.find("+") != std::string::npos) {
+									size_t poss;
+									while((poss = val1.find("+")) != std::string::npos) {
+										if(val2.find("+") != std::string::npos) {
+											std::string val2cpy = val2;
+											size_t poss2;
+											while((poss2 = val2cpy.find("+")) != std::string::npos) {
+												stack.push_back(std::string(val2cpy.substr(0, poss2) + "*" + val1.substr(0, poss) + "+"));
+												val2cpy.erase(0, poss2 + 1);
+											}
+											stack.push_back(std::string(val2cpy.substr(0, poss2) + "*" + val1.substr(0, poss) + "+"));
+											val2cpy.erase(0, poss2 + 1);
+										} else {
+											stack.push_back(std::string(val2 + "*" + val1.substr(0, poss) + "+"));
+										}
+										val1.erase(0, poss + 1);
+									}
+									if(val2.find("+") != std::string::npos) {
+										std::string val2cpy = val2;
+										size_t poss2;
+										while((poss2 = val2cpy.find("+")) != std::string::npos) {
+											stack.push_back(std::string(val2cpy.substr(0, poss2) + "*" + val1.substr(0, poss) + "+"));
+											val2cpy.erase(0, poss2 + 1);
+										}
+										stack.push_back(std::string(val2cpy.substr(0, poss2) + "*" + val1.substr(0, poss)));
+										val2cpy.erase(0, poss2 + 1);
+									} else {
+										stack.push_back(std::string(val2 + "*" + val1.substr(0, poss)));
+									}
+									val1.erase(0, poss + 1);
+								} else if(val2.find("+") != std::string::npos) {
+									size_t poss;
+									while((poss = val2.find("+")) != std::string::npos) {
+										if(val1.find("+") != std::string::npos) {
+											std::string val1cpy = val1;
+											size_t poss2;
+											while((poss2 = val1cpy.find("+")) != std::string::npos) {
+												stack.push_back(std::string(val2.substr(0, poss) + "*" + val1cpy.substr(0, poss2) + "+"));
+												val1cpy.erase(0, poss2 + 1);
+											}
+											stack.push_back(std::string(val2.substr(0, poss) + "*" + val1cpy.substr(0, poss2)) + "+");
+											val1cpy.erase(0, poss2 + 1);
+										} else {
+											stack.push_back(std::string(val2.substr(0, poss) + "*" + val1 + "+"));
+										}
+										val2.erase(0, poss + 1);
+									}
+									if(val1.find("+") != std::string::npos) {
+										std::string val1cpy = val1;
+										size_t poss2;
+										while((poss2 = val1cpy.find("+")) != std::string::npos) {
+											stack.push_back(std::string(val2.substr(0, poss) + "*" + val1cpy.substr(0, poss2) + "+"));
+											val1cpy.erase(0, poss + 1);
+										}
+										stack.push_back(std::string(val2.substr(0, poss) + "*" + val1cpy.substr(0, poss)));
+										val1cpy.erase(0, poss + 1);
+									} else {
+										stack.push_back(std::string(val2.substr(0, poss) + "*" + val1));
+									}
+									val2.erase(0, poss + 1);
+								} else {
+									stack.push_back(std::string(val2 + "*" + val1));
+								}
 							}
 						} else if(o == "/") {
 							if(val2 != "" && val1 != "0.0" && val2 != "0.0" && val1 != "0" && val2 != "0") {
@@ -175,7 +284,7 @@ namespace hsitho {
               if(val2 != "") {
 								stack.push_back(std::string(val2 + "+" + val1));
 							}
-              else if(val1 != "0.0")
+							else if(val1 != "0.0")
 								stack.push_back(std::string(val1));
 						} else if(o == "-") {
 							if(val2 != "")
@@ -195,4 +304,5 @@ namespace hsitho {
 }
 /*
  * Please do not look at these!
+			std::cout << "\n";
  */

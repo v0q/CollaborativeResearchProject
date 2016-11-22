@@ -1,17 +1,17 @@
-#include "CubePrimitiveDataModel.hpp"
+#include "SpherePrimitiveDataModel.hpp"
 
 
-CubePrimitiveDataModel::~CubePrimitiveDataModel()
+SpherePrimitiveDataModel::~SpherePrimitiveDataModel()
 {
 
 }
 
-void CubePrimitiveDataModel::save(Properties &p) const
+void SpherePrimitiveDataModel::save(Properties &p) const
 {
 
 }
 
-unsigned int CubePrimitiveDataModel::nPorts(PortType portType) const
+unsigned int SpherePrimitiveDataModel::nPorts(PortType portType) const
 {
   unsigned int result = 1;
 
@@ -31,7 +31,7 @@ unsigned int CubePrimitiveDataModel::nPorts(PortType portType) const
   return result;
 }
 
-NodeDataType CubePrimitiveDataModel::dataType(PortType portType, PortIndex portIndex) const
+NodeDataType SpherePrimitiveDataModel::dataType(PortType portType, PortIndex portIndex) const
 {
 //  switch (portType)
 //  {
@@ -47,26 +47,26 @@ NodeDataType CubePrimitiveDataModel::dataType(PortType portType, PortIndex portI
 //  }
 }
 
-std::shared_ptr<NodeData> CubePrimitiveDataModel::outData(PortIndex port)
+std::shared_ptr<NodeData> SpherePrimitiveDataModel::outData(PortIndex port)
 {
   return nullptr;
 }
 
-void CubePrimitiveDataModel::setInData(std::shared_ptr<NodeData>, int)
+void SpherePrimitiveDataModel::setInData(std::shared_ptr<NodeData>, int)
 {
 
 }
 
-std::vector<QWidget *> CubePrimitiveDataModel::embeddedWidget()
+std::vector<QWidget *> SpherePrimitiveDataModel::embeddedWidget()
 {
   return std::vector<QWidget *>();
 }
 
-std::string CubePrimitiveDataModel::getShaderCode()
+std::string SpherePrimitiveDataModel::getShaderCode()
 {
   if(m_transform == "")
   {
     m_transform = "mat4x4(cos(u_GlobalTime)*1.0+0, sin(u_GlobalTime)*1.0+0, 0, 2.5,	-sin(u_GlobalTime)*1.0+0, cos(u_GlobalTime)*1.0+0, 0, 0.600000024, 0, 0, 1, 0, 0, 0, 0, 1)";
   }
-	return "sdFastBox(vec3(" + m_transform + " * vec4(_position, 1.0)).xyz, 0.6f, vec3(1.0, 0.41, 0.71))";
+	return "sdSphere(vec3(" + m_transform + " * vec4(_position, 1.0)).xyz, 0.6f, vec3(1.0, 0.41, 0.71))";
 }

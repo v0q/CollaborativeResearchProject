@@ -40,7 +40,7 @@ public:
   std::string getShaderCode();
 
 private slots:
-	void vectorEdit(QString const);
+	void scalarEdit(QString const);
 
 private:
 	std::shared_ptr<ScalarData> m_v;
