@@ -1,6 +1,7 @@
 #include <iostream>
 #include <boost/lexical_cast.hpp>
 
+#include <QColorDialog>
 #include "mainwindow.hpp"
 #include "ui_mainwindow.h"
 
@@ -24,6 +25,7 @@
 #include "nodes/VectorDataModel.hpp"
 #include "nodes/ScalarDataModel.hpp"
 #include "nodes/DistanceFieldOutputDataModel.hpp"
+#include "nodes/ColorPickerDataModel.hpp"
 
 
 
@@ -43,6 +45,11 @@ MainWindow::MainWindow(QWidget *_parent) :
   DataModelRegistry::registerModel<RotateDataModel>("Transforms");
   DataModelRegistry::registerModel<VectorDataModel>("Maths");
   DataModelRegistry::registerModel<ScalarDataModel>("Maths");
+  DataModelRegistry::registerModel<ColorPickerDataModel>("Color");
+
+
+
+ // DataModelRegistry::registerModel<ColorPickerDataModel>("Colors");
 //	DataModelRegistry::registerModel<NumberSourceDataModel>();
 //	DataModelRegistry::registerModel<NumberDisplayDataModel>();
 //	DataModelRegistry::registerModel<MultiplicationModel>();
@@ -72,6 +79,8 @@ MainWindow::MainWindow(QWidget *_parent) :
 	node->nodeGeometry().setSpacing(5);
 	node->nodeGeometry().recalculateSize(QFontMetrics(f));
 	node->nodeGraphicsObject()->setPos(posView);
+
+//    m_colorTester.onColor();
 
   std::string expr("cos(u_GlobalTime) * 1.0 + sin(u_GlobalTime) * 0.0 + 0.0 * 0.0 + 0.0 * 0.0");
   std::cout << hsitho::Expressions::evaluate(expr) << "\n";

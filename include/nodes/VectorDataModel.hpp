@@ -36,7 +36,7 @@ public:
 
 	std::vector<QWidget *> embeddedWidget() override;
 
-	DFNodeType getNodeType() const { return DFNodeType::VECTOR; }
+  DFNodeType getNodeType() const { return DFNodeType::VECTOR; }
 	std::string getShaderCode();
 
 private slots:
@@ -44,7 +44,7 @@ private slots:
 
 private:
 	std::shared_ptr<VectorData> m_v;
-	union {
+  union {
 		QLineEdit *m_inputs[3];
 		struct {
 			QLineEdit *m_x;

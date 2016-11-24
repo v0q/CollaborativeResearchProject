@@ -253,6 +253,8 @@ namespace hsitho
       shadercode += _node->nodeDataModel()->getShaderCode();
     }
 
+
+
     std::vector<std::shared_ptr<Connection>> inConns = _node->nodeState().connection(PortType::In);
     unsigned int i = 0;
     for(auto connection : inConns)

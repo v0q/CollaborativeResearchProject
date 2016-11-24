@@ -1,6 +1,7 @@
 #include "CubePrimitiveDataModel.hpp"
 
 
+
 CubePrimitiveDataModel::~CubePrimitiveDataModel()
 {
 
@@ -18,7 +19,7 @@ unsigned int CubePrimitiveDataModel::nPorts(PortType portType) const
   switch (portType)
   {
     case PortType::In:
-      result = 0;
+      result = 1;
       break;
 
     case PortType::Out:
@@ -33,18 +34,18 @@ unsigned int CubePrimitiveDataModel::nPorts(PortType portType) const
 
 NodeDataType CubePrimitiveDataModel::dataType(PortType portType, PortIndex portIndex) const
 {
-//  switch (portType)
-//  {
-//    case PortType::In:
-//      return MyNodeData().type();
-//    break;
-//		case PortType::Out:
-      return DistanceFieldOutput().type();
-//		break;
-
-//    default:
-//      break;
-//  }
+    switch (portType)
+    {
+      case PortType::In:
+          return ColorData().type();
+      break;
+      case PortType::Out:
+        return DistanceFieldOutput().type();
+      break;
+      default:
+        break;
+    }
+    return DistanceFieldInput().type();
 }
 
 std::shared_ptr<NodeData> CubePrimitiveDataModel::outData(PortIndex port)

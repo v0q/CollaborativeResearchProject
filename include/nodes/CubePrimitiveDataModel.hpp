@@ -3,6 +3,8 @@
 #include <QtCore/QObject>
 #include <QtWidgets/QLineEdit>
 #include <iostream>
+#include <QColorDialog>
+
 
 #include "nodeEditor/NodeDataModel.hpp"
 #include "nodes/DistanceFieldData.hpp"
@@ -17,6 +19,7 @@ public:
   NodeDataType
   type() const override
   { return NodeDataType {"DistanceFieldData", "Cube Data"}; }
+
 
 };
 
@@ -83,3 +86,5 @@ public:
 private:
 	std::string m_transform;
 };
+
+

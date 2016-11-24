@@ -1,6 +1,7 @@
 #pragma once
 
 #include <QMainWindow>
+#include <QColorDialog>
 
 #include "nodeEditor/Node.hpp"
 #include "nodeEditor/NodeGraphicsObject.hpp"
@@ -34,6 +35,7 @@ private:
   hsitho::SceneWindow *m_gl;
   FlowScene *m_nodes;
 	FlowView *m_flowView;
+  //QColorDialogTester m_colorTester;
 
 public slots:
   void nodeChanged() { emit(nodeEditorModified(getNodes())); }

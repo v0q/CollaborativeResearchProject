@@ -13,6 +13,7 @@ struct Vec4f
 		m_w(_w)
 	{}
 
+
 	Vec4f operator +(const Vec4f &_rhs) {
 		m_x = _rhs.m_x;
 		m_y = _rhs.m_y;
@@ -32,7 +33,7 @@ struct Vec4f
 	std::string m_x = "0.0";
 	std::string m_y = "0.0";
 	std::string m_z = "0.0";
-	std::string m_w = "1.0";
+  std::string m_w = "1.0";
 };
 
 enum DFNodeType
@@ -41,7 +42,8 @@ enum DFNodeType
 	TRANSFORM,
 	MIX,
 	VECTOR,
-	SCALAR
+  SCALAR,
+  COLOR
 };
 
 class Mat4f
@@ -288,5 +290,26 @@ public:
 
 private:
 	Vec4f m_v;
+};
+
+class ColorData : public NodeData
+{
+public:
+
+  ColorData() : m_cd(Vec4f()) {}
+  ColorData(const std::string &_r, const std::string &_g, const std::string &_b) :
+    m_cd(Vec4f(_r, _g, _b, "1.0")) {}
+
+  NodeDataType type() const override
+  {
+    return NodeDataType {"Color", "Cd"};
+  }
+
+  Vec4f color() const
+  {
+    return m_cd;
+  }
+private:
+  Vec4f m_cd;
 };
 

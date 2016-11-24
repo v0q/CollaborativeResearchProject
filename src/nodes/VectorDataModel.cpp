@@ -16,20 +16,20 @@ VectorDataModel::VectorDataModel() :
   auto d = new QDoubleValidator;
   d->setLocale(QLocale("en_GB"));
   m_x->setValidator(d);
-	m_x->setMaximumSize(m_x->sizeHint());
-	m_x->setGeometry(x, y, w, h);
-	connect(m_x, &QLineEdit::textChanged, this, &VectorDataModel::vectorEdit);
+  m_x->setMaximumSize(m_x->sizeHint());
+  m_x->setGeometry(x, y, w, h);
+  connect(m_x, &QLineEdit::textChanged, this, &VectorDataModel::vectorEdit);
 
-	m_x->setText("0.0");
+  m_x->setText("0.0");
 
   d = new QDoubleValidator;
   d->setLocale(QLocale("en_GB"));
   m_y->setValidator(d);
-	m_y->setMaximumSize(m_y->sizeHint());
-	m_y->setGeometry(x, y + h + margin, w, h);
-	connect(m_y, &QLineEdit::textChanged, this, &VectorDataModel::vectorEdit);
+  m_y->setMaximumSize(m_y->sizeHint());
+  m_y->setGeometry(x, y + h + margin, w, h);
+  connect(m_y, &QLineEdit::textChanged, this, &VectorDataModel::vectorEdit);
 
-	m_y->setText("0.0");
+  m_y->setText("0.0");
 
   d = new QDoubleValidator;
   d->setLocale(QLocale("en_GB"));
@@ -98,15 +98,15 @@ NodeDataType VectorDataModel::dataType(PortType portType, PortIndex portIndex) c
 		case PortType::In:
 			switch(portIndex)
 			{
-				case 0:
-					return NodeDataType{"Scalar", "x"};
-				break;
-				case 1:
-					return NodeDataType{"Scalar", "y"};
-				break;
-				case 2:
-					return NodeDataType{"Scalar", "z"};
-				break;
+        case 0:
+          return NodeDataType{"Scalar", "x"};
+        break;
+        case 1:
+          return NodeDataType{"Scalar", "y"};
+        break;
+        case 2:
+          return NodeDataType{"Scalar", "z"};
+        break;
 			}
 		break;
 		case PortType::Out:
@@ -128,22 +128,23 @@ std::shared_ptr<NodeData> VectorDataModel::outData(PortIndex)
 
 void VectorDataModel::setInData(std::shared_ptr<NodeData> _data, PortIndex portIndex)
 {
-	auto data = std::dynamic_pointer_cast<ScalarData>(_data);
-	if(data) {
-		m_inputs[portIndex]->setVisible(false);
-		m_inputs[portIndex]->setText(data->value().c_str());
-	} else {
-		m_inputs[portIndex]->setVisible(true);
-		m_inputs[portIndex]->setText("0.0");
-	}
+  auto data = std::dynamic_pointer_cast<ScalarData>(_data);
+  if(data) {
+    m_inputs[portIndex]->setVisible(false);
+    m_inputs[portIndex]->setText(data->value().c_str());
+  } else {
+    m_inputs[portIndex]->setVisible(false);
+    m_inputs[portIndex]->setText("0.0");
+  }
 }
 
 std::vector<QWidget *> VectorDataModel::embeddedWidget()
 {
-	return std::vector<QWidget *>{m_x, m_y, m_z};
+  return std::vector<QWidget *>{m_x, m_y, m_z};
 }
 
-std::string VectorDataModel::getShaderCode() {
+std::string VectorDataModel::getShaderCode()
+{
 	return "";
 }
 
