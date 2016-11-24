@@ -84,13 +84,17 @@ MainWindow::MainWindow(QWidget *_parent) :
 //	std::cout << hsitho::Expressions::evaluate("( 0.0 ) * ( 0.0 ) + ( 0.0 ) * ( c ) + ( 0.0 ) * ( -s ) + ( 1.0 ) * ( 0.0 )") << "\n";
 //	std::cout << hsitho::Expressions::evaluate("( 0.0 ) * ( 0.0 ) + ( 0.0 ) * ( s ) + ( 0.0 ) * ( c ) + ( 1.0 ) * ( 0.0 )") << "\n";
 
-	Mat4f t("1.0", "0.0", "0.0", "0.0",
-					"0.0", "1.0", "0.0", "0.0",
-					"0.0", "0.0", "1.0", "0.0",
-					"0.0", "0.0", "0.0", "1.0");
+//	Mat4f t("1.0", "0.0", "0.0", "0.0",
+//					"0.0", "1.0", "0.0", "0.0",
+//					"0.0", "0.0", "1.0", "0.0",
+//					"0.0", "0.0", "0.0", "1.0");
+	Mat4f rx("1.0", "0.0", "0.0",		"0.0",
+					 "0.0", "a",	 "-b",	"0.0",
+					 "0.0", "b",	 "a",			"0.0",
+					 "0.0", "0.0", "0.0",		"1.0");
 
-	t = t*t;
-	t.print();
+//	t = t*t;
+//	t.print();
 
 //  std::string expr("cos(u_GlobalTime) * 1.0 + sin(u_GlobalTime) * 0.0 + 0.0 * 0.0 + 0.0 * 0.0");
 	std::string expr("( a - 2 ) * ( a + 6 )");
@@ -100,8 +104,9 @@ MainWindow::MainWindow(QWidget *_parent) :
 
 //	std::cout << hsitho::Expressions::evaluate("( 0.0 ) * ( 0.0 ) + ( 0.0 ) * ( c ) + ( 1.0 ) * ( -s ) + ( 0.0 ) * ( 0.0 )") << "\n";
 	std::cout << hsitho::Expressions::evaluate(expr) << "\n";
-	std::cout << hsitho::Expressions::evaluate("0 + 1.0 * cos(1) + 0");
-//	exit(0);
+	std::cout << hsitho::Expressions::evaluate("( -b*-b ) * ( a )") << "\n";
+//	std::cout << hsitho::Expressions::evaluate("( -b*-b ) * ( a ) + ( a ) * ( b ) + ( -b*a ) * ( 0.0 ) + ( 0 ) * ( 0.0 )") << "\n";
+	exit(0);
 //	exit(EXIT_SUCCESS);
 }
 

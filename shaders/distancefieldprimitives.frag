@@ -186,7 +186,10 @@ vec4 map(vec3 _position)
 {
   vec4 pos = vec4(4.0, 3.0, 4.0, 0.0);
 //  pos = opRepetition(_position, pos.xyz);
-  pos = opUnion(pos, sdFastBox(vec3(vec4(_position, 1.0)), 0.6, vec3(0.2, 0.2, 0.2)));
+  pos = opUnion(pos, sdFastBox(vec3(mat4x4(1 * cos(u_GlobalTime) * 1.0, 1.0 * sin(u_GlobalTime) * sin(u_GlobalTime) * 1.0, 1.0 * cos(u_GlobalTime) * sin(u_GlobalTime) * 1.0, 0,
+                                           0, 1.0 * cos(u_GlobalTime) * 1.0 * 1.0,  - sin(u_GlobalTime) * 1.0 * 1.0, 0,
+                                            - sin(u_GlobalTime) * 1.0, 1.0 * sin(u_GlobalTime) * cos(u_GlobalTime) * 1.0, 1.0 * cos(u_GlobalTime) * cos(u_GlobalTime) * 1.0, 0,
+                                           0, 0, 0, 1) * vec4(_position, 1.0)), 0.6, vec3(0.2, 0.2, 0.2)));
 //  _position = opRepetition(_position, vec3(4.0, 4.0, 4.0));
 ////  pos = opUnion(pos, sdPlane(_position, vec4(0.0, 1.0, 0.0, 1.0), vec3(0.85, 0.85, 0.85)));
 //  float sg = sin(u_GlobalTime/300.f)*180;

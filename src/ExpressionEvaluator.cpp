@@ -12,7 +12,9 @@ namespace hsitho {
 			std::vector<std::string> expElements;
 			size_t poss = 0;
 			while((poss = exp.find(" ")) != std::string::npos) {
-				expElements.push_back(exp.substr(0, poss));
+				if(exp.substr(0, poss) != "") {
+					expElements.push_back(exp.substr(0, poss));
+				}
 				exp.erase(0, poss + 1);
 			}
 			expElements.push_back(exp.substr(0, poss));
@@ -156,7 +158,12 @@ namespace hsitho {
 					newOutput << o.substr(0, plus) << " + ";
 					o.erase(0, plus + 1);
 				} else if(minus < plus && minus < multiply && minus < divide) {
-					newOutput << o.substr(0, minus) << " - ";
+					std::string d = newOutput.str();
+					if((newOutput.str().find("* ") == newOutput.str().length() - 2 || newOutput.str().find("/ ") == newOutput.str().length() - 2) && minus == 0) {
+						newOutput << o.substr(0, minus) << "-";
+					} else {
+						newOutput << o.substr(0, minus) << " - ";
+					}
 					o.erase(0, minus + 1);
 				} else if(multiply < plus && multiply < minus && multiply < divide) {
 					newOutput << o.substr(0, multiply) <<  " * ";
@@ -167,12 +174,16 @@ namespace hsitho {
 				}
 			} while(!parsed);
 			newOutput << o;
+			std::string test = newOutput.str();
 			std::string finalOutput;
 			if(newOutput.str() != _prev) {
 				finalOutput = evaluate(newOutput.str(), newOutput.str());
 			} else {
 				finalOutput = newOutput.str();
 			}
+			std::string::iterator end_pos = std::remove(finalOutput.begin(), finalOutput.end(), ' ');
+			finalOutput.erase(end_pos, finalOutput.end());
+
 			return finalOutput;
 		}
 
@@ -212,9 +223,14 @@ namespace hsitho {
 						stack.push_back(boost::lexical_cast<std::string>(result));
 					} catch(const boost::bad_lexical_cast &) {
 						if(o == "*") {
-							if(val2 != "" && val1 != "" && val1 != "0.0" && val2 != "0.0" && val1 != "0" && val2 != "0") {
+							if((val1 == "1" || val1 == "1.0") && val2 != "" && val2 != "0.0" && val2 != "0") {
+								stack.push_back(val2);
+							} else if((val2 == "1" || val2 == "1.0") && val1 != "" && val1 != "0.0" && val1 != "0") {
+								stack.push_back(val1);
+							}	else if(val2 != "" && val1 != "" && val1 != "0.0" && val2 != "0.0" && val1 != "0" && val2 != "0") {
 								if(val1.find("+") != std::string::npos || val1.find("-") != std::string::npos) {
 									bool parsed = false;
+									bool val2parsed = false;
 									size_t plus;
 									size_t minus;
 									do {
@@ -224,7 +240,7 @@ namespace hsitho {
 										if(plus == std::string::npos && minus == std::string::npos) {
 											parsed = true;
 										} else {
-											if(val2.find("+") != std::string::npos || val2.find("-") != std::string::npos) {
+											if((val2.find("+") != std::string::npos || val2.find("-") != std::string::npos) && val2.find("-") != 0 && val2.find("+") != 0) {
 												bool p = false;
 												std::string val2cpy = val2;
 												size_t plus2;
@@ -241,22 +257,23 @@ namespace hsitho {
 												} while(!p);
 												stack.push_back(std::string(val2cpy + "*" + val1.substr(0, std::min(plus, minus)) + (plus < minus ? "+" : "-")));
 												val2cpy.erase(0, std::min(plus2, minus2) + 1);
+												val2parsed = true;
 											} else {
-												if(std::min(plus, minus) == 0) {
+//												if(std::min(plus, minus) == 0) {
 													std::string symbol = val1.substr(0, std::min(plus, minus) + 1);
 													val1.erase(0, std::min(plus, minus) + 1);
 													plus = val1.find("+");
 													minus = val1.find("-");
 													stack.push_back(std::string(val2 + "*" + symbol + val1.substr(0, std::min(plus, minus)) + (plus != std::string::npos && minus != std::string::npos ? (plus < minus ? "+" : "-") : "")));
 													definingSymbol = true;
-												} else {
-													stack.push_back(std::string(val2 + "*" + val1.substr(0, std::min(plus, minus)) + val1.substr(1) + (plus < minus ? "+" : "-")));
-												}
+//												} else {
+//													stack.push_back(std::string(val2 + "*" + val1.substr(0, std::min(plus, minus)) + val1.substr(1) + (plus < minus ? "+" : "-")));
+//												}
 											}
 											val1.erase(0, std::min(plus, minus) + 1);
 										}
 									} while(!parsed);
-									if(val2.find("+") != std::string::npos || val2.find("-") != std::string::npos) {
+									if((val2.find("+") != std::string::npos || val2.find("-") != std::string::npos) && val2parsed) {
 										bool p = false;
 										std::string val2cpy = val2;
 										size_t plus2;
@@ -280,6 +297,7 @@ namespace hsitho {
 									val1.erase(0, std::min(plus, minus) + 1);
 								} else if(val2.find("+") != std::string::npos || val2.find("-") != std::string::npos) {
 									bool parsed = false;
+									bool val1parsed = false;
 									size_t plus;
 									size_t minus;
 									do {
@@ -289,7 +307,7 @@ namespace hsitho {
 										if(plus == std::string::npos && minus == std::string::npos) {
 											parsed = true;
 										} else {
-											if(val1.find("+") != std::string::npos || val1.find("-") != std::string::npos) {
+											if((val1.find("+") != std::string::npos || val1.find("-") != std::string::npos) && val1.find("-") != 0 && val1.find("+") != 0) {
 												bool p = false;
 												std::string val1cpy = val1;
 												size_t plus2;
@@ -306,22 +324,23 @@ namespace hsitho {
 												} while(!p);
 												stack.push_back(std::string(val2.substr(0, std::min(plus, minus)) + "*" + val1cpy + (plus2 < minus2 ? "+" : "-")));
 												val1cpy.erase(0, std::min(plus2, minus2));
+												val1parsed = true;
 											} else {
-												if(std::min(plus, minus) == 0) {
+//												if(std::min(plus, minus) == 0) {
 													std::string symbol = val2.substr(0, std::min(plus, minus) + 1);
 													val2.erase(0, std::min(plus, minus) + 1);
 													plus = val1.find("+");
 													minus = val1.find("-");
 													stack.push_back(std::string(symbol + val2.substr(0, std::min(plus, minus)) + "*" + val1 + (plus != std::string::npos && minus != std::string::npos ? (plus < minus ? "+" : "-") : "")));
 													definingSymbol = true;
-												} else {
-													stack.push_back(std::string(val2.substr(0, std::min(plus, minus)) + "*" + val1 + (plus < minus ? "+" : "-")));
-												}
+//												} else {
+//													stack.push_back(std::string(val2.substr(0, std::min(plus, minus)) + "*" + val1 + (plus < minus ? "+" : "-")));
+//												}
 											}
 											val2.erase(0, std::min(plus, minus) + 1);
 										}
 									} while(!parsed);
-									if(val1.find("+") != std::string::npos || val1.find("-") != std::string::npos) {
+									if((val1.find("+") != std::string::npos || val1.find("-") != std::string::npos) && val1parsed) {
 										bool p = false;
 										std::string val1cpy = val1;
 										size_t plus2;
