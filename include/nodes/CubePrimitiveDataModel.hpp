@@ -77,10 +77,6 @@ public:
 				ss << _t.matrix(x, y);
 			}
 		}
-		std::cout << "Inside the node\n";
-		_t.print();
-		std::cout << ss.str() << "\n";
-		std::cout << "Inside the node end\n\n";
 		m_transform = "mat4x4(" + ss.str() + ")";
   }
 

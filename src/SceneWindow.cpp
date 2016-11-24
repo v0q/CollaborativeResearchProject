@@ -162,12 +162,7 @@ namespace hsitho
     std::string shadercode;
     if(_node->nodeDataModel()->getNodeType() == DFNodeType::TRANSFORM)
     {
-			_t = _node->nodeDataModel()->getTransform() * _t;
-			std::cout << "Transform node transform:\n";
-			_node->nodeDataModel()->getTransform().print();
-			std::cout << "Current acc transform:\n";
-			_t.print();
-			std::cout << "\n";
+			_t = _t * _node->nodeDataModel()->getTransform();
     }
     else if(_node->nodeDataModel()->getNodeType() == DFNodeType::PRIMITIVE)
 		{
