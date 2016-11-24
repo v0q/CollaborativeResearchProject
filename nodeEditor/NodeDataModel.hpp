@@ -60,7 +60,7 @@ public:
   resizable() const { return false; }
 
 	virtual std::string getExtraParams() const { return ""; }
-	virtual std::string getShaderCode() = 0;
+	virtual std::string getShaderCode() { return ""; }
 	virtual DFNodeType getNodeType() const = 0;
 	virtual Mat4f getTransform() { return Mat4f(); }
 	virtual void setTransform(const Mat4f &_t) {}

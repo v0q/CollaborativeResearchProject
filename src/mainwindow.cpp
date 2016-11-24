@@ -41,6 +41,9 @@ MainWindow::MainWindow(QWidget *_parent) :
   DataModelRegistry::registerModel<RotateDataModel>("Transforms");
   DataModelRegistry::registerModel<VectorDataModel>("Maths");
   DataModelRegistry::registerModel<ScalarDataModel>("Maths");
+	DataModelRegistry::registerModel<SineDataModel>("Maths");
+	DataModelRegistry::registerModel<CosineDataModel>("Maths");
+	DataModelRegistry::registerModel<MultiplyDataModel>("Maths");
 
 	connect(this, SIGNAL(nodeEditorModified(std::unordered_map<QUuid, std::shared_ptr<Node>>)), m_gl, SLOT(nodeChanged(std::unordered_map<QUuid, std::shared_ptr<Node>>)));
 
@@ -84,22 +87,22 @@ MainWindow::MainWindow(QWidget *_parent) :
 //	std::cout << hsitho::Expressions::evaluate("( 0.0 ) * ( 0.0 ) + ( 0.0 ) * ( c ) + ( 0.0 ) * ( -s ) + ( 1.0 ) * ( 0.0 )") << "\n";
 //	std::cout << hsitho::Expressions::evaluate("( 0.0 ) * ( 0.0 ) + ( 0.0 ) * ( s ) + ( 0.0 ) * ( c ) + ( 1.0 ) * ( 0.0 )") << "\n";
 
-	Mat4f t("1.0", "0.0", "0.0", "0.0",
-					"0.0", "1.0", "0.0", "0.0",
-					"0.0", "0.0", "1.0", "0.0",
-					"0.0", "0.0", "0.0", "1.0");
-	Mat4f rx("1.0", "0.0", "0.0",		"0.0",
-					 "0.0", "a",	 "-b",	"0.0",
-					 "0.0", "b",	 "a",			"0.0",
-					 "0.0", "0.0", "0.0",		"1.0");
-	Mat4f ry("a",			 "0.0", "b",		 "0.0",
-					 "0.0",		 "1.0", "0.0", "0.0",
-					 "-b",		 "0.0", "a",		 "0.0",
-					 "0.0",		 "0.0", "0.0", "1.0");
-	Mat4f rz("a",		"-b", "0.0", "0.0",
-					 "b",		"a",			"0.0", "0.0",
-					 "0.0", "0.0",	"1.0", "0.0",
-					 "0.0", "0.0",	"0.0", "1.0");
+//	Mat4f t("1.0", "0.0", "0.0", "0.0",
+//					"0.0", "1.0", "0.0", "0.0",
+//					"0.0", "0.0", "1.0", "0.0",
+//					"0.0", "0.0", "0.0", "1.0");
+//	Mat4f rx("1.0", "0.0", "0.0",		"0.0",
+//					 "0.0", "a",	 "-b",	"0.0",
+//					 "0.0", "b",	 "a",			"0.0",
+//					 "0.0", "0.0", "0.0",		"1.0");
+//	Mat4f ry("a",			 "0.0", "b",		 "0.0",
+//					 "0.0",		 "1.0", "0.0", "0.0",
+//					 "-b",		 "0.0", "a",		 "0.0",
+//					 "0.0",		 "0.0", "0.0", "1.0");
+//	Mat4f rz("a",		"-b", "0.0", "0.0",
+//					 "b",		"a",			"0.0", "0.0",
+//					 "0.0", "0.0",	"1.0", "0.0",
+//					 "0.0", "0.0",	"0.0", "1.0");
 
 //	t = t*rx;
 //	t.print();
@@ -120,8 +123,8 @@ MainWindow::MainWindow(QWidget *_parent) :
 //	std::cout << "\n" << hsitho::Expressions::evaluate("( 0.0 ) * ( 0.0 ) + ( 0.0 ) * ( -b ) + ( 1.0 ) * ( a ) + ( 0.0 ) * ( 0.0 )") << "\n";
 //	std::cout << hsitho::Expressions::evaluate("( -b*-b ) * ( a ) + ( a ) * ( b ) + ( -b*a ) * ( 0.0 ) + ( 0 ) * ( 0.0 )") << "\n";
 //	std::cout << hsitho::Expressions::evaluate("( -b*-b ) * ( a )") << "\n";
-	std::cout << hsitho::Expressions::evaluate("sin(6) * cos(u_GlobalTime)") << "\n";
-	exit(0);
+//	std::cout << hsitho::Expressions::evaluate("sin(6) * cos(u_GlobalTime)") << "\n";
+//	exit(0);
 //	exit(EXIT_SUCCESS);
 }
 

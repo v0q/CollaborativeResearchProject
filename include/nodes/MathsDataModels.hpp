@@ -36,10 +36,9 @@ public:
 	std::vector<QWidget *> embeddedWidget() override;
 
 	DFNodeType getNodeType() const { return DFNodeType::SCALAR; }
-	std::string getShaderCode();
 
 private slots:
-	void scalarEdit(QString const);
+	void valueEdit(QString const);
 
 private:
 	std::shared_ptr<ScalarData> m_v;
@@ -77,10 +76,9 @@ public:
 	std::vector<QWidget *> embeddedWidget() override;
 
 	DFNodeType getNodeType() const { return DFNodeType::VECTOR; }
-	std::string getShaderCode();
 
 private slots:
-	void vectorEdit(QString const);
+	void valueEdit(QString const);
 
 private:
 	std::shared_ptr<VectorData> m_v;
@@ -90,6 +88,130 @@ private:
 			QLineEdit *m_x;
 			QLineEdit *m_y;
 			QLineEdit *m_z;
+		};
+	};
+};
+
+// **********************************************
+//	SINE
+// **********************************************
+class SineDataModel : public NodeDataModel
+{
+	Q_OBJECT
+
+public:
+
+	SineDataModel();
+	virtual ~SineDataModel() {}
+
+	QString caption() const override {
+		return QString("Sine");
+	}
+
+	static QString name() {
+		return QString("Sine");
+	}
+
+	void save(Properties &p) const override {}
+
+	unsigned int nPorts(PortType portType) const override;
+	NodeDataType dataType(PortType portType, PortIndex portIndex) const override;
+	std::shared_ptr<NodeData> outData(PortIndex) override;
+	void setInData(std::shared_ptr<NodeData> _data, PortIndex portIndex) override;
+
+	std::vector<QWidget *> embeddedWidget() override;
+
+	DFNodeType getNodeType() const { return DFNodeType::SCALAR; }
+
+private slots:
+	void valueEdit(QString const);
+
+private:
+	std::shared_ptr<ScalarData> m_v;
+	QLineEdit *m_value;
+};
+
+// **********************************************
+//	COSINE
+// **********************************************
+class CosineDataModel : public NodeDataModel
+{
+	Q_OBJECT
+
+public:
+
+	CosineDataModel();
+	virtual ~CosineDataModel() {}
+
+	QString caption() const override {
+		return QString("Cosine");
+	}
+
+	static QString name() {
+		return QString("Cosine");
+	}
+
+	void save(Properties &p) const override {}
+
+	unsigned int nPorts(PortType portType) const override;
+	NodeDataType dataType(PortType portType, PortIndex portIndex) const override;
+	std::shared_ptr<NodeData> outData(PortIndex) override;
+	void setInData(std::shared_ptr<NodeData> _data, PortIndex portIndex) override;
+
+	std::vector<QWidget *> embeddedWidget() override;
+
+	DFNodeType getNodeType() const { return DFNodeType::SCALAR; }
+
+private slots:
+	void valueEdit(QString const);
+
+private:
+	std::shared_ptr<ScalarData> m_v;
+	QLineEdit *m_value;
+};
+
+
+// **********************************************
+//	Multiply
+// **********************************************
+class MultiplyDataModel : public NodeDataModel
+{
+	Q_OBJECT
+
+public:
+
+	MultiplyDataModel();
+	virtual ~MultiplyDataModel() {}
+
+	QString caption() const override {
+		return QString("Multiply");
+	}
+
+	static QString name() {
+		return QString("Multiply");
+	}
+
+	void save(Properties &p) const override {}
+	void setInData(std::shared_ptr<NodeData>, PortIndex portIndex) override;
+
+	unsigned int nPorts(PortType portType) const override;
+	NodeDataType dataType(PortType portType, PortIndex portIndex) const override;
+	std::shared_ptr<NodeData> outData(PortIndex) override;
+
+	std::vector<QWidget *> embeddedWidget() override;
+
+	DFNodeType getNodeType() const { return DFNodeType::SCALAR; }
+
+private slots:
+	void valueEdit(QString const);
+
+private:
+	std::shared_ptr<ScalarData> m_v;
+	union {
+		QLineEdit *m_inputs[2];
+		struct {
+			QLineEdit *m_x;
+			QLineEdit *m_y;
 		};
 	};
 };
