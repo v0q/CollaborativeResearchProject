@@ -38,7 +38,7 @@ namespace hsitho {
 				} else if(i == "+" || i == "-") {
 					if(stack.size()) {
 						std::string op = stack.back();
-						if(op == "+" || op == "-") {
+						if(op == "+" || op == "-" || op == "*" || op == "/") {
 							outputQueue.push_back(op);
 							stack.pop_back();
 						}
@@ -109,8 +109,10 @@ namespace hsitho {
 				} else if( i == "+" || i == "-") {
 					if(stack.size()) {
 						std::string op = stack.back();
-						outputQueue.push_back(op);
-						stack.pop_back();
+						if(op == "+" || op == "-" || op == "*" || op == "/") {
+							outputQueue.push_back(op);
+							stack.pop_back();
+						}
 					}
 					stack.push_back(i);
 				} else {
@@ -150,9 +152,7 @@ namespace hsitho {
 				size_t divide = o.find("/");
 				if(plus == std::string::npos && minus == std::string::npos && multiply == std::string::npos && divide == std::string::npos) {
 					parsed = true;
-					break;
-				}
-				if(plus < minus && plus < multiply && plus < divide) {
+				}	else if(plus < minus && plus < multiply && plus < divide) {
 					newOutput << o.substr(0, plus) << " + ";
 					o.erase(0, plus + 1);
 				} else if(minus < plus && minus < multiply && minus < divide) {
@@ -168,11 +168,12 @@ namespace hsitho {
 			} while(!parsed);
 			newOutput << o;
 			std::string finalOutput;
-//			if(newOutput.str() != _prev) {
-//				finalOutput = evaluate(newOutput.str(), newOutput.str());
-//			}
-			std::cout << newOutput.str() << "\n";
-			return output.str();
+			if(newOutput.str() != _prev) {
+				finalOutput = evaluate(newOutput.str(), newOutput.str());
+			} else {
+				finalOutput = newOutput.str();
+			}
+			return finalOutput;
 		}
 
 		std::vector<std::string> evaluatePostFix(std::vector<std::string> outputQueue)
@@ -186,7 +187,7 @@ namespace hsitho {
 					continue;
 				} catch(const boost::bad_lexical_cast &) {}
 
-				if(o == "*" || o == "/" || o == "+" || o == "-") {
+				if((o == "*" || o == "/" || o == "+" || o == "-") && stack.size()) {
 					std::string val1 = stack.back();
 					stack.pop_back();
 					std::string val2;
@@ -211,67 +212,136 @@ namespace hsitho {
 						stack.push_back(boost::lexical_cast<std::string>(result));
 					} catch(const boost::bad_lexical_cast &) {
 						if(o == "*") {
-							if(val2 != "" && val1 != "0.0" && val2 != "0.0" && val1 != "0" && val2 != "0") {
-								if(val1.find("+") != std::string::npos) {
-									size_t poss;
-									while((poss = val1.find("+")) != std::string::npos) {
-										if(val2.find("+") != std::string::npos) {
-											std::string val2cpy = val2;
-											size_t poss2;
-											while((poss2 = val2cpy.find("+")) != std::string::npos) {
-												stack.push_back(std::string(val2cpy.substr(0, poss2) + "*" + val1.substr(0, poss) + "+"));
-												val2cpy.erase(0, poss2 + 1);
-											}
-											stack.push_back(std::string(val2cpy.substr(0, poss2) + "*" + val1.substr(0, poss) + "+"));
-											val2cpy.erase(0, poss2 + 1);
+							if(val2 != "" && val1 != "" && val1 != "0.0" && val2 != "0.0" && val1 != "0" && val2 != "0") {
+								if(val1.find("+") != std::string::npos || val1.find("-") != std::string::npos) {
+									bool parsed = false;
+									size_t plus;
+									size_t minus;
+									do {
+										bool definingSymbol = false;
+										plus = val1.find("+");
+										minus = val1.find("-");
+										if(plus == std::string::npos && minus == std::string::npos) {
+											parsed = true;
 										} else {
-											stack.push_back(std::string(val2 + "*" + val1.substr(0, poss) + "+"));
+											if(val2.find("+") != std::string::npos || val2.find("-") != std::string::npos) {
+												bool p = false;
+												std::string val2cpy = val2;
+												size_t plus2;
+												size_t minus2;
+												do {
+													plus2 = val2cpy.find("+");
+													minus2 = val2cpy.find("-");
+													if(plus2 == std::string::npos && minus2 == std::string::npos) {
+														p = true;
+													} else {
+														stack.push_back(std::string(val2cpy.substr(0, std::min(plus2, minus2)) + "*" + val1.substr(0, std::min(plus, minus)) + (plus2 < minus2 ? "+" : "-")));
+														val2cpy.erase(0, std::min(plus2, minus2) + 1);
+													}
+												} while(!p);
+												stack.push_back(std::string(val2cpy + "*" + val1.substr(0, std::min(plus, minus)) + (plus < minus ? "+" : "-")));
+												val2cpy.erase(0, std::min(plus2, minus2) + 1);
+											} else {
+												if(std::min(plus, minus) == 0) {
+													std::string symbol = val1.substr(0, std::min(plus, minus) + 1);
+													val1.erase(0, std::min(plus, minus) + 1);
+													plus = val1.find("+");
+													minus = val1.find("-");
+													stack.push_back(std::string(val2 + "*" + symbol + val1.substr(0, std::min(plus, minus)) + (plus != std::string::npos && minus != std::string::npos ? (plus < minus ? "+" : "-") : "")));
+													definingSymbol = true;
+												} else {
+													stack.push_back(std::string(val2 + "*" + val1.substr(0, std::min(plus, minus)) + val1.substr(1) + (plus < minus ? "+" : "-")));
+												}
+											}
+											val1.erase(0, std::min(plus, minus) + 1);
 										}
-										val1.erase(0, poss + 1);
-									}
-									if(val2.find("+") != std::string::npos) {
+									} while(!parsed);
+									if(val2.find("+") != std::string::npos || val2.find("-") != std::string::npos) {
+										bool p = false;
 										std::string val2cpy = val2;
-										size_t poss2;
-										while((poss2 = val2cpy.find("+")) != std::string::npos) {
-											stack.push_back(std::string(val2cpy.substr(0, poss2) + "*" + val1.substr(0, poss) + "+"));
-											val2cpy.erase(0, poss2 + 1);
-										}
-										stack.push_back(std::string(val2cpy.substr(0, poss2) + "*" + val1.substr(0, poss)));
-										val2cpy.erase(0, poss2 + 1);
-									} else {
-										stack.push_back(std::string(val2 + "*" + val1.substr(0, poss)));
-									}
-									val1.erase(0, poss + 1);
-								} else if(val2.find("+") != std::string::npos) {
-									size_t poss;
-									while((poss = val2.find("+")) != std::string::npos) {
-										if(val1.find("+") != std::string::npos) {
-											std::string val1cpy = val1;
-											size_t poss2;
-											while((poss2 = val1cpy.find("+")) != std::string::npos) {
-												stack.push_back(std::string(val2.substr(0, poss) + "*" + val1cpy.substr(0, poss2) + "+"));
-												val1cpy.erase(0, poss2 + 1);
+										size_t plus2;
+										size_t minus2;
+										do {
+											plus2 = val2cpy.find("+");
+											minus2 = val2cpy.find("-");
+											if(plus2 == std::string::npos && minus2 == std::string::npos) {
+												p = true;
+											} else {
+												stack.push_back(std::string(val2cpy.substr(0, std::min(plus2, minus2)) + "*" + val1 + (plus2 < minus2 ? "+" : "-")));
+												val2cpy.erase(0, std::min(plus2, minus2) + 1);
 											}
-											stack.push_back(std::string(val2.substr(0, poss) + "*" + val1cpy.substr(0, poss2)) + "+");
-											val1cpy.erase(0, poss2 + 1);
+										} while(!p);
+										stack.push_back(std::string(val2cpy.substr(0, std::min(plus2, minus2)) + "*" + val1));
+										val2cpy.erase(0, std::min(plus2, minus2) + 1);
+									}/* else {
+										std::cout << "d: " << std::string(val2 + "*" + val1.substr(0, std::min(plus, minus))) << "\n";
+										stack.push_back(std::string(val2 + "*" + val1.substr(0, std::min(plus, minus))));
+									}*/
+									val1.erase(0, std::min(plus, minus) + 1);
+								} else if(val2.find("+") != std::string::npos || val2.find("-") != std::string::npos) {
+									bool parsed = false;
+									size_t plus;
+									size_t minus;
+									do {
+										bool definingSymbol = false;
+										plus = val2.find("+");
+										minus = val2.find("-");
+										if(plus == std::string::npos && minus == std::string::npos) {
+											parsed = true;
 										} else {
-											stack.push_back(std::string(val2.substr(0, poss) + "*" + val1 + "+"));
+											if(val1.find("+") != std::string::npos || val1.find("-") != std::string::npos) {
+												bool p = false;
+												std::string val1cpy = val1;
+												size_t plus2;
+												size_t minus2;
+												do {
+													plus2 = val1cpy.find("+");
+													minus2 = val1cpy.find("-");
+													if(plus2 == std::string::npos && minus2 == std::string::npos) {
+														p = true;
+													} else {
+														stack.push_back(std::string(val2.substr(0, std::min(plus, minus)) + "*" + val1cpy.substr(0, std::min(plus2, minus2)) + (plus2 < minus2 ? "+" : "-")));
+														val1cpy.erase(0, std::min(plus2, minus2) + 1);
+													}
+												} while(!p);
+												stack.push_back(std::string(val2.substr(0, std::min(plus, minus)) + "*" + val1cpy + (plus2 < minus2 ? "+" : "-")));
+												val1cpy.erase(0, std::min(plus2, minus2));
+											} else {
+												if(std::min(plus, minus) == 0) {
+													std::string symbol = val2.substr(0, std::min(plus, minus) + 1);
+													val2.erase(0, std::min(plus, minus) + 1);
+													plus = val1.find("+");
+													minus = val1.find("-");
+													stack.push_back(std::string(symbol + val2.substr(0, std::min(plus, minus)) + "*" + val1 + (plus != std::string::npos && minus != std::string::npos ? (plus < minus ? "+" : "-") : "")));
+													definingSymbol = true;
+												} else {
+													stack.push_back(std::string(val2.substr(0, std::min(plus, minus)) + "*" + val1 + (plus < minus ? "+" : "-")));
+												}
+											}
+											val2.erase(0, std::min(plus, minus) + 1);
 										}
-										val2.erase(0, poss + 1);
-									}
-									if(val1.find("+") != std::string::npos) {
+									} while(!parsed);
+									if(val1.find("+") != std::string::npos || val1.find("-") != std::string::npos) {
+										bool p = false;
 										std::string val1cpy = val1;
-										size_t poss2;
-										while((poss2 = val1cpy.find("+")) != std::string::npos) {
-											stack.push_back(std::string(val2.substr(0, poss) + "*" + val1cpy.substr(0, poss2) + "+"));
-											val1cpy.erase(0, poss + 1);
-										}
-										stack.push_back(std::string(val2.substr(0, poss) + "*" + val1cpy.substr(0, poss)));
-										val1cpy.erase(0, poss + 1);
-									} else {
-										stack.push_back(std::string(val2.substr(0, poss) + "*" + val1));
-									}
-									val2.erase(0, poss + 1);
+										size_t plus2;
+										size_t minus2;
+										do {
+											plus2 = val1cpy.find("+");
+											minus2 = val1cpy.find("-");
+											if(plus2 == std::string::npos && minus2 == std::string::npos) {
+												p = true;
+											} else {
+												stack.push_back(std::string(val2 + "*" + val1cpy.substr(0, std::min(plus2, minus2)) + (plus2 < minus2 ? "+" : "-")));
+												val1cpy.erase(0, std::min(plus2, minus2) + 1);
+											}
+										} while(!p);
+										stack.push_back(std::string(val2 + "*" + val1cpy.substr(0, std::min(plus2, minus2))));
+										val1cpy.erase(0, std::min(plus2, minus2) + 1);
+									}/* else {
+										stack.push_back(std::string(val2.substr(0, std::min(plus, minus)) + "*" + val1));
+									}*/
+									val2.erase(0, std::min(plus, minus) + 1);
 								} else {
 									stack.push_back(std::string(val2 + "*" + val1));
 								}
@@ -281,15 +351,17 @@ namespace hsitho {
 								stack.push_back(std::string(val2 + "/" + val1));
 							}
 						} else if(o == "+") {
-              if(val2 != "") {
-								stack.push_back(std::string(val2 + "+" + val1));
-							}
-							else if(val1 != "0.0")
+							if(val2 != "0" && val2 != "0.0" && val2 != "") {
+								if(val1 != "0" && val1 != "0.0" && val1 != "")
+									stack.push_back(std::string(val2 + "+" + val1));
+								else
+									stack.push_back(std::string(val2));
+							} else if(val1 != "")
 								stack.push_back(std::string(val1));
 						} else if(o == "-") {
-							if(val2 != "")
-								stack.push_back(std::string(val2 + " - " + val1));
-							else if(val1 != "0.0")
+							if(val2 != "" && val2 != "0" && val2 != "0.0")
+								stack.push_back(std::string(val2 + "-" + val1));
+							else if(val1 != "0.0" && val1 != "")
 								stack.push_back(std::string("-" + val1));
 						}
 					}

@@ -68,16 +68,41 @@ MainWindow::MainWindow(QWidget *_parent) :
 	node->nodeGeometry().recalculateSize(QFontMetrics(f));
 	node->nodeGraphicsObject()->setPos(posView);
 
+//	std::cout << hsitho::Expressions::evaluate("( 0.0 ) * ( 0.0 ) + ( 1.0 ) * ( c ) + ( 0.0 ) * ( -s ) + ( 0.0 ) * ( 0.0 )") << "\n";
+//	std::cout << hsitho::Expressions::evaluate("( 1.0 ) * ( 1.0 ) + ( 0.0 ) * ( 0.0 ) + ( 0.0 ) * ( 0.0 ) + ( 0.0 ) * ( 0.0 )") << "\n";
+//	std::cout << hsitho::Expressions::evaluate("( 1.0 ) * ( 0.0 ) + ( 0.0 ) * ( c ) + ( 0.0 ) * ( -s ) + ( 0.0 ) * ( 0.0 )") << "\n";
+//	std::cout << hsitho::Expressions::evaluate("( 1.0 ) * ( 0.0 ) + ( 0.0 ) * ( s ) + ( 0.0 ) * ( c ) + ( 0.0 ) * ( 0.0 )") << "\n";
+//	std::cout << hsitho::Expressions::evaluate("( 1.0 ) * ( 0.0 ) + ( 0.0 ) * ( 0.0 ) + ( 0.0 ) * ( 0.0 ) + ( 0.0 ) * ( 1.0 )") << "\n";
+//	std::cout << hsitho::Expressions::evaluate("( 0.0 ) * ( 1.0 ) + ( 1.0 ) * ( 0.0 ) + ( 0.0 ) * ( 0.0 ) + ( 0.0 ) * ( 0.0 )") << "\n";
+//	std::cout << hsitho::Expressions::evaluate("( 0.0 ) * ( 0.0 ) + ( 1.0 ) * ( c ) + ( 0.0 ) * ( -s ) + ( 0.0 ) * ( 0.0 )") << "\n";
+//	std::cout << hsitho::Expressions::evaluate("( 0.0 ) * ( 0.0 ) + ( 1.0 ) * ( s ) + ( 0.0 ) * ( c ) + ( 0.0 ) * ( 0.0 )") << "\n";
+//	std::cout << hsitho::Expressions::evaluate("( 0.0 ) * ( 0.0 ) + ( 1.0 ) * ( 0.0 ) + ( 0.0 ) * ( 0.0 ) + ( 0.0 ) * ( 1.0 )") << "\n";
+//	std::cout << hsitho::Expressions::evaluate("( 0.0 ) * ( 1.0 ) + ( 0.0 ) * ( 0.0 ) + ( 1.0 ) * ( 0.0 ) + ( 0.0 ) * ( 0.0 )") << "\n";
+//	std::cout << hsitho::Expressions::evaluate("( 0.0 ) * ( 0.0 ) + ( 0.0 ) * ( s ) + ( 1.0 ) * ( c ) + ( 0.0 ) * ( 0.0 )") << "\n";
+//	std::cout << hsitho::Expressions::evaluate("( 0.0 ) * ( 0.0 ) + ( 0.0 ) * ( 0.0 ) + ( 1.0 ) * ( 0.0 ) + ( 0.0 ) * ( 1.0 )") << "\n";
+//	std::cout << hsitho::Expressions::evaluate("( 0.0 ) * ( 1.0 ) + ( 0.0 ) * ( 0.0 ) + ( 0.0 ) * ( 0.0 ) + ( 1.0 ) * ( 0.0 )") << "\n";
+//	std::cout << hsitho::Expressions::evaluate("( 0.0 ) * ( 0.0 ) + ( 0.0 ) * ( c ) + ( 0.0 ) * ( -s ) + ( 1.0 ) * ( 0.0 )") << "\n";
+//	std::cout << hsitho::Expressions::evaluate("( 0.0 ) * ( 0.0 ) + ( 0.0 ) * ( s ) + ( 0.0 ) * ( c ) + ( 1.0 ) * ( 0.0 )") << "\n";
+
+	Mat4f t("1.0", "0.0", "0.0", "0.0",
+					"0.0", "1.0", "0.0", "0.0",
+					"0.0", "0.0", "1.0", "0.0",
+					"0.0", "0.0", "0.0", "1.0");
+
+	t = t*t;
+	t.print();
+
 //  std::string expr("cos(u_GlobalTime) * 1.0 + sin(u_GlobalTime) * 0.0 + 0.0 * 0.0 + 0.0 * 0.0");
-	std::string expr("( cos(u_GlobalTime) + 2 ) * ( cos(u_GlobalTime) + 6 )");
+	std::string expr("( a - 2 ) * ( a + 6 )");
+//	std::string nextExpr("( " + hsitho::Expressions::evaluate(expr) + " ) * ( 3 + 10 + 6 * a )");
 //	std::string expr("cos(u_GlobalTime)+3 * 6");
 //	std::string expr("2 * ( cos(u_GlobalTime) + 6 * 4 )");
 
-  std::cout << hsitho::Expressions::evaluate(expr) << "\n";
-	std::cout << hsitho::Expressions::evaluate("cos(u_GlobalTime) * cos(u_GlobalTime) + 2 * cos(u_GlobalTime) + cos(u_GlobalTime) * 6 + 2 * 6") << "\n";
-	exit(EXIT_SUCCESS);
-//	hsitho::evalExp::evaluate(std::string("5.0 * 2.0 + sin(u_GlobalTime) * 1.0"));
-//	std::cout << std::atof("5.0f") << " " << std::atof("u_GlobalTime") << " " << derp << "\n";
+//	std::cout << hsitho::Expressions::evaluate("( 0.0 ) * ( 0.0 ) + ( 0.0 ) * ( c ) + ( 1.0 ) * ( -s ) + ( 0.0 ) * ( 0.0 )") << "\n";
+	std::cout << hsitho::Expressions::evaluate(expr) << "\n";
+	std::cout << hsitho::Expressions::evaluate("0 + 1.0 * cos(1) + 0");
+//	exit(0);
+//	exit(EXIT_SUCCESS);
 }
 
 MainWindow::~MainWindow()

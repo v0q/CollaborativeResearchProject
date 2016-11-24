@@ -103,6 +103,9 @@ void RotateDataModel::setInData(std::shared_ptr<NodeData> _data, PortIndex portI
       if(v.m_z != "0.0") {
 				m_t = m_t * rz;
 			}
+			std::cout << "GOT DATA\n";
+			m_t.print();
+			std::cout << "\n";
     }
 	}
 }

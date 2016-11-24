@@ -156,13 +156,24 @@ namespace hsitho
 
   std::string SceneWindow::recurseNodeTree(std::shared_ptr<Node> _node, Mat4f _t)
   {
+		std::cout << "before anything:\n";
+		_t.print();
+		std::cout << "\n\n";
     std::string shadercode;
     if(_node->nodeDataModel()->getNodeType() == DFNodeType::TRANSFORM)
     {
 			_t = _node->nodeDataModel()->getTransform() * _t;
+			std::cout << "Transform node transform:\n";
+			_node->nodeDataModel()->getTransform().print();
+			std::cout << "Current acc transform:\n";
+			_t.print();
+			std::cout << "\n";
     }
     else if(_node->nodeDataModel()->getNodeType() == DFNodeType::PRIMITIVE)
-    {
+		{
+			std::cout << "PASSING THIS TRANSFORM TO PRIMITIVE:\n";
+			_t.print();
+			std::cout << "\n";
       _node->nodeDataModel()->setTransform(_t);
       shadercode += _node->nodeDataModel()->getShaderCode();
     }
