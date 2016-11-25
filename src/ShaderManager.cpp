@@ -25,17 +25,21 @@ namespace hsitho
   }
 
   void ShaderManager::updateShader(const char *_shaderCode)
-  {
+	{
+//		QOpenGLShader *fragShader = new QOpenGLShader(QOpenGLShader::Fragment);
+//		fragShader->compileSourceCode(QString(_shaderCode));
 		if(m_program != nullptr)
 		{
 			m_program->release();
 
 			m_program->removeAllShaders();
 			m_program->addShaderFromSourceFile(QOpenGLShader::Vertex, "./shaders/screenQuad.vert");
+//			m_program->addShader(fragShader);
 			m_program->addShaderFromSourceCode(QOpenGLShader::Fragment, QString(_shaderCode));
 
 			m_program->link();
 		}
+//		delete fragShader;
   }
 
   void ShaderManager::useShader(const std::string &_name)

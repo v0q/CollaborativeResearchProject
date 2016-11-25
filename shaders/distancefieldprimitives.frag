@@ -186,28 +186,32 @@ vec4 map(vec3 _position)
 {
   vec4 pos = vec4(4.0, 3.0, 4.0, 0.0);
 //  pos = opRepetition(_position, pos.xyz);
-  _position = opRepetition(_position, vec3(4.0, 4.0, 4.0));
-//  pos = opUnion(pos, sdPlane(_position, vec4(0.0, 1.0, 0.0, 1.0), vec3(0.85, 0.85, 0.85)));
-  float sg = sin(u_GlobalTime/300.f)*180;
-  float gg = cos(u_GlobalTime/200.f)*90;
-  pos = opUnion(pos, sdSphere(_position, 0.6, vec3(1.0, 1.078, 0.576)));
-  pos = smin(pos, sdSphere(vec3(mat4x4(1, 0, 0, 0,
-                                           0, 1, 0, 0,
-                                           0, 0, 1, 0,
-                                           0, sin(sg)*-0.6, 0, 1)*
-                                    mat4x4(cos(sg), -sin(sg), 0, 0,
-                                           sin(sg), cos(sg), 0, 0,
-                                           0, 0, 1, 0,
-                                           0, 0, 0, 1)*
-                                    mat4x4(cos(gg), 0, -sin(gg), 0,
-                                           0, 1, 0, 0,
-                                           sin(gg), 0, cos(gg), 0,
-                                           0, 0, 0, 1)*
-                                    mat4x4(1, 0, 0, 0,
-                                           0, 1, 0, 0,
-                                           0, 0, 1, 0,
-                                           0, sin(sg)*0.6, 0, 1)*
-                                    vec4(_position + vec3(0.0, 0.0, 0.0), 1.0)), 0.6, vec3(1.0, 0.078, 0.576)), 0.6);
+  pos = opUnion(pos, sdFastBox(vec3(mat4x4(1 * cos(u_GlobalTime) * 1.0, 1.0 * sin(u_GlobalTime) * sin(u_GlobalTime) * 1.0, 1.0 * cos(u_GlobalTime) * sin(u_GlobalTime) * 1.0, 0,
+                                           0, 1.0 * cos(u_GlobalTime) * 1.0 * 1.0,  - sin(u_GlobalTime) * 1.0 * 1.0, 0,
+                                            - sin(u_GlobalTime) * 1.0, 1.0 * sin(u_GlobalTime) * cos(u_GlobalTime) * 1.0, 1.0 * cos(u_GlobalTime) * cos(u_GlobalTime) * 1.0, 0,
+                                           0, 0, 0, 1) * vec4(_position, 1.0)), 0.6, vec3(0.2, 0.2, 0.2)));
+//  _position = opRepetition(_position, vec3(4.0, 4.0, 4.0));
+////  pos = opUnion(pos, sdPlane(_position, vec4(0.0, 1.0, 0.0, 1.0), vec3(0.85, 0.85, 0.85)));
+//  float sg = sin(u_GlobalTime/300.f)*180;
+//  float gg = cos(u_GlobalTime/200.f)*90;
+//  pos = opUnion(pos, sdSphere(_position, 0.6, vec3(1.0, 1.078, 0.576)));
+//  pos = smin(pos, sdSphere(vec3(mat4x4(1, 0, 0, 0,
+//                                           0, 1, 0, 0,
+//                                           0, 0, 1, 0,
+//                                           0, sin(sg)*-0.6, 0, 1)*
+//                                    mat4x4(cos(sg), -sin(sg), 0, 0,
+//                                           sin(sg), cos(sg), 0, 0,
+//                                           0, 0, 1, 0,
+//                                           0, 0, 0, 1)*
+//                                    mat4x4(cos(gg), 0, -sin(gg), 0,
+//                                           0, 1, 0, 0,
+//                                           sin(gg), 0, cos(gg), 0,
+//                                           0, 0, 0, 1)*
+//                                    mat4x4(1, 0, 0, 0,
+//                                           0, 1, 0, 0,
+//                                           0, 0, 1, 0,
+//                                           0, sin(sg)*0.6, 0, 1)*
+//                                    vec4(_position + vec3(0.0, 0.0, 0.0), 1.0)), 0.6, vec3(1.0, 0.078, 0.576)), 0.6);
 //  pos = smin(pos, sdSphere(vec3(mat4x4(1, 0, 0, 0,
 //                                       0, 1, 0, 0,
 //                                       0, 0, 1, 0,
@@ -355,11 +359,11 @@ vec3 render(mat2x3 _ray)
 void main()
 {
   // Moving camera
-  vec3 cameraPosition = vec3(sin(u_GlobalTime/10.f)*5.f, 2.5f, cos(u_GlobalTime/10.f)*5.f);
-  vec3 lookAt = vec3(cameraPosition.x - sin(u_GlobalTime/10.f)*5.f, cameraPosition.y + sin(u_GlobalTime/5.f)*7.f, cameraPosition.z - cos(u_GlobalTime/10.f)*5.f);
+//  vec3 cameraPosition = vec3(sin(u_GlobalTime/10.f)*5.f, 2.5f, cos(u_GlobalTime/10.f)*5.f);
+//  vec3 lookAt = vec3(cameraPosition.x - sin(u_GlobalTime/10.f)*5.f, cameraPosition.y + sin(u_GlobalTime/5.f)*7.f, cameraPosition.z - cos(u_GlobalTime/10.f)*5.f);
   // Static camera
-//  vec3 cameraPosition = vec3(5.f, 2.5f, 5.f);
-//  vec3 lookAt = vec3(0.f);
+  vec3 cameraPosition = vec3(5.f, 2.5f, 5.f);
+  vec3 lookAt = vec3(0.f);
   vec3 upVector = vec3(0.f, 1.f, 0.f);
   float aspectRatio = u_Resolution.x / u_Resolution.y;
 

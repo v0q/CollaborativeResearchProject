@@ -62,13 +62,10 @@ void TranslateDataModel::setInData(std::shared_ptr<NodeData> _data, PortIndex po
 		if(vec)
 		{
 			Vec4f v = vec->vector();
-      std::cout << v.m_x << " " << v.m_y << " " << v.m_z << "\n";
 			m_t = Mat4f("1.0", "0.0", "0.0", "0.0",
 									"0.0", "1.0", "0.0", "0.0",
 									"0.0", "0.0", "1.0", "0.0",
-									v.m_x, v.m_y, v.m_z, "1.0");
-		} else {
-			std::cout << "Failed to get here\n";
+									hsitho::Expressions::evaluate(v.m_x), hsitho::Expressions::evaluate(v.m_y), hsitho::Expressions::evaluate(v.m_z), "1.0");
 		}
 	}
 }

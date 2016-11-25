@@ -181,7 +181,9 @@ void ColorPickerDataModel::setInData(std::shared_ptr<NodeData> _data, int)
       setPalColor();
     } catch(boost::exception &) {
       current_color = QColor(0, 0, 0);
-      setPalColor();
+      m_palColor.setColor(_label->backgroundRole(), current_color);
+      _label->setPalette(m_palColor);
+//      setPalColor();
     }
   } else {
     m_x->setGeometry(m_px, m_py, m_w, m_h);

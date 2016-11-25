@@ -8,11 +8,12 @@
  * Please do not look at these!
  */
 namespace hsitho {
-	namespace Expressions
-	{
-		std::string evaluate(const std::string &_expression);
-		std::string reorganiseExpression(const std::string &_expression);
-		std::vector<std::string> evaluatePostFix(std::vector<std::string> outputQueue);
+  namespace Expressions
+  {
+    void parseExpression(std::string &_expression);
+    std::string addSpaces(const std::string &_expression);
+    std::string evaluate(const std::string &_expression, const std::string &_prev = "");
+    std::string evaluatePostFix(std::vector<std::string> outputQueue);
     template<typename T>
     T clamp(const T _val, const T _v1, const T _v2)
     {
@@ -22,8 +23,5 @@ namespace hsitho {
         return _v2;
       return _val;
     }
-	}
+  }
 }
-/*
- * Please do not look at these!
- */
