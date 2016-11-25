@@ -4,6 +4,7 @@
 #include <QtWidgets/QLabel>
 #include <QtWidgets/QLineEdit>
 
+
 #include "nodeEditor/NodeDataModel.hpp"
 #include "nodes/DistanceFieldData.hpp"
 
@@ -30,7 +31,7 @@ public:
 
   QString caption() const override
   {
-    return QString("    Color     ");
+    return QString("Color");
   }
 
   static QString name()
@@ -45,10 +46,11 @@ public:
   void setCurrentColor(const QColor &color);
 
   void save(Properties &p) const override;
-  void setInData(std::shared_ptr<NodeData>, int) override {}
+  void setInData(std::shared_ptr<NodeData>, int) override;
+  void updateWidgets() override;
 
   unsigned int nPorts(PortType portType) const override;
-  NodeDataType dataType(PortType portType, PortIndex portIndex) const override;
+  NodeDataType dataType(PortType portType, PortIndex) const override;
   std::shared_ptr<NodeData> outData(PortIndex) override;
 
   std::vector<QWidget *> embeddedWidget() override;
@@ -56,18 +58,29 @@ public:
   DFNodeType getNodeType() const { return DFNodeType::COLOR; }
   std::string getShaderCode();
 
+private slots:
+  void colorEdit(QString const &string);
+
 protected:
   bool eventFilter(QObject *object, QEvent *event);
 
 private:
- // std::shared_ptr<ColorData> m_cd;
   QPalette m_palColor;
   QColorPicker m_color;
   QLabel *_label;
   QColor current_color;
   QColor label_color;
+  unsigned int m_w, m_h, m_px, m_py, m_margin;
 
-  int m_r, m_b, m_g;
+  std::shared_ptr<ColorData> m_cd;
 
+  union {
+    QLineEdit *m_inputs[3];
+    struct {
+      QLineEdit *m_x;
+      QLineEdit *m_y;
+      QLineEdit *m_z;
+    };
+  };
 
 };

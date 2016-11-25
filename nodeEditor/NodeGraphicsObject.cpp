@@ -21,14 +21,14 @@ NodeGraphicsObject(FlowScene &scene,
                    std::shared_ptr<Node>& node)
   : _scene(scene)
   , _node(node)
-	, _proxyWidgets(0)
+  , _proxyWidgets(0)
 {
   _scene.addItem(this);
 
   setFlag(QGraphicsItem::ItemDoesntPropagateOpacityToChildren, true);
-	setFlag(QGraphicsItem::ItemIsMovable, _node.lock()->isMovable());
-	setFlag(QGraphicsItem::ItemIsFocusable, _node.lock()->isMovable());
-	setFlag(QGraphicsItem::ItemIsSelectable, _node.lock()->isMovable());
+  setFlag(QGraphicsItem::ItemIsMovable, _node.lock()->isMovable());
+  setFlag(QGraphicsItem::ItemIsFocusable, _node.lock()->isMovable());
+  setFlag(QGraphicsItem::ItemIsSelectable, _node.lock()->isMovable());
   setFlag(QGraphicsItem::ItemSendsScenePositionChanges);
 
   setCacheMode( QGraphicsItem::DeviceCoordinateCache );
@@ -72,25 +72,26 @@ embedQWidget()
   auto node = _node.lock();
   NodeGeometry & geom = node->nodeGeometry();
 
-	for(auto w : node->nodeDataModel()->embeddedWidget())
+  for(auto w : node->nodeDataModel()->embeddedWidget())
   {
-		auto proxyWidget = new QGraphicsProxyWidget(this);
-		proxyWidget->setWidget(w);
+    auto proxyWidget = new QGraphicsProxyWidget(this);
+    proxyWidget->setWidget(w);
 
-		proxyWidget->setPreferredWidth(5);
+    proxyWidget->setPreferredWidth(5);
 
-		proxyWidget->setPos(geom.widgetPosition() + w->pos());
+    proxyWidget->setPos(geom.widgetPosition() + w->pos());
 
-		geom.recalculateSize();
+    update();
 
-		update();
+    geom.recalculateSize();
 
-		proxyWidget->setOpacity(1.0);
-		proxyWidget->setFlag(QGraphicsItem::ItemIgnoresParentOpacity);
+    proxyWidget->setOpacity(1.0);
+    proxyWidget->setFlag(QGraphicsItem::ItemIgnoresParentOpacity);
 
-		_proxyWidgets.push_back(proxyWidget);
+    _proxyWidgets.push_back(proxyWidget);
 
   }
+  node->nodeDataModel()->updateWidgets();
 }
 
 
@@ -149,7 +150,7 @@ paint(QPainter * painter,
 
   auto node = _node.lock();
 
-	NodePainter::paint(painter, node);
+  NodePainter::paint(painter, node);
 }
 
 

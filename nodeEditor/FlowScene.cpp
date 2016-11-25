@@ -172,8 +172,7 @@ removeNode(QGraphicsItem* item)
 	deleteConnections(PortType::Out);
   deleteConnections(PortType::In);
 
-	_nodes.erase(node->id());
-	std::cout << "Deleted Node\n";
+  _nodes.erase(node->id());
 	emit nodeEditorChanged();
 }
 

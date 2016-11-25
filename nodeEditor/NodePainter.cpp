@@ -18,39 +18,39 @@ paint(QPainter* painter,
 
   NodeState const& state = node->nodeState();
 
-	std::unique_ptr<NodeGraphicsObject> const& graphicsObject = node->nodeGraphicsObject();
+  std::unique_ptr<NodeGraphicsObject> const& graphicsObject = node->nodeGraphicsObject();
 
-	if(!node->isMovable())
-	{
-		QFont f = painter->font(), fo = painter->font();
-		f.setBold(true);
-		f.setPixelSize(36);
-		painter->setFont(f);
-		QFontMetrics metrics(f);
+  if(!node->isMovable())
+  {
+    QFont f = painter->font(), fo = painter->font();
+    f.setBold(true);
+    f.setPixelSize(36);
+    painter->setFont(f);
+    QFontMetrics metrics(f);
 
-		geom.recalculateSize(painter->fontMetrics());
+    geom.recalculateSize(painter->fontMetrics());
 
-		painter->setFont(fo);
-	}
-	else
-	{
-		geom.recalculateSize(painter->fontMetrics());
-	}
+    painter->setFont(fo);
+  }
+  else
+  {
+    geom.recalculateSize(painter->fontMetrics());
+  }
 
-	//--------------------------------------------
+  //--------------------------------------------
 
 
-	drawNodeRect(painter, geom, graphicsObject);
+  drawNodeRect(painter, geom, graphicsObject);
 
-	auto const &model = node->nodeDataModel();
+  auto const &model = node->nodeDataModel();
 
-	drawConnectionPoints(painter, geom, state, model);
+  drawConnectionPoints(painter, geom, state, model);
 
-	drawFilledConnectionPoints(painter, geom, state);
+  drawFilledConnectionPoints(painter, geom, state);
 
-	drawModelName(painter, geom, state, model);
+  drawModelName(painter, geom, state, model);
 
-	drawEntryLabels(painter, geom, state, model, node->isMovable());
+  drawEntryLabels(painter, geom, state, model, node->isMovable());
 
   drawResizeRect(painter, geom, model);
 }

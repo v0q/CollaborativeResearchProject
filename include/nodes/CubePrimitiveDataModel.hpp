@@ -84,6 +84,7 @@ public:
   }
 
 private:
+  Vec4f m_color;
 	std::string m_transform;
 };
 

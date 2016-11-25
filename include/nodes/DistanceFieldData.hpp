@@ -285,7 +285,7 @@ public:
 
 	Vec4f vector() const
 	{
-		return m_v;
+    return m_v;
 	}
 
 private:

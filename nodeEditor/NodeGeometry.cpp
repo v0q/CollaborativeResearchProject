@@ -65,7 +65,7 @@ recalculateSize() const
 
 	for(auto w : _dataModel->embeddedWidget())
   {
-		_height = std::max(_height, static_cast<unsigned>(w->height()));
+    _height = std::max(_height, static_cast<unsigned>(w->height() + w->pos().y()));
   }
 
   _height += nameHeight();
@@ -80,8 +80,8 @@ recalculateSize() const
 	for(auto w : _dataModel->embeddedWidget())
   {
 //		_width += w->width();
-		_width = std::max(_width, static_cast<unsigned>(w->pos().x() + w->width() + _spacing*2));
-	}
+    _width = std::max(_width, static_cast<unsigned>(w->pos().x() + w->width() + _spacing*2.5));
+  }
 }
 
 
@@ -193,15 +193,17 @@ QPointF
 NodeGeometry::
 widgetPosition() const
 {
-	int sum = 0;
-	for(auto w : _dataModel->embeddedWidget())
-  {
-		sum += w->height() + 4*(_dataModel->embeddedWidget().size() - 1);
-	}
-	return QPointF(_spacing + portWidth(PortType::In),
-								 (nameHeight() + _height - sum) / 2.0);
+  unsigned int step = _entryHeight + _spacing;
+  QPointF result;
 
-  return QPointF();
+  double totalHeight = 0.0;
+  totalHeight += nameHeight();
+
+  // TODO: why?
+  totalHeight += step / 2.0;
+  totalHeight -= (_dataModel->embeddedWidget()[0]->height()/2.0);
+
+  return QPointF(_spacing + portWidth(PortType::In), totalHeight);
 }
 
 

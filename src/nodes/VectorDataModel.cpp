@@ -133,7 +133,7 @@ void VectorDataModel::setInData(std::shared_ptr<NodeData> _data, PortIndex portI
     m_inputs[portIndex]->setVisible(false);
     m_inputs[portIndex]->setText(data->value().c_str());
   } else {
-    m_inputs[portIndex]->setVisible(false);
+    m_inputs[portIndex]->setVisible(true);
     m_inputs[portIndex]->setText("0.0");
   }
 }

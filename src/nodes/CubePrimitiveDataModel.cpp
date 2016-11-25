@@ -34,18 +34,18 @@ unsigned int CubePrimitiveDataModel::nPorts(PortType portType) const
 
 NodeDataType CubePrimitiveDataModel::dataType(PortType portType, PortIndex portIndex) const
 {
-    switch (portType)
-    {
-      case PortType::In:
-          return ColorData().type();
+  switch (portType)
+  {
+    case PortType::In:
+      return ColorData().type();
+    break;
+    case PortType::Out:
+      return DistanceFieldOutput().type();
+    break;
+    default:
       break;
-      case PortType::Out:
-        return DistanceFieldOutput().type();
-      break;
-      default:
-        break;
-    }
-    return DistanceFieldInput().type();
+  }
+  return DistanceFieldInput().type();
 }
 
 std::shared_ptr<NodeData> CubePrimitiveDataModel::outData(PortIndex port)
@@ -53,9 +53,12 @@ std::shared_ptr<NodeData> CubePrimitiveDataModel::outData(PortIndex port)
   return nullptr;
 }
 
-void CubePrimitiveDataModel::setInData(std::shared_ptr<NodeData>, int)
+void CubePrimitiveDataModel::setInData(std::shared_ptr<NodeData> _data, int)
 {
-
+  auto data = std::dynamic_pointer_cast<ColorData>(_data);
+  if(data) {
+    m_color = data->color();
+  }
 }
 
 std::vector<QWidget *> CubePrimitiveDataModel::embeddedWidget()
