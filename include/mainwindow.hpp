@@ -26,6 +26,7 @@ class MainWindow : public QMainWindow
 public:
   explicit MainWindow(QWidget *_parent = 0);
   ~MainWindow();
+	void keyPressEvent(QKeyEvent *_event);
 
   std::unordered_map<QUuid, std::shared_ptr<Node>> getNodes() { return m_nodes->getNodes(); }
 

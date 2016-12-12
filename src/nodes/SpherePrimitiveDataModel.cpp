@@ -18,7 +18,7 @@ unsigned int SpherePrimitiveDataModel::nPorts(PortType portType) const
   switch (portType)
   {
     case PortType::In:
-      result = 0;
+			result = 1;
       break;
 
     case PortType::Out:
@@ -33,18 +33,19 @@ unsigned int SpherePrimitiveDataModel::nPorts(PortType portType) const
 
 NodeDataType SpherePrimitiveDataModel::dataType(PortType portType, PortIndex portIndex) const
 {
-//  switch (portType)
-//  {
-//    case PortType::In:
-//      return MyNodeData().type();
-//    break;
-//		case PortType::Out:
-      return DistanceFieldOutput().type();
-//		break;
+	switch (portType)
+	{
+		case PortType::In:
+			return ColorData().type();
+		break;
+		case PortType::Out:
+			return DistanceFieldOutput().type();
+		break;
 
-//    default:
-//      break;
-//  }
+		default:
+			break;
+	}
+	return DistanceFieldOutput().type();
 }
 
 std::shared_ptr<NodeData> SpherePrimitiveDataModel::outData(PortIndex port)
@@ -52,9 +53,12 @@ std::shared_ptr<NodeData> SpherePrimitiveDataModel::outData(PortIndex port)
   return nullptr;
 }
 
-void SpherePrimitiveDataModel::setInData(std::shared_ptr<NodeData>, int)
+void SpherePrimitiveDataModel::setInData(std::shared_ptr<NodeData> _data, int)
 {
-
+	auto data = std::dynamic_pointer_cast<ColorData>(_data);
+	if(data) {
+		m_color = data->color();
+	}
 }
 
 std::vector<QWidget *> SpherePrimitiveDataModel::embeddedWidget()
@@ -68,5 +72,5 @@ std::string SpherePrimitiveDataModel::getShaderCode()
   {
     m_transform = "mat4x4(cos(u_GlobalTime)*1.0+0, sin(u_GlobalTime)*1.0+0, 0, 2.5,	-sin(u_GlobalTime)*1.0+0, cos(u_GlobalTime)*1.0+0, 0, 0.600000024, 0, 0, 1, 0, 0, 0, 0, 1)";
   }
-	return "sdSphere(vec3(" + m_transform + " * vec4(_position, 1.0)).xyz, 0.6f, vec3(1.0, 0.41, 0.71))";
+	return "sdSphere(vec3(" + m_transform + " * vec4(_position, 1.0)).xyz, 0.6f, vec3(clamp(" + m_color.m_x + ", 0.0, 1.0), clamp(" + m_color.m_y + ", 0.0, 1.0), clamp(" + m_color.m_z + ", 0.0, 1.0)))";
 }

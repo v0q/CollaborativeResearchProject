@@ -17,6 +17,7 @@
 
 #include "ConnectionGraphicsObject.hpp"
 
+#include "DistanceFieldOutputDataModel.hpp"
 #include "FlowItemInterface.hpp"
 #include "FlowView.hpp"
 #include "DataModelRegistry.hpp"
@@ -118,7 +119,6 @@ restoreNode(Properties const &p)
   QString modelName;
 
   p.get("model_name", &modelName);
-
   for(auto const &category : DataModelRegistry::registeredModels())
   {
     auto it = category.second.find(modelName);
@@ -135,7 +135,7 @@ restoreNode(Properties const &p)
       _nodes[node->id()] = node;
       emit nodeEditorChanged();
       return node;
-    }
+		}
   }
   throw std::logic_error(std::string("No registered model with name ") +
                          modelName.toLocal8Bit().data());
@@ -187,17 +187,20 @@ save() const
   writeBuffer.open(QIODevice::WriteOnly);
   QDataStream out(&writeBuffer);
 
-  out << static_cast<quint64>(_nodes.size());
+	out << static_cast<quint64>(_nodes.size() - 1);
 
-  for (auto const & pair : _nodes)
-  {
-    auto const &node = pair.second;
+	for(auto const & pair : _nodes)
+	{
+		auto const &node = pair.second;
 
     Properties p;
 
     node->save(p);
 
     QVariantMap const &m = p.values();
+
+		if(p.values().find(QString("model_name")) == p.values().end())
+			continue;
 
     out << m;
   }
@@ -225,7 +228,7 @@ save() const
                                  QDir::homePath(),
                                  tr("Flow Scene Files (*.flow)"));
 
-  if (!fileName.isEmpty())
+	if(!fileName.isEmpty())
   {
     if (!fileName.endsWith("flow", Qt::CaseInsensitive))
       fileName += ".flow";
@@ -241,8 +244,13 @@ void
 FlowScene::
 load()
 {
-  _connections.clear();
-  _nodes.clear();
+	_connections.clear();
+//	for(auto n = _nodes.begin(); n != _nodes.end(); ++n) {
+//		if((*n).second()) {
+//			_nodes.erase(n);
+//		}
+//	}
+	_nodes.clear();
 
   //-------------
 
@@ -257,7 +265,7 @@ load()
 
   QFile file(fileName);
 
-  if (!file.open(QIODevice::ReadOnly))
+	if(!file.open(QIODevice::ReadOnly))
     return;
 
   QDataStream in(&file);

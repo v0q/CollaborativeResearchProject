@@ -64,6 +64,7 @@ public:
 	virtual DFNodeType getNodeType() const = 0;
 	virtual Mat4f getTransform() { return Mat4f(); }
 	virtual void setTransform(const Mat4f &_t) {}
+	virtual QColor getNodeColor(PortType, PortIndex) const { return Qt::cyan; }
 
   virtual void updateWidgets() {}
   static QString nodeCategory() { return QString("Primitive"); }

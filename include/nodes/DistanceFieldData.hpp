@@ -248,7 +248,7 @@ class DistanceFieldInput : public NodeData
 public:
 	NodeDataType type() const override
 	{
-		return NodeDataType {"DistanceFieldData", "     "};
+		return NodeDataType {"DistanceFieldData", "     ", Qt::green};
 	}
 };
 
@@ -257,7 +257,7 @@ class DistanceFieldOutput : public NodeData
 public:
 	NodeDataType type() const override
 	{
-		return NodeDataType {"DistanceFieldData", "Result"};
+		return NodeDataType {"DistanceFieldData", "Result", Qt::green};
 	}
 };
 
@@ -268,7 +268,7 @@ public:
 	ScalarData(const std::string &_v) : m_value(_v) {}
 	NodeDataType type() const override
 	{
-		return NodeDataType {"Scalar", " "};
+		return NodeDataType {"Scalar", " ", Qt::red};
 	}
 	std::string value() const { return m_value; }
 private:
@@ -285,7 +285,7 @@ public:
 
 	NodeDataType type() const override
 	{
-		return NodeDataType {"Vector", "Vec"};
+		return NodeDataType {"Vector", "Vec", Qt::yellow};
 	}
 
 	Vec4f vector() const
@@ -307,7 +307,7 @@ public:
 
   NodeDataType type() const override
   {
-    return NodeDataType {"Color", "Cd"};
+		return NodeDataType {"Color", "Cd", Qt::white};
   }
 
   Vec4f color() const

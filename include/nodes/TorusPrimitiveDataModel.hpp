@@ -3,40 +3,32 @@
 #include <QtCore/QObject>
 #include <QtWidgets/QLineEdit>
 #include <iostream>
+#include <QColorDialog>
+
 
 #include "nodeEditor/NodeDataModel.hpp"
 #include "nodes/DistanceFieldData.hpp"
-
-class SphereData : public NodeData
-{
-public:
-
-  NodeDataType
-  type() const override
-	{ return NodeDataType {"DistanceFieldData", "Sphere Data"}; }
-
-};
 
 //------------------------------------------------------------------------------
 
 /// The model dictates the number of inputs and outputs for the Node.
 /// In this example it has no logic.
-class SpherePrimitiveDataModel : public NodeDataModel
+class TorusPrimitiveDataModel : public NodeDataModel
 {
   Q_OBJECT
 
 public:
 
-	virtual ~SpherePrimitiveDataModel();
+	virtual ~TorusPrimitiveDataModel();
 
   QString caption() const override
   {
-		return QString("Sphere");
+		return QString("Torus");
   }
 
   static QString name()
   {
-		return QString("Sphere");
+		return QString("Torus");
   }
 
 
@@ -69,6 +61,8 @@ public:
   }
 
 private:
-	Vec4f m_color;
+  Vec4f m_color;
 	std::string m_transform;
 };
+
+

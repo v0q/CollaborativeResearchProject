@@ -5,6 +5,8 @@ uniform vec2 u_Resolution;
 in vec2 o_FragCoord;
 out vec4 o_FragColor;
 
+//float pixelRadius = (2.0f/u_Resolution.x + 2.0f/u_Resolution.y)/2.0f;
+
 struct TraceResult
 {
   vec3 color;
@@ -43,7 +45,7 @@ vec4 sdFastBox(vec3 _position, float _w, vec3 color)
 }
 
 // Torus - signed - exact
-vec4 sdTorus(vec4 p, vec2 t, vec3 color)
+vec4 sdTorus(vec3 p, vec2 t, vec3 color)
 {
   vec2 q = vec2(length(p.xz)-t.x,p.y);
   return vec4(length(q)-t.y, color);
@@ -150,15 +152,20 @@ float w2(float a, float b, float t)
 
 vec3 lerp(vec4 a, vec4 b, float t)
 {
-//  return t*a.yzw + (1-t)*b.yzw;
-  return w1(a.x, b.x, t)*a.yzw + w2(a.x, b.x, t)*b.yzw;
+  return t*a.yzw + (1-t)*b.yzw;
+//  return w1(a.x, b.x, t)*a.yzw + w2(a.x, b.x, t)*b.yzw;
 }
 
 vec4 smin(vec4 a, vec4 b, float k)
 {
-  float h = clamp(0.5+0.5*(b.x-a.x)/k, 0.0, 1.0);
-  float d = mix(b.x, a.x, h) - k*h*(1.0-h);
-  return vec4(d, lerp(a, b, h));
+//  float ax = pow(a.x, k);
+//  float bx = pow(b.x, k);
+//  float d = pow((ax*bx)/(ax+bx), 1.0/k);
+  float res = exp( -k*a.x ) + exp( -k*b.x );
+  float d = -log( res )/k;
+//  float h = clamp(0.5+0.5*(b.x-a.x)/k, 0.0, 1.0);
+//  float d = mix(b.x, a.x, h) - k*h*(1.0-h);
+  return vec4(d, lerp(a, b, 0.5));
 }
 
 vec4 opUnion(vec4 a, vec4 b)
@@ -184,16 +191,19 @@ vec3 opRepetition(vec3 p, vec3 c)
 
 vec4 map(vec3 _position)
 {
-  vec4 pos = vec4(4.0, 3.0, 4.0, 0.0);
+  vec4 pos = vec4(1.0, 0.0, 0.0, 0.0);
 //  pos = opRepetition(_position, pos.xyz);
-  pos = opUnion(pos, sdFastBox(vec3(mat4x4(1 * cos(u_GlobalTime) * 1.0, 1.0 * sin(u_GlobalTime) * sin(u_GlobalTime) * 1.0, 1.0 * cos(u_GlobalTime) * sin(u_GlobalTime) * 1.0, 0,
-                                           0, 1.0 * cos(u_GlobalTime) * 1.0 * 1.0,  - sin(u_GlobalTime) * 1.0 * 1.0, 0,
-                                            - sin(u_GlobalTime) * 1.0, 1.0 * sin(u_GlobalTime) * cos(u_GlobalTime) * 1.0, 1.0 * cos(u_GlobalTime) * cos(u_GlobalTime) * 1.0, 0,
-                                           0, 0, 0, 1) * vec4(_position, 1.0)), 0.6, vec3(0.2, 0.2, 0.2)));
-//  _position = opRepetition(_position, vec3(4.0, 4.0, 4.0));
+//  pos = opUnion(pos, sdFastBox(vec3(mat4x4(1 * cos(u_GlobalTime) * 1.0, 1.0 * sin(u_GlobalTime) * sin(u_GlobalTime) * 1.0, 1.0 * cos(u_GlobalTime) * sin(u_GlobalTime) * 1.0, 0,
+//                                           0, 1.0 * cos(u_GlobalTime) * 1.0 * 1.0,  - sin(u_GlobalTime) * 1.0 * 1.0, 0,
+//                                            - sin(u_GlobalTime) * 1.0, 1.0 * sin(u_GlobalTime) * cos(u_GlobalTime) * 1.0, 1.0 * cos(u_GlobalTime) * cos(u_GlobalTime) * 1.0, 0,
+//                                           0, 0, 0, 1) * vec4(_position, 1.0)), 0.6, vec3(clamp(-1, 0, 1), 0, 0)));
+  _position = opRepetition(_position, vec3(4.0, 4.0, 4.0));
 ////  pos = opUnion(pos, sdPlane(_position, vec4(0.0, 1.0, 0.0, 1.0), vec3(0.85, 0.85, 0.85)));
 //  float sg = sin(u_GlobalTime/300.f)*180;
 //  float gg = cos(u_GlobalTime/200.f)*90;
+  pos = sdTorus(vec3(mat4x4(1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0) * vec4(_position, 1.0)).xyz, vec2(1.0, 0.2), vec3(clamp(0.0, 0.0, 1.0), clamp(0.0, 0.0, 1.0), clamp(0.0, 0.0, 1.0)));
+//  float sg = sin(1)*180;
+//  float gg = cos(5)*90;
 //  pos = opUnion(pos, sdSphere(_position, 0.6, vec3(1.0, 1.078, 0.576)));
 //  pos = smin(pos, sdSphere(vec3(mat4x4(1, 0, 0, 0,
 //                                           0, 1, 0, 0,
@@ -209,9 +219,9 @@ vec4 map(vec3 _position)
 //                                           0, 0, 0, 1)*
 //                                    mat4x4(1, 0, 0, 0,
 //                                           0, 1, 0, 0,
-//                                           0, 0, 1, 0,
+//                                           0, 0, 1, 0.2,
 //                                           0, sin(sg)*0.6, 0, 1)*
-//                                    vec4(_position + vec3(0.0, 0.0, 0.0), 1.0)), 0.6, vec3(1.0, 0.078, 0.576)), 0.6);
+//                                    vec4(_position + vec3(0.0, 0.0, 0.0), 1.0)), 0.8, vec3(1.0, 0.078, 0.576)), 20.);
 //  pos = smin(pos, sdSphere(vec3(mat4x4(1, 0, 0, 0,
 //                                       0, 1, 0, 0,
 //                                       0, 0, 1, 0,
@@ -229,7 +239,7 @@ vec4 map(vec3 _position)
 //                                       0, 0, 1, 0,
 //                                       0, sin(sg)*0.6, 0, 1)*
 //                                vec4(_position, 1.0)) + vec3(0.0, 0.0, 0.0), 0.6, vec3(0.0, 1.0, 0.576)), 0.3);
-//  pos = smin(pos, sdSphere(_position, 0.5, vec3(0.0, 0.0, 1.0)), 0.5);
+//  pos = smin(pos, sdSphere(_position + vec3(0., -1., 0.), 0.5, vec3(0.0, 0.0, 1.0)), 0.5);
 //  float l = length(_position);
 //  _position = vec3(mat4x4(cos(sg*l), -sin(sg*l), 0, 0,
 //                          sin(sg*l), cos(sg*l), 0, 0,
@@ -264,7 +274,8 @@ mat2x3 createRay(vec3 _origin, vec3 _lookAt, vec3 _upV, vec2 _uv, float _fov, fl
 {
   mat2x3 ray;
   vec3 direction, rayUpV, rightV;
-  vec2 uv;
+  vec2 uv;//  if((trace.t > traceprecision || candidate_error > pixelRadius) && !forceHit)
+  //    trace.t = 1.0f;
   float fieldOfViewRad;
 
   ray[0] = _origin;
@@ -284,6 +295,38 @@ TraceResult castRay(mat2x3 _ray)
 {
   TraceResult trace;
   trace.t = 1.f;
+//  float omega = 1.2;
+//  float candidate_error = 1.f;
+//  float candidate_t = 1.f;
+//  float previousRadius = 0;
+//  float stepLength = 0;
+//  float functionSign = map(_ray[0]).x < 0 ? -1 : +1;
+//  float pixelRadius = 0.01/u_Resolution.x;
+//  bool forceHit = false;
+//  for (int i = 0; i < 80; ++i) {
+//    vec4 signedRadius = functionSign * map(_ray[1]*trace.t + _ray[0]);
+//    float radius = abs(signedRadius.x);
+//    trace.d = signedRadius.x;
+//    trace.color = signedRadius.yzw;
+//    bool sorFail = omega > 1 && (radius + previousRadius) < stepLength;
+//    if(sorFail) {
+//      stepLength -= omega * stepLength;
+//      omega = 1;
+//    } else {
+//      stepLength = signedRadius.x * omega;
+//    }
+//    previousRadius = radius;
+//    float error = radius / trace.t;
+//    if (!sorFail && error < candidate_error) {
+//      candidate_error = error;
+//    }
+//    if(!sorFail && error < pixelRadius || trace.d <= traceprecision) break;
+//    trace.t += stepLength;
+//  }
+////  if((trace.t > traceprecision || candidate_error > pixelRadius) && !forceHit)
+////    trace.t = candidate_error;
+//  return trace;
+
   for(int i = 0; i < 80; ++i)
   {
     vec4 r = map(_ray[0] + trace.t * _ray[1]);
@@ -338,20 +381,22 @@ vec3 render(mat2x3 _ray)
   {
     vec3 p = _ray[0] + trace.t * _ray[1];
     vec3 n = calcNormal(p);
-    vec3 lightDir = normalize(lightPos - p);
-//    vec3 ref = reflect(_ray[1], n);
-    float intensity = clamp(dot(n, lightDir), 0.0, 1.0);
-    float shadow = softshadow(p, lightPos, 0.01, 2.5);
-    shadow = 1.0f;
-    trace.color = applyFog(trace.color, trace.t/150.f);
+//    vec3 lightDir = normalize(lightPos - p);
+////    vec3 ref = reflect(_ray[1], n);
+//    float intensity = clamp(dot(n, lightDir), 0.0, 1.0);
+//    float shadow = softshadow(p, lightPos, 0.01, 2.5);
+//    shadow = 1.0f;
+////    trace.color = applyFog(trace.color, trace.t/150.f);
 
-    // Vigneting
-    vec2 q = o_FragCoord.xy / u_Resolution.xy;
-    trace.color *= 0.5 + 0.5*pow( 16.0*q.x*q.y*(1.0-q.x)*(1.0-q.y), 0.25 );
-    trace.color *= 1.4 /** intensity*/ * vec3(1.0, 1.0, 1.0);
-    trace.color *= shadow;
+//    // Vigneting
+//    vec2 q = o_FragCoord.xy / u_Resolution.xy;
+//    trace.color *= 0.5 + 0.5*pow( 16.0*q.x*q.y*(1.0-q.x)*(1.0-q.y), 0.25 );
+//    trace.color *= 1.4 /** intensity*/ * vec3(1.0, 1.0, 1.0);
+//    trace.color *= shadow;
+//    trace.color = n;
 
-    return clamp(trace.color, 0.0, 1.0);
+    return n;
+//    return clamp(trace.color, 0.0, 1.0);
   }
   return vec3(0.529, 0.807, 0.9215);
 }

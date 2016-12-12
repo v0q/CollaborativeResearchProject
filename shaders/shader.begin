@@ -43,7 +43,7 @@ vec4 sdFastBox(vec3 _position, float _w, vec3 color)
 }
 
 // Torus - signed - exact
-vec4 sdTorus(vec4 p, vec2 t, vec3 color)
+vec4 sdTorus(vec3 p, vec2 t, vec3 color)
 {
   vec2 q = vec2(length(p.xz)-t.x,p.y);
   return vec4(length(q)-t.y, color);

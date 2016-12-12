@@ -42,8 +42,15 @@ canConnect(PortIndex &portIndex) const
   auto const &modelTarget = _node->nodeDataModel();
   NodeDataType candidateNodeDataType = modelTarget->dataType(requiredPort, portIndex);
 
+	if(requiredPort == PortType::In && _node == _connection->getNode(PortType::Out).lock()) {
+		return false;
+	}
+	else if(_node == _connection->getNode(PortType::In).lock()) {
+		return false;
+	}
+
   if (connectionDataType.id != candidateNodeDataType.id)
-    return false;
+		return false;
 
   return true;
 }

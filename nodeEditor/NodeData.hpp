@@ -1,6 +1,7 @@
 #pragma once
 
 #include <QtCore/QString>
+#include <QColor>
 
 #include "Export.hpp"
 
@@ -9,6 +10,12 @@ struct NodeDataType
 {
   QString id;
   QString name;
+	QColor color;
+
+	NodeDataType() : id(""), name(""), color(Qt::cyan) {}
+	NodeDataType(QString _id, QString _name, QColor _color = Qt::cyan) :
+		id(_id), name(_name), color(_color)
+	{}
 };
 
 /// Class represents data transferred between nodes.
@@ -23,5 +30,5 @@ public:
   }
 
   /// Type for inner use
-  virtual NodeDataType type() const = 0;
+	virtual NodeDataType type() const = 0;
 };

@@ -39,7 +39,8 @@ FlowView(FlowScene *scene)
 
   setCacheMode(QGraphicsView::CacheBackground);
 
-  //setViewport(new QGLWidget(QGLFormat(QGL::SampleBuffers)));
+	//setViewport(new QGLWidget(QGLFormat(QGL::SampleBuffers)));
+	this->setSceneRect(0, 0, this->rect().width()*8, this->rect().height()*8);
 }
 
 
@@ -237,8 +238,8 @@ void
 FlowView::
 showEvent(QShowEvent *event)
 {
-  _scene->setSceneRect(this->rect());
-  QGraphicsView::showEvent(event);
+	_scene->setSceneRect(this->rect());
+	QGraphicsView::showEvent(event);
 }
 
 

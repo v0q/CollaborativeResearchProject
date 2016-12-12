@@ -24,7 +24,7 @@ namespace hsitho
 		~SceneWindow();
 
     void initializeGL();
-    void paintGL();
+		void paintGL();
 
 	private:
 		std::string recurseNodeTree(std::shared_ptr<Node> _node, Mat4f _t);

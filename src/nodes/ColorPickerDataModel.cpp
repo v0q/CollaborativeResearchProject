@@ -6,16 +6,17 @@
 #include "ExpressionEvaluator.hpp"
 
 ColorPickerDataModel::ColorPickerDataModel()
-  : _label(new QLabel("Select Color")),
-    m_x(new QLineEdit()),
-    m_y(new QLineEdit()),
-    m_z(new QLineEdit()),
+	: _label(new QLabel("Select Color")),
     m_margin(12),
     m_w(0),
     m_h(0),
     m_px(0),
     m_py(0),
-    m_cd(nullptr)
+		m_vars(false),
+		m_cd(nullptr),
+		m_x(new QLineEdit()),
+		m_y(new QLineEdit()),
+		m_z(new QLineEdit())
 {
   m_w = m_x->sizeHint().width()/2;
   m_h = m_x->sizeHint().height();
@@ -80,6 +81,28 @@ QColor QColorPicker::onColor(QColor& current_color)
 
 void ColorPickerDataModel::colorEdit(QString const &string)
 {
+	bool ok = false;
+
+	std::cout << m_vars << "\n";
+
+	if(!m_vars) {
+		m_x->text().toFloat(&ok);
+		if(!ok) {
+			emit dataInvalidated(0);
+			return;
+		}
+		m_y->text().toFloat(&ok);
+		if(!ok) {
+			emit dataInvalidated(0);
+			return;
+		}
+		m_z->text().toFloat(&ok);
+		if(!ok) {
+			emit dataInvalidated(0);
+			return;
+		}
+	}
+
   m_cd = std::make_shared<ColorData>(m_x->text().toStdString(),
                                      m_y->text().toStdString(),
                                      m_z->text().toStdString());
@@ -158,19 +181,7 @@ NodeDataType ColorPickerDataModel::dataType(PortType portType, PortIndex) const
 void ColorPickerDataModel::setInData(std::shared_ptr<NodeData> _data, int)
 {
   auto data = std::dynamic_pointer_cast<VectorData>(_data);
-  if(data) {
-    m_x->setVisible(false);
-    m_x->setText(QString(data->vector().m_x.c_str()));
-    m_y->setVisible(false);
-    m_y->setText(QString(data->vector().m_y.c_str()));
-    m_z->setVisible(false);
-    m_z->setText(QString(data->vector().m_z.c_str()));
-
-    m_x->setGeometry(0, 0, 0, 0);
-    m_y->setGeometry(0, 0, 0, 0);
-    m_z->setGeometry(0, 0, 0, 0);
-    _label->setText("");
-    _label->setGeometry(m_px, m_py, m_w, m_h);
+	if(data) {
     try {
       Vec4f vec = data->vector();
 
@@ -179,12 +190,25 @@ void ColorPickerDataModel::setInData(std::shared_ptr<NodeData> _data, int)
       int b = hsitho::Expressions::clamp<int>((int)(boost::lexical_cast<float>(vec.m_z) * 255), 0, 255);
       current_color = QColor(r, g, b);
       setPalColor();
+			m_vars = false;
     } catch(boost::exception &) {
       current_color = QColor(0, 0, 0);
       m_palColor.setColor(_label->backgroundRole(), current_color);
-      _label->setPalette(m_palColor);
-//      setPalColor();
+			_label->setPalette(m_palColor);
+			m_vars = true;
     }
+		m_x->setVisible(false);
+		m_x->setText(QString(data->vector().m_x.c_str()));
+		m_y->setVisible(false);
+		m_y->setText(QString(data->vector().m_y.c_str()));
+		m_z->setVisible(false);
+		m_z->setText(QString(data->vector().m_z.c_str()));
+
+		m_x->setGeometry(0, 0, 0, 0);
+		m_y->setGeometry(0, 0, 0, 0);
+		m_z->setGeometry(0, 0, 0, 0);
+		_label->setText("");
+		_label->setGeometry(m_px, m_py, m_w, m_h);
   } else {
     m_x->setGeometry(m_px, m_py, m_w, m_h);
     m_y->setGeometry(m_px + m_w + m_margin, m_py, m_w, m_h);
@@ -192,9 +216,13 @@ void ColorPickerDataModel::setInData(std::shared_ptr<NodeData> _data, int)
     _label->setGeometry(m_px, m_py + m_h + m_margin, m_w*3 + m_margin*2, m_h);
 
     m_x->setVisible(true);
+		m_x->setText("0.0");
     m_y->setVisible(true);
+		m_y->setText("0.0");
     m_z->setVisible(true);
+		m_z->setText("0.0");
     _label->setText("Select Color");
+		m_vars = false;
   }
 }
 

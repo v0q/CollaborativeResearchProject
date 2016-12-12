@@ -8,6 +8,7 @@ BlendDataModel::~BlendDataModel()
 
 void BlendDataModel::save(Properties &p) const
 {
+	p.put("model_name", BlendDataModel::name());
 }
 
 unsigned int BlendDataModel::nPorts(PortType portType) const

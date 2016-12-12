@@ -9,7 +9,7 @@ CubePrimitiveDataModel::~CubePrimitiveDataModel()
 
 void CubePrimitiveDataModel::save(Properties &p) const
 {
-
+	p.put("model_name", CubePrimitiveDataModel::name());
 }
 
 unsigned int CubePrimitiveDataModel::nPorts(PortType portType) const
@@ -56,10 +56,8 @@ std::shared_ptr<NodeData> CubePrimitiveDataModel::outData(PortIndex port)
 void CubePrimitiveDataModel::setInData(std::shared_ptr<NodeData> _data, int)
 {
   auto data = std::dynamic_pointer_cast<ColorData>(_data);
-  if(data) {
-    std::cout << data->color().m_x << "\n";
-    m_color = data->color();
-    std::cout << m_color.m_x << "\n";
+	if(data) {
+		m_color = data->color();
   }
 }
 
@@ -73,7 +71,6 @@ std::string CubePrimitiveDataModel::getShaderCode()
   if(m_transform == "")
   {
     m_transform = "mat4x4(cos(u_GlobalTime)*1.0+0, sin(u_GlobalTime)*1.0+0, 0, 2.5,	-sin(u_GlobalTime)*1.0+0, cos(u_GlobalTime)*1.0+0, 0, 0.600000024, 0, 0, 1, 0, 0, 0, 0, 1)";
-  }
-  std::cout << m_color.m_x << "\n";
-  return "sdFastBox(vec3(" + m_transform + " * vec4(_position, 1.0)).xyz, 0.6f, vec3(" + m_color.m_x + ", " + m_color.m_y + ", " + m_color.m_z + "))";
+	}
+	return "sdFastBox(vec3(" + m_transform + " * vec4(_position, 1.0)).xyz, 0.6f, vec3(clamp(" + m_color.m_x + ", 0.0, 1.0), clamp(" + m_color.m_y + ", 0.0, 1.0), clamp(" +m_color.m_z + ", 0.0, 1.0)))";
 }

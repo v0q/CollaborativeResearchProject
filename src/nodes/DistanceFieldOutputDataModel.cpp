@@ -8,7 +8,7 @@ DistanceFieldOutputDataModel::~DistanceFieldOutputDataModel()
 
 void DistanceFieldOutputDataModel::save(Properties &p) const
 {
-	p.put("Cube_size", DistanceFieldOutputDataModel::name());
+//	p.put("model_name", DistanceFieldOutputDataModel::name());
 }
 
 unsigned int DistanceFieldOutputDataModel::nPorts(PortType portType) const

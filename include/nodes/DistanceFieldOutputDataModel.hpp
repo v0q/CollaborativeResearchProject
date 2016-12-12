@@ -11,7 +11,7 @@ class OutputData : public NodeData
 {
 public:
 	NodeDataType type() const override {
-		return NodeDataType {"DistanceFieldData", "DISTANCE"};
+		return NodeDataType {"DistanceFieldData", "DISTANCE", Qt::green};
 	}
 };
 

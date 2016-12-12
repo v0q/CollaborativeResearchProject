@@ -46,7 +46,7 @@ paint(QPainter* painter,
 
   drawConnectionPoints(painter, geom, state, model);
 
-  drawFilledConnectionPoints(painter, geom, state);
+	drawFilledConnectionPoints(painter, geom, state, model);
 
   drawModelName(painter, geom, state, model);
 
@@ -106,10 +106,8 @@ drawConnectionPoints(QPainter* painter,
                      NodeState const& state,
                      std::unique_ptr<NodeDataModel> const & model)
 {
-  painter->setBrush(QColor(Qt::darkGray));
-
   auto diameter = geom.connectionPointDiameter();
-  auto reducedDiameter = diameter * 0.6;
+	auto reducedDiameter = diameter * 0.6;
 
   auto drawPoints =
   [&](PortType portType)
@@ -128,9 +126,9 @@ drawConnectionPoints(QPainter* painter,
       {
 
         auto   diff = geom.draggingPos() - p;
-        double dist = std::sqrt(QPointF::dotProduct(diff, diff));
+				double dist = std::sqrt(QPointF::dotProduct(diff, diff));
 
-        if (state.reactingDataType().id == model->dataType(portType, i).id)
+				if(state.reactingDataType().id == model->dataType(portType, i).id)
         {
           double const thres = 40.0;
           r = (dist < thres) ?
@@ -144,11 +142,12 @@ drawConnectionPoints(QPainter* painter,
               (dist / thres) :
               1.0;
         }
-      }
+			}
 
-      painter->drawEllipse(p,
-                           reducedDiameter * r,
-                           reducedDiameter * r);
+			painter->setBrush(model->dataType(portType, i).color);
+			painter->drawEllipse(p,
+													 reducedDiameter * r,
+													 reducedDiameter * r);
     }
   };
 
@@ -160,12 +159,10 @@ drawConnectionPoints(QPainter* painter,
 void
 NodePainter::
 drawFilledConnectionPoints(QPainter * painter,
-                           NodeGeometry const & geom,
-                           NodeState const & state)
+													 NodeGeometry const & geom,
+													 NodeState const & state,
+													 const std::unique_ptr<NodeDataModel> &model)
 {
-  painter->setPen(Qt::cyan);
-  painter->setBrush(Qt::cyan);
-
   auto diameter = geom.connectionPointDiameter();
 
   auto drawPoints =
@@ -181,6 +178,8 @@ drawFilledConnectionPoints(QPainter * painter,
 			{
 				if(conn.lock())
 				{
+					painter->setPen(model->dataType(portType, i).color);
+					painter->setBrush(model->dataType(portType, i).color);
 					painter->drawEllipse(p,
 															 diameter * 0.4,
 															 diameter * 0.4);
