@@ -48,42 +48,55 @@ void
 FlowView::
 contextMenuEvent(QContextMenuEvent *event)
 {
-  QMenu modelMenu;
+//	for(auto &d : _scene->selectedItems())
+//	{
+//		std::dynamic_pointer_cast<NodeGraphicsObject>(d)->
+//	}
+	if(_scene->selectedItems().size() > 1)
+	{
+		QMenu collapseMenu;
+		collapseMenu.addAction("Collapse");
+		if(QAction *action = collapseMenu.exec(event->globalPos()))
+		{
+			std::cout << action->text().toStdString() << "\n";
+		}
+	} else {
+		QMenu modelMenu;
+		for(auto const &category : DataModelRegistry::registeredModels())
+		{
+			modelMenu.addSection(category.first);
 
-  for(auto const &category : DataModelRegistry::registeredModels())
-  {
-//    auto catMenu = modelMenu.addMenu(category.first);
-    modelMenu.addSection(category.first);
+			for(auto const &modelRegistry : category.second)
+			{
+				QString const &modelName = modelRegistry.first;
+				modelMenu.addAction(modelName);
+			}
+		}
 
-    for(auto const &modelRegistry : category.second)
-    {
-      QString const &modelName = modelRegistry.first;
-//      catMenu->addAction(modelName);
-      modelMenu.addAction(modelName);
-    }
-  }
+		std::cout << "Global: " << event->globalPos().x() << " " << event->globalPos().y() << "\n";
 
-  if(QAction * action = modelMenu.exec(event->globalPos()))
-  {
-    QString modelName = action->text();
+		if(QAction * action = modelMenu.exec(event->globalPos()))
+		{
+			QString modelName = action->text();
 
-    for(auto const &category : DataModelRegistry::registeredModels())
-    {
-      auto it = category.second.find(modelName);
+			for(auto const &category : DataModelRegistry::registeredModels())
+			{
+				auto it = category.second.find(modelName);
 
-      if(it != category.second.end())
-      {
-        auto node = _scene->createNode(it->second->create() );
+				if(it != category.second.end())
+				{
+					auto node = _scene->createNode(it->second->create() );
 
-        QPoint pos = event->pos();
-        QPointF posView = this->mapToScene(pos);
+					QPoint pos = event->pos();
+					QPointF posView = this->mapToScene(pos);
 
-        node->nodeGraphicsObject()->setPos(posView);
-        return;
-      }
-    }
-    qDebug() << "Model not found";
-  }
+					node->nodeGraphicsObject()->setPos(posView);
+					return;
+				}
+			}
+			qDebug() << "Model not found";
+		}
+	}
 }
 
 

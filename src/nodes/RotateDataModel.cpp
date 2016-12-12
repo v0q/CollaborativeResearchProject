@@ -2,6 +2,7 @@
 
 void RotateDataModel::save(Properties &p) const
 {
+	p.put("model_name", name());
 }
 
 unsigned int RotateDataModel::nPorts(PortType portType) const

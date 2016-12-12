@@ -2,6 +2,7 @@
 
 void TranslateDataModel::save(Properties &p) const
 {
+	p.put("model_name", name());
 }
 
 unsigned int TranslateDataModel::nPorts(PortType portType) const

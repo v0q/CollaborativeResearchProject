@@ -165,15 +165,14 @@ itemChange(GraphicsItemChange change, const QVariant &value)
   return QGraphicsItem::itemChange(change, value);
 }
 
-
 void
 NodeGraphicsObject::
 mousePressEvent(QGraphicsSceneMouseEvent * event)
 {
-  if (!this->isSelected() && !(event->modifiers() & Qt::ControlModifier))
+	if(!this->isSelected() && !(event->modifiers() & Qt::ControlModifier))
   {
     _scene.clearSelection();
-  }
+	}
 
 	auto clickPort =
   [&](PortType portToCheck)

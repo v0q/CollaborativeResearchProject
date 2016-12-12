@@ -46,6 +46,7 @@ public:
   void setCurrentColor(const QColor &color);
 
   void save(Properties &p) const override;
+	void restore(const Properties &p) override;
   void setInData(std::shared_ptr<NodeData>, int) override;
   void updateWidgets() override;
 

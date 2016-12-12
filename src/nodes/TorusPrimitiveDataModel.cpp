@@ -7,7 +7,7 @@ TorusPrimitiveDataModel::~TorusPrimitiveDataModel()
 
 void TorusPrimitiveDataModel::save(Properties &p) const
 {
-
+	p.put("model_name", name());
 }
 
 unsigned int TorusPrimitiveDataModel::nPorts(PortType portType) const

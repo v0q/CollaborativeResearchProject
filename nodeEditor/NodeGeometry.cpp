@@ -73,8 +73,8 @@ recalculateSize() const
   _inputPortWidth  = portWidth(PortType::In);
   _outputPortWidth = portWidth(PortType::Out);
 
-  _width = _inputPortWidth +
-           _outputPortWidth +
+	_width = _inputPortWidth +
+					 _outputPortWidth +
 					 2 * _spacing;
 
 	for(auto w : _dataModel->embeddedWidget())

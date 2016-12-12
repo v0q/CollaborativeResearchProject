@@ -23,6 +23,7 @@
 #include "nodes/RotateDataModel.hpp"
 #include "nodes/DistanceFieldOutputDataModel.hpp"
 #include "nodes/ColorPickerDataModel.hpp"
+#include "nodes/OutputDataModel.hpp"
 
 #include "nodes/MathsDataModels.hpp"
 
@@ -48,7 +49,8 @@ MainWindow::MainWindow(QWidget *_parent) :
   DataModelRegistry::registerModel<CosineDataModel>("Maths");
   DataModelRegistry::registerModel<MultiplyDataModel>("Maths");
 	DataModelRegistry::registerModel<DivideDataModel>("Maths");
-  DataModelRegistry::registerModel<ColorPickerDataModel>("Color");
+	DataModelRegistry::registerModel<ColorPickerDataModel>("Color");
+	DataModelRegistry::registerModel<OutputDataModel>("Generic");
 
   connect(this, SIGNAL(nodeEditorModified(std::unordered_map<QUuid, std::shared_ptr<Node>>)), m_gl, SLOT(nodeChanged(std::unordered_map<QUuid, std::shared_ptr<Node>>)));
 

@@ -8,6 +8,7 @@ UnionDataModel::~UnionDataModel()
 
 void UnionDataModel::save(Properties &p) const
 {
+	p.put("model_name", name());
 }
 
 unsigned int UnionDataModel::nPorts(PortType portType) const

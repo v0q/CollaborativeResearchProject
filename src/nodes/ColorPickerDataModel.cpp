@@ -74,7 +74,6 @@ ColorPickerDataModel::~ColorPickerDataModel()
 QColor QColorPicker::onColor(QColor& current_color)
 {
   QColor color = QColorDialog::getColor(current_color, this);
-//  current_color = color;
 
   return color;
 }
@@ -116,6 +115,7 @@ void ColorPickerDataModel::setPalColor()
   m_x->setText(QString::number(current_color.red() / 255.0));
   m_y->setText(QString::number(current_color.green() / 255.0));
   m_z->setText(QString::number(current_color.blue() / 255.0));
+
 //  if(current_color == QColor(255,255,255))
 //  {
 //    m_palColor.setColor(_label->foregroundRole(), Qt::black);
@@ -130,6 +130,28 @@ void ColorPickerDataModel::setPalColor()
 
 void ColorPickerDataModel::save(Properties &p) const
 {
+	p.put("model_name", name());
+	p.put("m_x", m_x->text());
+	p.put("m_y", m_y->text());
+	p.put("m_z", m_z->text());
+}
+
+void ColorPickerDataModel::restore(const Properties &p)
+{
+	m_x->setText(p.values().find("m_x").value().toString());
+	m_y->setText(p.values().find("m_y").value().toString());
+	m_z->setText(p.values().find("m_z").value().toString());
+
+	int r = hsitho::Expressions::clamp<int>((int)(boost::lexical_cast<float>(m_x->text().toStdString()) * 255), 0, 255);
+	int g = hsitho::Expressions::clamp<int>((int)(boost::lexical_cast<float>(m_y->text().toStdString()) * 255), 0, 255);
+	int b = hsitho::Expressions::clamp<int>((int)(boost::lexical_cast<float>(m_z->text().toStdString()) * 255), 0, 255);
+	current_color = QColor(r, g, b);
+	setPalColor();
+	m_vars = false;
+
+	m_cd = std::make_shared<ColorData>(m_x->text().toStdString(),
+																		 m_y->text().toStdString(),
+																		 m_z->text().toStdString());
 }
 
 unsigned int ColorPickerDataModel::nPorts(PortType portType) const

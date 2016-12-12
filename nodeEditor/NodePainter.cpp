@@ -39,10 +39,9 @@ paint(QPainter* painter,
 
   //--------------------------------------------
 
+	auto const &model = node->nodeDataModel();
 
-  drawNodeRect(painter, geom, graphicsObject);
-
-  auto const &model = node->nodeDataModel();
+	drawNodeRect(model, painter, geom, graphicsObject);
 
   drawConnectionPoints(painter, geom, state, model);
 
@@ -58,11 +57,15 @@ paint(QPainter* painter,
 
 void
 NodePainter::
-drawNodeRect(QPainter* painter,
+drawNodeRect(const std::unique_ptr<NodeDataModel> &model,
+						 QPainter* painter,
              NodeGeometry const& geom,
              std::unique_ptr<NodeGraphicsObject> const& graphicsObject)
 {
   auto color = graphicsObject->isSelected() ? QColor(255, 150, 0) : Qt::white;
+	QFont f = painter->font();
+	f.setBold(true);
+	QFontMetrics metrics(f);
 
   if (geom.hovered())
   {
@@ -90,7 +93,7 @@ drawNodeRect(QPainter* painter,
 
   unsigned int diam = geom.connectionPointDiameter();
 
-  QRectF   boundary(0.0, 0.0, geom.width(), geom.height());
+	QRectF   boundary(0.0, 0.0, std::max(geom.width(), (unsigned int)metrics.width(model->caption())), geom.height());
   QMargins m(diam, diam, diam, diam);
 
   double const radius = 3.0;
@@ -128,7 +131,7 @@ drawConnectionPoints(QPainter* painter,
         auto   diff = geom.draggingPos() - p;
 				double dist = std::sqrt(QPointF::dotProduct(diff, diff));
 
-				if(state.reactingDataType().id == model->dataType(portType, i).id)
+				if(state.reactingDataType().id == model->dataType(portType, i).id || state.reactingDataType().id == QString("Generic") || model->dataType(portType, i).id == QString("Generic"))
         {
           double const thres = 40.0;
           r = (dist < thres) ?
@@ -203,8 +206,8 @@ drawModelName(QPainter * painter,
 {
   Q_UNUSED(state);
 
-  if (!model->captionVisible())
-    return;
+	if(!model->captionVisible())
+		return;
 
   QString const &name = model->caption();
 
@@ -215,9 +218,13 @@ drawModelName(QPainter * painter,
   QFontMetrics metrics(f);
 
   auto rect = metrics.boundingRect(name);
-
-  QPointF position((geom.width() - rect.width()) / 2.0,
-                   (geom.spacing() + geom.entryHeight()) / 3.0);
+	QPointF position;
+	if(rect.width() < geom.width()) {
+		position = QPointF((geom.width() - rect.width()) / 2.0,
+											 (geom.spacing() + geom.entryHeight()) / 3.0);
+	} else {
+		position = QPointF(0, (geom.spacing() + geom.entryHeight()) / 3.0);
+	}
 
   painter->setFont(f);
   painter->setPen(Qt::white);

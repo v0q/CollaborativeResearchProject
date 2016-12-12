@@ -5,32 +5,8 @@
 #include <iostream>
 #include <QColorDialog>
 
-
 #include "nodeEditor/NodeDataModel.hpp"
 #include "nodes/DistanceFieldData.hpp"
-
-
-/// The class can potentially incapsulate any user data which
-/// need to be transferred within the Node Editor graph
-class MyNodeData : public NodeData
-{
-public:
-
-  NodeDataType
-  type() const override
-  { return NodeDataType {"DistanceFieldData", "Cube Data"}; }
-
-
-};
-
-class SimpleNodeData : public NodeData
-{
-public:
-
-  NodeDataType
-  type() const override
-  { return NodeDataType {"SimpleData", "Simple Data"}; }
-};
 
 //------------------------------------------------------------------------------
 

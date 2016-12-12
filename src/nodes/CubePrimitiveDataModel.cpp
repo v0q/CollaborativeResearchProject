@@ -1,7 +1,5 @@
 #include "CubePrimitiveDataModel.hpp"
 
-
-
 CubePrimitiveDataModel::~CubePrimitiveDataModel()
 {
 
@@ -9,7 +7,7 @@ CubePrimitiveDataModel::~CubePrimitiveDataModel()
 
 void CubePrimitiveDataModel::save(Properties &p) const
 {
-	p.put("model_name", CubePrimitiveDataModel::name());
+	p.put("model_name", name());
 }
 
 unsigned int CubePrimitiveDataModel::nPorts(PortType portType) const

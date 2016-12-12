@@ -55,9 +55,7 @@ public:
 
 	virtual std::vector<QWidget *> embeddedWidget() = 0;
 
-  virtual
-  bool
-  resizable() const { return false; }
+	virtual bool resizable() const { return false; }
 
 	virtual std::string getExtraParams() const { return ""; }
 	virtual std::string getShaderCode() { return ""; }
@@ -65,6 +63,7 @@ public:
 	virtual Mat4f getTransform() { return Mat4f(); }
 	virtual void setTransform(const Mat4f &_t) {}
 	virtual QColor getNodeColor(PortType, PortIndex) const { return Qt::cyan; }
+	virtual void setDataType(const NodeDataType &_dt) { }
 
   virtual void updateWidgets() {}
   static QString nodeCategory() { return QString("Primitive"); }

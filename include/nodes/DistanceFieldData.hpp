@@ -43,7 +43,8 @@ enum DFNodeType
 	MIX,
 	VECTOR,
   SCALAR,
-  COLOR
+	COLOR,
+	OUTPUT
 };
 
 class Mat4f
@@ -316,5 +317,14 @@ public:
   }
 private:
   Vec4f m_cd;
+};
+
+class GenericData : public NodeData
+{
+public:
+	GenericData() {}
+	NodeDataType type() const override {
+		return NodeDataType {"Generic", "Out", Qt::gray};
+	}
 };
 

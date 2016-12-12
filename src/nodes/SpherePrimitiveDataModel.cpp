@@ -8,7 +8,7 @@ SpherePrimitiveDataModel::~SpherePrimitiveDataModel()
 
 void SpherePrimitiveDataModel::save(Properties &p) const
 {
-
+	p.put("model_name", name());
 }
 
 unsigned int SpherePrimitiveDataModel::nPorts(PortType portType) const

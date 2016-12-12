@@ -1,8 +1,10 @@
+#include <QDebug>
 #include "NodeConnectionInteraction.hpp"
 
 #include "ConnectionGraphicsObject.hpp"
 #include "NodeGraphicsObject.hpp"
 #include "NodeDataModel.hpp"
+#include "OutputDataModel.hpp"
 
 bool
 NodeConnectionInteraction::
@@ -24,7 +26,7 @@ canConnect(PortIndex &portIndex) const
   portIndex = nodePortIndexUnderScenePoint(requiredPort,
                                            connectionPoint);
 
-  if (portIndex == INVALID)
+	if(portIndex == INVALID)
   {
     return false;
   }
@@ -49,7 +51,7 @@ canConnect(PortIndex &portIndex) const
 		return false;
 	}
 
-  if (connectionDataType.id != candidateNodeDataType.id)
+	if(connectionDataType.id != candidateNodeDataType.id && (connectionDataType.id != QString("Generic") && candidateNodeDataType.id != QString("Generic")))
 		return false;
 
   return true;
@@ -73,6 +75,16 @@ bool NodeConnectionInteraction::tryConnect() const
                                    portIndex,
                                    _connection);
 
+	NodeDataType connectionDataType = _connection->dataType();
+	auto const &modelTarget = _node->nodeDataModel();
+	NodeDataType candidateNodeDataType = modelTarget->dataType(requiredPort, portIndex);
+	std::cout << _node->nodeDataModel()->caption().toStdString() << "\n";
+	if(connectionDataType.id == QString("Generic")) {
+		_connection->getNode(PortType::In).lock()->nodeDataModel()->setDataType(candidateNodeDataType);
+	} else if(candidateNodeDataType.id == QString("Generic")) {
+		_node->nodeDataModel()->setDataType(connectionDataType);
+	}
+
   // 3) Assign Connection to empty port in NodeState
   // The port is not longer required after this function
   _connection->setNodeToPort(_node, requiredPort, portIndex);
@@ -88,7 +100,6 @@ bool NodeConnectionInteraction::tryConnect() const
   {
     PortIndex outPortIndex = _connection->getPortIndex(PortType::Out);
 		outNode->onDataUpdated(outPortIndex);
-
   }
 
   return true;

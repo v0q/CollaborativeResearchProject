@@ -27,7 +27,7 @@ public:
     return QString("Time");
 	}
 
-	void save(Properties &p) const override {}
+	void save(Properties &p) const override {	p.put("model_name", name()); }
 	void setInData(std::shared_ptr<NodeData>, int) override {}
 
 	unsigned int nPorts(PortType portType) const override;

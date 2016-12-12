@@ -244,16 +244,7 @@ void
 FlowScene::
 load()
 {
-	_connections.clear();
-//	for(auto n = _nodes.begin(); n != _nodes.end(); ++n) {
-//		if((*n).second()) {
-//			_nodes.erase(n);
-//		}
-//	}
-	_nodes.clear();
-
   //-------------
-
   QString fileName =
     QFileDialog::getOpenFileName(nullptr,
                                  tr("Open Flow Scene"),
@@ -267,6 +258,16 @@ load()
 
 	if(!file.open(QIODevice::ReadOnly))
     return;
+
+	_connections.clear();
+	std::unordered_map<QUuid, SharedNode> swapNodes;
+	for(auto n = _nodes.begin(); n != _nodes.end(); ++n) {
+		if((*n).second->nodeDataModel()->caption() == QString("DFO")) {
+			swapNodes[(*n).first] = (*n).second;
+		}
+	}
+	_nodes.swap(swapNodes);
+	swapNodes.clear();
 
   QDataStream in(&file);
 

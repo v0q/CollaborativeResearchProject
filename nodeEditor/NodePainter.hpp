@@ -28,7 +28,8 @@ public:
 
   static
   void
-  drawNodeRect(QPainter* painter, NodeGeometry const& geom,
+	drawNodeRect(const std::unique_ptr<NodeDataModel> &model,
+							 QPainter* painter, NodeGeometry const& geom,
                std::unique_ptr<NodeGraphicsObject> const& graphicsObject);
 
   static
