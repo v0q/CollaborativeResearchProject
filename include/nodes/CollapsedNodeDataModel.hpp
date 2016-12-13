@@ -5,6 +5,7 @@
 #include <iostream>
 #include <QColorDialog>
 
+#include "nodeEditor/Node.hpp"
 #include "nodeEditor/NodeDataModel.hpp"
 #include "nodes/DistanceFieldData.hpp"
 
@@ -18,7 +19,7 @@ class CollapsedNodeDataModel : public NodeDataModel
 
 public:
 
-	CollapsedNodeDataModel(const NodeDataType &_type);
+	CollapsedNodeDataModel(const NodeDataType &_type, std::vector<std::shared_ptr<Node>> &_nodes);
 	virtual ~CollapsedNodeDataModel() {}
 
 	QString caption() const override
@@ -40,10 +41,12 @@ public:
 
 	std::shared_ptr<NodeData> outData(PortIndex port) override;
 	void setInData(std::shared_ptr<NodeData>, int) override {}
-	std::vector<QWidget *> embeddedWidget() override { std::vector<QWidget *>(); }
+	std::vector<QWidget *> embeddedWidget() override { return std::vector<QWidget *>(); }
+	std::vector<std::shared_ptr<Node>> getNodes() const { return m_nodes; }
 
 	DFNodeType getNodeType() const { return DFNodeType::OUTPUT; }
 
 private:
 	NodeDataType m_nodeDataType;
+	std::vector<std::shared_ptr<Node>> m_nodes;
 };

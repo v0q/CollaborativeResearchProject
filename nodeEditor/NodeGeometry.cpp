@@ -53,7 +53,7 @@ boundingRect() const
 
 void
 NodeGeometry::
-recalculateSize() const
+recalculateSize(const QString &_name) const
 {
 	_entryHeight = _fontMetrics.height();
 
@@ -73,10 +73,10 @@ recalculateSize() const
   _inputPortWidth  = portWidth(PortType::In);
   _outputPortWidth = portWidth(PortType::Out);
 
-	_width = _inputPortWidth +
-					 _outputPortWidth +
-					 2 * _spacing;
-
+	_width = std::max(_inputPortWidth +
+										_outputPortWidth,
+										(unsigned int)_fontMetrics.width(_name));
+	_width += 2 * _spacing;
 	for(auto w : _dataModel->embeddedWidget())
   {
 //		_width += w->width();
@@ -87,13 +87,13 @@ recalculateSize() const
 
 void
 NodeGeometry::
-recalculateSize(QFontMetrics const & fontMetrics) const
+recalculateSize(QFontMetrics const & fontMetrics, const QString &_name) const
 {
   if (_fontMetrics != fontMetrics)
   {
     _fontMetrics = fontMetrics;
 
-    recalculateSize();
+		recalculateSize(_name);
   }
 }
 

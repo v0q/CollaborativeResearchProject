@@ -1,6 +1,7 @@
 #include "NodeGraphicsObject.hpp"
 
 #include <iostream>
+#include <memory>
 #include <cstdlib>
 
 #include <QtWidgets/QtWidgets>
@@ -15,6 +16,8 @@
 #include "Node.hpp"
 #include "NodeDataModel.hpp"
 #include "NodeConnectionInteraction.hpp"
+
+#include "nodes/CollapsedNodeDataModel.hpp"
 
 NodeGraphicsObject::
 NodeGraphicsObject(FlowScene &scene,
@@ -271,10 +274,17 @@ mouseMoveEvent(QGraphicsSceneMouseEvent * event)
 	}
 	else
 	{
+		auto node = _node.lock();
 		QGraphicsObject::mouseMoveEvent(event);
 
-		if (event->lastPos() != event->pos())
+		if(event->lastPos() != event->pos()) {
+			if(node->nodeDataModel()->caption() == QString("Collapsed Node")) {
+				for(auto &n : node->nodeDataModel()->getNodes()) {
+					n->nodeGraphicsObject()->moveBy(event->pos().x() - event->lastPos().x(), event->pos().y() - event->lastPos().y());
+				}
+			}
 			moveConnections();
+		}
 
 		event->ignore();
 	}

@@ -19,6 +19,7 @@ paint(QPainter* painter,
   NodeState const& state = node->nodeState();
 
   std::unique_ptr<NodeGraphicsObject> const& graphicsObject = node->nodeGraphicsObject();
+	auto const &model = node->nodeDataModel();
 
   if(!node->isMovable())
   {
@@ -34,12 +35,10 @@ paint(QPainter* painter,
   }
   else
   {
-    geom.recalculateSize(painter->fontMetrics());
+		geom.recalculateSize(painter->fontMetrics(), model->caption());
   }
 
   //--------------------------------------------
-
-	auto const &model = node->nodeDataModel();
 
 	drawNodeRect(model, painter, geom, graphicsObject);
 
@@ -93,7 +92,8 @@ drawNodeRect(const std::unique_ptr<NodeDataModel> &model,
 
   unsigned int diam = geom.connectionPointDiameter();
 
-	QRectF   boundary(0.0, 0.0, std::max(geom.width(), (unsigned int)metrics.width(model->caption())), geom.height());
+//	QRectF   boundary(0.0, 0.0, std::max(geom.width(), (unsigned int)metrics.width(model->caption())), geom.height());
+	QRectF   boundary(0.0, 0.0, geom.width(), geom.height());
   QMargins m(diam, diam, diam, diam);
 
   double const radius = 3.0;
@@ -251,7 +251,7 @@ drawEntryLabels(QPainter * painter,
 		painter->setFont(f);
 	}
 	QFontMetrics const &metrics = painter->fontMetrics();
-	geom.recalculateSize(metrics);
+	geom.recalculateSize(metrics, model->caption());
 
   auto drawPoints =
   [&](PortType portType)

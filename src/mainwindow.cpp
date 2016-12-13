@@ -60,7 +60,7 @@ MainWindow::MainWindow(QWidget *_parent) :
   m_ui->m_sceneLayout->addWidget(m_gl, 0, 0, 1, 1);
   m_ui->m_nodeEditorLayout->addWidget(m_flowView, 0, 0, 1, 1);
 
-  // Create the static distance field output node
+	// Create the static distance field output node
   auto node = m_nodes->createNode(std::make_unique<DistanceFieldOutputDataModel>(), false);
 	QRectF geom = m_flowView->sceneRect();
 

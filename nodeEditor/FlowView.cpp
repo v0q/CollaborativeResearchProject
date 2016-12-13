@@ -53,9 +53,11 @@ FlowView::
 contextMenuEvent(QContextMenuEvent *event)
 {
   bool canCollapse = false;
+	std::vector<std::shared_ptr<Node>> selectedNodes;
   for(auto &d : _scene->selectedItems())
   {
     std::shared_ptr<Node> node = ((NodeGraphicsObject *)d)->node().lock();
+		selectedNodes.push_back(node);
     if(node->nodeDataModel()->caption() == QString("Output") && node->nodeState().getEntries(PortType::In)[0].size() && node->nodeState().getEntries(PortType::In)[0][0].lock())
     {
       canCollapse = true;
@@ -78,7 +80,7 @@ contextMenuEvent(QContextMenuEvent *event)
       }
       for(auto &o : outputs) {
 //        std::unique_ptr<NodeDataModel> node = std::make_unique<CollapsedNodeDataModel>(o);
-        auto sceneNode = _scene->createNode(std::make_unique<CollapsedNodeDataModel>(o));
+				auto sceneNode = _scene->createNode(std::make_unique<CollapsedNodeDataModel>(o, selectedNodes));
 
         QPoint pos = event->pos();
         QPointF posView = this->mapToScene(pos);

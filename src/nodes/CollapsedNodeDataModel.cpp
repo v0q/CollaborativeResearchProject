@@ -1,7 +1,8 @@
 #include "CollapsedNodeDataModel.hpp"
 
-CollapsedNodeDataModel::CollapsedNodeDataModel(const NodeDataType &_type) :
-	m_nodeDataType(_type)
+CollapsedNodeDataModel::CollapsedNodeDataModel(const NodeDataType &_type, std::vector<std::shared_ptr<Node> > &_nodes) :
+	m_nodeDataType(_type),
+	m_nodes(_nodes)
 {
 
 }

@@ -89,11 +89,11 @@ public:
 
   /// Updates size unconditionally
   void
-  recalculateSize() const;
+	recalculateSize(const QString &_name = QString("")) const;
 
   /// Updates size if the QFontMetrics is changed
   void
-  recalculateSize(QFontMetrics const &fontMetrics) const;
+	recalculateSize(QFontMetrics const &fontMetrics, const QString &_name = QString("")) const;
 
   // TODO removed default QTransform()
   QPointF
