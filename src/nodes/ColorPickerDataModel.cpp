@@ -6,12 +6,12 @@
 #include "ExpressionEvaluator.hpp"
 
 ColorPickerDataModel::ColorPickerDataModel()
-	: _label(new QLabel("Select Color")),
-    m_margin(12),
+  : _label(new QLabel("Select Color")),
     m_w(0),
     m_h(0),
     m_px(0),
     m_py(0),
+    m_margin(12),
 		m_vars(false),
 		m_cd(nullptr),
 		m_x(new QLineEdit()),

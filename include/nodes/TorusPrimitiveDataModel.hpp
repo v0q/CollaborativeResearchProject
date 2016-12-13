@@ -44,9 +44,9 @@ public:
 
 	std::vector<QWidget *> embeddedWidget() override;
 
-	DFNodeType getNodeType() const { return DFNodeType::PRIMITIVE; }
-	std::string getShaderCode();
-	void setTransform(const Mat4f &_t) {
+  DFNodeType getNodeType() const override { return DFNodeType::PRIMITIVE; }
+  std::string getShaderCode() override;
+  void setTransform(const Mat4f &_t) override {
 		std::ostringstream ss;
 		for(int y = 0; y < 4; ++y)
 		{
