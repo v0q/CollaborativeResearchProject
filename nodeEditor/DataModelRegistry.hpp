@@ -12,30 +12,6 @@
 /// Base abstract class for Model Registry items
 ///
 
-//class RegistryCategory
-//{
-//public:
-//  RegistryCategory() {}
-
-//  virtual ~RegistryCategory() {}
-
-//  virtual std::unique_ptr<NodeDataModel> createCat() const = 0;
-
-//  virtual QString nameCat() const = 0;
-
-//};
-
-//template<typename C>
-//class RegistryCategoryImpl : public RegistryCategory
-//{
-//public:
-
-//  std::unique_ptr<NodeDataModel>createCat() const override { return std::make_unique<C>(); }
-
-//  QString nameCat() const override {return C::nameCat(); }
-//};
-
-
 class RegistryItem
 {
 public:

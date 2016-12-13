@@ -83,15 +83,15 @@ embedQWidget()
 
     update();
 
-    geom.recalculateSize();
+		geom.recalculateSize();
 
     proxyWidget->setOpacity(1.0);
     proxyWidget->setFlag(QGraphicsItem::ItemIgnoresParentOpacity);
 
     _proxyWidgets.push_back(proxyWidget);
 
-  }
-  node->nodeDataModel()->updateWidgets();
+	}
+	node->nodeDataModel()->updateWidgets();
 }
 
 
@@ -134,8 +134,7 @@ moveConnections() const
 		}
   };
 
-  moveConnections(PortType::In);
-
+	moveConnections(PortType::In);
   moveConnections(PortType::Out);
 }
 
@@ -166,16 +165,14 @@ itemChange(GraphicsItemChange change, const QVariant &value)
   return QGraphicsItem::itemChange(change, value);
 }
 
-
 void
 NodeGraphicsObject::
 mousePressEvent(QGraphicsSceneMouseEvent * event)
 {
-
-  if (!this->isSelected() && !(event->modifiers() & Qt::ControlModifier))
+	if(!this->isSelected() && !(event->modifiers() & Qt::ControlModifier))
   {
     _scene.clearSelection();
-  }
+	}
 
 	auto clickPort =
   [&](PortType portToCheck)

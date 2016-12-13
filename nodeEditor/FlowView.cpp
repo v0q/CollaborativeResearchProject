@@ -1,5 +1,3 @@
-#include "FlowView.hpp"
-
 #include <QtWidgets/QGraphicsScene>
 
 #include <QtGui/QPen>
@@ -8,18 +6,24 @@
 
 #include <QtCore/QRectF>
 
+#include <QGraphicsView>
 #include <QtOpenGL>
 #include <QtWidgets>
+#include <QList>
 
 #include <QDebug>
+#include <memory>
 #include <iostream>
 
+#include "FlowView.hpp"
 #include "FlowScene.hpp"
 
 #include "DataModelRegistry.hpp"
 
 #include "Node.hpp"
 #include "NodeGraphicsObject.hpp"
+#include "NodeDataModel.hpp"
+#include "CollapsedNodeDataModel.hpp"
 
 FlowView::
 FlowView(FlowScene *scene)
@@ -39,7 +43,8 @@ FlowView(FlowScene *scene)
 
   setCacheMode(QGraphicsView::CacheBackground);
 
-  //setViewport(new QGLWidget(QGLFormat(QGL::SampleBuffers)));
+	//setViewport(new QGLWidget(QGLFormat(QGL::SampleBuffers)));
+	this->setSceneRect(0, 0, this->rect().width()*8, this->rect().height()*8);
 }
 
 
@@ -47,42 +52,77 @@ void
 FlowView::
 contextMenuEvent(QContextMenuEvent *event)
 {
-  QMenu modelMenu;
-
-  for(auto const &category : DataModelRegistry::registeredModels())
+  bool canCollapse = false;
+  for(auto &d : _scene->selectedItems())
   {
-//    auto catMenu = modelMenu.addMenu(category.first);
-    modelMenu.addSection(category.first);
-
-    for(auto const &modelRegistry : category.second)
+    std::shared_ptr<Node> node = ((NodeGraphicsObject *)d)->node().lock();
+    if(node->nodeDataModel()->caption() == QString("Output") && node->nodeState().getEntries(PortType::In)[0].size() && node->nodeState().getEntries(PortType::In)[0][0].lock())
     {
-      QString const &modelName = modelRegistry.first;
-//      catMenu->addAction(modelName);
-      modelMenu.addAction(modelName);
+      canCollapse = true;
     }
   }
-
-  if(QAction * action = modelMenu.exec(event->globalPos()))
-  {
-    QString modelName = action->text();
-
-    for(auto const &category : DataModelRegistry::registeredModels())
-    {
-      auto it = category.second.find(modelName);
-
-      if(it != category.second.end())
+  if(_scene->selectedItems().size() > 1 && canCollapse)
+	{
+		QMenu collapseMenu;
+		collapseMenu.addAction("Collapse");
+		if(QAction *action = collapseMenu.exec(event->globalPos()))
+		{
+      std::vector<NodeDataType> outputs;
+      for(auto &d : _scene->selectedItems())
       {
-        auto node = _scene->createNode(it->second->create() );
+        std::shared_ptr<Node> node = ((NodeGraphicsObject *)d)->node().lock();
+        if(node->nodeDataModel()->caption() == QString("Output") && node->nodeState().getEntries(PortType::In)[0].size() && node->nodeState().getEntries(PortType::In)[0][0].lock())
+        {
+          outputs.push_back(node->nodeDataModel()->dataType(PortType::In, 0));
+        }
+      }
+      for(auto &o : outputs) {
+//        std::unique_ptr<NodeDataModel> node = std::make_unique<CollapsedNodeDataModel>(o);
+        auto sceneNode = _scene->createNode(std::make_unique<CollapsedNodeDataModel>(o));
 
         QPoint pos = event->pos();
         QPointF posView = this->mapToScene(pos);
 
-        node->nodeGraphicsObject()->setPos(posView);
+        sceneNode->nodeGraphicsObject()->setPos(posView);
         return;
       }
-    }
-    qDebug() << "Model not found";
-  }
+			std::cout << action->text().toStdString() << "\n";
+		}
+	} else {
+		QMenu modelMenu;
+		for(auto const &category : DataModelRegistry::registeredModels())
+		{
+			modelMenu.addSection(category.first);
+
+			for(auto const &modelRegistry : category.second)
+			{
+				QString const &modelName = modelRegistry.first;
+				modelMenu.addAction(modelName);
+			}
+		}
+
+		if(QAction * action = modelMenu.exec(event->globalPos()))
+		{
+			QString modelName = action->text();
+
+			for(auto const &category : DataModelRegistry::registeredModels())
+			{
+				auto it = category.second.find(modelName);
+
+				if(it != category.second.end())
+				{
+          auto node = _scene->createNode(it->second->create());
+
+					QPoint pos = event->pos();
+					QPointF posView = this->mapToScene(pos);
+
+					node->nodeGraphicsObject()->setPos(posView);
+					return;
+				}
+			}
+			qDebug() << "Model not found";
+		}
+	}
 }
 
 
@@ -237,8 +277,8 @@ void
 FlowView::
 showEvent(QShowEvent *event)
 {
-  _scene->setSceneRect(this->rect());
-  QGraphicsView::showEvent(event);
+	_scene->setSceneRect(this->rect());
+	QGraphicsView::showEvent(event);
 }
 
 

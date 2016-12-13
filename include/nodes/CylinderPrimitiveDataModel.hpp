@@ -3,31 +3,40 @@
 #include <QtCore/QObject>
 #include <QtWidgets/QLineEdit>
 #include <iostream>
-#include <QColorDialog>
 
 #include "nodeEditor/NodeDataModel.hpp"
 #include "nodes/DistanceFieldData.hpp"
+
+class CylinderData : public NodeData
+{
+public:
+
+  NodeDataType
+  type() const override
+  { return NodeDataType {"DistanceFieldData", "Cylinder Data"}; }
+
+};
 
 //------------------------------------------------------------------------------
 
 /// The model dictates the number of inputs and outputs for the Node.
 /// In this example it has no logic.
-class CubePrimitiveDataModel : public NodeDataModel
+class CylinderPrimitiveDataModel : public NodeDataModel
 {
   Q_OBJECT
 
 public:
 
-  virtual ~CubePrimitiveDataModel();
+  virtual ~CylinderPrimitiveDataModel();
 
   QString caption() const override
   {
-    return QString("Cube");
+    return QString("Cylinder");
   }
 
   static QString name()
   {
-    return QString("Cube");
+    return QString("Cylinder");
   }
 
 
@@ -41,27 +50,25 @@ public:
 
   void setInData(std::shared_ptr<NodeData>, int) override;
 
-	std::vector<QWidget *> embeddedWidget() override;
+  std::vector<QWidget *> embeddedWidget() override;
 
-	DFNodeType getNodeType() const { return DFNodeType::PRIMITIVE; }
-	std::string getShaderCode();
-	void setTransform(const Mat4f &_t) {
-		std::ostringstream ss;
-		for(int y = 0; y < 4; ++y)
-		{
-			for(int x = 0; x < 4; ++x)
-			{
-				if(x || y)
-					ss << ", ";
-				ss << _t.matrix(x, y);
-			}
-		}
-		m_transform = "mat4x4(" + ss.str() + ")";
+  DFNodeType getNodeType() const { return DFNodeType::PRIMITIVE; }
+  std::string getShaderCode();
+  void setTransform(const Mat4f &_t) {
+    std::ostringstream ss;
+    for(int y = 0; y < 4; ++y)
+    {
+      for(int x = 0; x < 4; ++x)
+      {
+        if(x || y)
+          ss << ", ";
+        ss << _t.matrix(x, y);
+      }
+    }
+    m_transform = "mat4x4(" + ss.str() + ")";
   }
 
 private:
   Vec4f m_color;
-	std::string m_transform;
+  std::string m_transform;
 };
-
-

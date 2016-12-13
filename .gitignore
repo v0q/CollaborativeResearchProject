@@ -59,3 +59,4 @@ install_manifest.txt
 
 #Random
 .DS_Store
+*.flow

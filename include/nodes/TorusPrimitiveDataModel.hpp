@@ -5,6 +5,7 @@
 #include <iostream>
 #include <QColorDialog>
 
+
 #include "nodeEditor/NodeDataModel.hpp"
 #include "nodes/DistanceFieldData.hpp"
 
@@ -12,22 +13,22 @@
 
 /// The model dictates the number of inputs and outputs for the Node.
 /// In this example it has no logic.
-class CubePrimitiveDataModel : public NodeDataModel
+class TorusPrimitiveDataModel : public NodeDataModel
 {
   Q_OBJECT
 
 public:
 
-  virtual ~CubePrimitiveDataModel();
+	virtual ~TorusPrimitiveDataModel();
 
   QString caption() const override
   {
-    return QString("Cube");
+		return QString("Torus");
   }
 
   static QString name()
   {
-    return QString("Cube");
+		return QString("Torus");
   }
 
 

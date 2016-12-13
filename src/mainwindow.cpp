@@ -15,6 +15,7 @@
 #include "ExpressionEvaluator.hpp"
 #include "nodes/SpherePrimitiveDataModel.hpp"
 #include "nodes/CubePrimitiveDataModel.hpp"
+#include "nodes/TorusPrimitiveDataModel.hpp"
 #include "nodes/UnionDataModel.hpp"
 #include "nodes/BlendDataModel.hpp"
 #include "nodes/TimeDataModel.hpp"
@@ -22,7 +23,10 @@
 #include "nodes/RotateDataModel.hpp"
 #include "nodes/DistanceFieldOutputDataModel.hpp"
 #include "nodes/ColorPickerDataModel.hpp"
-#include "nodes/CopyDataModel.hpp"
+#include "nodes/OutputDataModel.hpp"
+#include "nodes/CylinderPrimitiveDataModel.hpp"
+#include "nodes/CapsulePrimitiveDataModel.hpp"
+//#include "nodes/CopyDataModel.hpp"
 
 #include "nodes/MathsDataModels.hpp"
 
@@ -36,10 +40,12 @@ MainWindow::MainWindow(QWidget *_parent) :
 
   DataModelRegistry::registerModel<TimeDataModel>("Misc");
   DataModelRegistry::registerModel<CubePrimitiveDataModel>("Primitives");
+  DataModelRegistry::registerModel<TorusPrimitiveDataModel>("Primitives");
   DataModelRegistry::registerModel<SpherePrimitiveDataModel>("Primitives");
+  DataModelRegistry::registerModel<CylinderPrimitiveDataModel>("Primitives");
+  DataModelRegistry::registerModel<CapsulePrimitiveDataModel>("Primitives");
   DataModelRegistry::registerModel<UnionDataModel>("Operations");
   DataModelRegistry::registerModel<BlendDataModel>("Operations");
-  DataModelRegistry::registerModel<CopyDataModel> ("Operations");
   DataModelRegistry::registerModel<TranslateDataModel>("Transforms");
   DataModelRegistry::registerModel<RotateDataModel>("Transforms");
   DataModelRegistry::registerModel<VectorDataModel>("Maths");
@@ -47,8 +53,10 @@ MainWindow::MainWindow(QWidget *_parent) :
   DataModelRegistry::registerModel<SineDataModel>("Maths");
   DataModelRegistry::registerModel<CosineDataModel>("Maths");
   DataModelRegistry::registerModel<MultiplyDataModel>("Maths");
+  DataModelRegistry::registerModel<DivideDataModel>("Maths");
   DataModelRegistry::registerModel<ColorPickerDataModel>("Color");
-
+  DataModelRegistry::registerModel<OutputDataModel>("Generic");
+ // DataModelRegistry::registerModel<CopyDataModel>("Copy");
 
   connect(this, SIGNAL(nodeEditorModified(std::unordered_map<QUuid, std::shared_ptr<Node>>)), m_gl, SLOT(nodeChanged(std::unordered_map<QUuid, std::shared_ptr<Node>>)));
 
@@ -60,14 +68,15 @@ MainWindow::MainWindow(QWidget *_parent) :
 
   // Create the static distance field output node
   auto node = m_nodes->createNode(std::make_unique<DistanceFieldOutputDataModel>(), false);
-  QRect geom = m_flowView->geometry();
+  QRectF geom = m_flowView->sceneRect();
 
   QPoint pos;
   QRectF box = node->nodeGraphicsObject()->boundingRect();
-  int w, h;
-  geom.getRect(&w, &h, &w, &h);
-  pos.setX(w + box.width());
-  pos.setY(h + box.height());
+  qreal x, y, w, h;
+  geom.getRect(&x, &y, &w, &h);
+  std::cout << w << " " << h << "\n";
+  pos.setX(w/2 + box.width());
+  pos.setY(h/2 + box.height());
   QPointF posView = m_flowView->mapToScene(pos);
 
   QFont f;
@@ -75,6 +84,8 @@ MainWindow::MainWindow(QWidget *_parent) :
   node->nodeGeometry().setSpacing(5);
   node->nodeGeometry().recalculateSize(QFontMetrics(f));
   node->nodeGraphicsObject()->setPos(posView);
+
+  m_flowView->centerOn(node->nodeGraphicsObject().get());
 
 //	std::cout << hsitho::Expressions::evaluate("( 0.0 ) * ( 0.0 ) + ( 1.0 ) * ( c ) + ( 0.0 ) * ( -s ) + ( 0.0 ) * ( 0.0 )") << "\n";
 //	std::cout << hsitho::Expressions::evaluate("( 1.0 ) * ( 1.0 ) + ( 0.0 ) * ( 0.0 ) + ( 0.0 ) * ( 0.0 ) + ( 0.0 ) * ( 0.0 )") << "\n";
@@ -92,22 +103,22 @@ MainWindow::MainWindow(QWidget *_parent) :
 //	std::cout << hsitho::Expressions::evaluate("( 0.0 ) * ( 0.0 ) + ( 0.0 ) * ( c ) + ( 0.0 ) * ( -s ) + ( 1.0 ) * ( 0.0 )") << "\n";
 //	std::cout << hsitho::Expressions::evaluate("( 0.0 ) * ( 0.0 ) + ( 0.0 ) * ( s ) + ( 0.0 ) * ( c ) + ( 1.0 ) * ( 0.0 )") << "\n";
 
-//	Mat4f t("1.0", "0.0", "0.0", "0.0",
-//					"0.0", "1.0", "0.0", "0.0",
-//					"0.0", "0.0", "1.0", "0.0",
-//					"0.0", "0.0", "0.0", "1.0");
-//	Mat4f rx("1.0", "0.0", "0.0",		"0.0",
-//					 "0.0", "a",	 "-b",	"0.0",
-//					 "0.0", "b",	 "a",			"0.0",
-//					 "0.0", "0.0", "0.0",		"1.0");
-//	Mat4f ry("a",			 "0.0", "b",		 "0.0",
-//					 "0.0",		 "1.0", "0.0", "0.0",
-//					 "-b",		 "0.0", "a",		 "0.0",
-//					 "0.0",		 "0.0", "0.0", "1.0");
-//	Mat4f rz("a",		"-b", "0.0", "0.0",
-//					 "b",		"a",			"0.0", "0.0",
-//					 "0.0", "0.0",	"1.0", "0.0",
-//					 "0.0", "0.0",	"0.0", "1.0");
+  Mat4f t("1.0", "0.0", "0.0", "0.0",
+          "0.0", "1.0", "0.0", "0.0",
+          "0.0", "0.0", "1.0", "0.0",
+          "0.0", "0.0", "0.0", "1.0");
+  Mat4f rx("1.0", "0.0", "0.0",		"0.0",
+           "0.0", "a",	 "-b",	"0.0",
+           "0.0", "b",	 "a",			"0.0",
+           "0.0", "0.0", "0.0",		"1.0");
+  Mat4f ry("a",			 "0.0", "b",		 "0.0",
+           "0.0",		 "1.0", "0.0", "0.0",
+           "-b",		 "0.0", "a",		 "0.0",
+           "0.0",		 "0.0", "0.0", "1.0");
+  Mat4f rz("a",		"-b", "0.0", "0.0",
+           "b",		"a",			"0.0", "0.0",
+           "0.0", "0.0",	"1.0", "0.0",
+           "0.0", "0.0",	"0.0", "1.0");
 
 //	t = t*rx;
 //	t.print();
@@ -131,6 +142,20 @@ MainWindow::MainWindow(QWidget *_parent) :
 //	std::cout << hsitho::Expressions::evaluate("sin(6) * cos(u_GlobalTime)") << "\n";
 //	exit(0);
 //	exit(EXIT_SUCCESS);
+}
+
+void MainWindow::keyPressEvent(QKeyEvent *_event)
+{
+  // this method is called every time the main window receives a key event.
+  // we then switch on the key value and set the camera in the GLWindow
+  switch(_event->key())
+  {
+    // escape key to quite
+    case Qt::Key_Escape : QGuiApplication::exit(EXIT_SUCCESS); break;
+    case Qt::Key_S : m_nodes->save(); break;
+    case Qt::Key_L : m_nodes->load(); break;
+    default: break;
+  }
 }
 
 MainWindow::~MainWindow()

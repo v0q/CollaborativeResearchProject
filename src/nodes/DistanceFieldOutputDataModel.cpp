@@ -6,11 +6,6 @@ DistanceFieldOutputDataModel::~DistanceFieldOutputDataModel()
 
 }
 
-void DistanceFieldOutputDataModel::save(Properties &p) const
-{
-	p.put("Cube_size", DistanceFieldOutputDataModel::name());
-}
-
 unsigned int DistanceFieldOutputDataModel::nPorts(PortType portType) const
 {
 	unsigned int result = 1;

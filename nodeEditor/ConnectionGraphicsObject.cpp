@@ -121,7 +121,7 @@ move()
   };
 
   moveEndPoint(PortType::In);
-  moveEndPoint(PortType::Out);
+	moveEndPoint(PortType::Out);
 }
 
 
@@ -135,7 +135,8 @@ paint(QPainter* painter,
 
   ConnectionPainter::paint(painter,
                            _connection.lock()->connectionGeometry(),
-                           _connection.lock()->connectionState());
+													 _connection.lock()->connectionState(),
+													 _connection.lock().get()->dataType().color);
 }
 
 

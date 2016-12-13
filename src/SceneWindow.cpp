@@ -2,7 +2,6 @@
 #include <string>
 #include <memory>
 
-
 #include "nodeEditor/Node.hpp"
 #include "nodeEditor/NodeDataModel.hpp"
 #include "SceneWindow.hpp"
@@ -27,16 +26,16 @@ namespace hsitho
   SceneWindow::SceneWindow(QWidget *_parent) :
     GLWindow(_parent),
     m_shaderMan(ShaderManager::instance()),
-		m_outputNode(nullptr)
-	{
-		std::ifstream s("shaders/shader.begin");
-		std::ifstream e("shaders/shader.end");
-		m_shaderStart = std::string((std::istreambuf_iterator<char>(s)), std::istreambuf_iterator<char>());
-		m_shaderEnd = std::string((std::istreambuf_iterator<char>(e)), std::istreambuf_iterator<char>());
+    m_outputNode(nullptr)
+  {
+    std::ifstream s("shaders/shader.begin");
+    std::ifstream e("shaders/shader.end");
+    m_shaderStart = std::string((std::istreambuf_iterator<char>(s)), std::istreambuf_iterator<char>());
+    m_shaderEnd = std::string((std::istreambuf_iterator<char>(e)), std::istreambuf_iterator<char>());
   }
 
   SceneWindow::~SceneWindow()
-	{
+  {
     delete m_vao;
   }
 
@@ -138,33 +137,26 @@ namespace hsitho
           shadercode += recurseNodeTree(connection->getNode(PortType::Out).lock(), translation);
 //					branches.m_branches.push_back(recurseNodeTree(connection->getNode(PortType::Out).lock()));
         }
-			}
+      }
 
       if(shadercode != "")
-			{
-				std::string fragmentShader = m_shaderStart;
+      {
+        std::string fragmentShader = m_shaderStart;
 
-				fragmentShader += "pos = ";
-				fragmentShader += shadercode;
-				fragmentShader += ";";
+        fragmentShader += "pos = ";
+        fragmentShader += shadercode;
+        fragmentShader += ";";
 
-				fragmentShader += m_shaderEnd;
+        fragmentShader += m_shaderEnd;
 
-				m_shaderMan->updateShader(fragmentShader.c_str());
+        m_shaderMan->updateShader(fragmentShader.c_str());
       }
     }
   }
 
   std::string SceneWindow::recurseNodeTree(std::shared_ptr<Node> _node, Mat4f _t)
   {
-//    char copyIn[80] = "NodeTree: ";
-//    char t =  't';
-//    char p = 'p';
-//    char m = 'm';
-      int copies = 5;
-
     std::string shadercode;
-
     if(_node->nodeDataModel()->getNodeType() == DFNodeType::TRANSFORM)
     {
       _t = _t * _node->nodeDataModel()->getTransform();
@@ -179,37 +171,21 @@ namespace hsitho
       shadercode += _node->nodeDataModel()->getShaderCode();
     }
 
-    if(copies == 0)
+    std::vector<std::shared_ptr<Connection>> inConns = _node->nodeState().connection(PortType::In);
+    unsigned int i = 0;
+    for(auto connection : inConns)
     {
-
-
-      return shadercode;
-    }
-    else
-    {
-    for(unsigned int k = 1; k <= copies; ++k)
-    {
-      std::vector<std::shared_ptr<Connection>> inConns = _node->nodeState().connection(PortType::In);
-      unsigned int i = 0;
-      for(auto connection : inConns)
-      {
-        if(connection.get() && connection->getNode(PortType::Out).lock()) {
-          ++i;
-          shadercode += recurseNodeTree(connection->getNode(PortType::Out).lock(), _t);
-          if(_node->nodeDataModel()->getNodeType() == DFNodeType::MIX) {
-            if(i < inConns.size())
-              shadercode += ",";
-            else
-              shadercode += _node->nodeDataModel()->getExtraParams() + ")";
-          }
+      if(connection.get() && connection->getNode(PortType::Out).lock()) {
+        ++i;
+        shadercode += recurseNodeTree(connection->getNode(PortType::Out).lock(), _t);
+        if(_node->nodeDataModel()->getNodeType() == DFNodeType::MIX) {
+          if(i < inConns.size())
+            shadercode += ",";
+          else
+            shadercode += _node->nodeDataModel()->getExtraParams() + ")";
         }
       }
     }
     return shadercode;
-    }
-	}
-
-
-
-
+  }
 }

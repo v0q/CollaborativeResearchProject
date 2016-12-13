@@ -26,6 +26,7 @@ class MainWindow : public QMainWindow
 public:
   explicit MainWindow(QWidget *_parent = 0);
   ~MainWindow();
+  void keyPressEvent(QKeyEvent *_event);
 
   std::unordered_map<QUuid, std::shared_ptr<Node>> getNodes() { return m_nodes->getNodes(); }
 
@@ -34,7 +35,7 @@ private:
 
   hsitho::SceneWindow *m_gl;
   FlowScene *m_nodes;
-	FlowView *m_flowView;
+  FlowView *m_flowView;
   //QColorDialogTester m_colorTester;
 
 public slots:

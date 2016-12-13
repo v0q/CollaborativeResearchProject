@@ -26,8 +26,9 @@ namespace hsitho
     static std::shared_ptr<hsitho::ShaderManager> m_instance;
 		std::unordered_map<std::string, QOpenGLShaderProgram*> m_shaders;
 		QOpenGLShaderProgram *m_program;
+		QOpenGLShader *m_fragShader;
 
-		ShaderManager() : m_program(nullptr) {}
+		ShaderManager() : m_program(nullptr), m_fragShader(nullptr) {}
     ShaderManager(const ShaderManager &_rhs) = delete;
 		ShaderManager& operator= (const ShaderManager &_rhs) = delete;
   };

@@ -11,7 +11,7 @@ class OutputData : public NodeData
 {
 public:
 	NodeDataType type() const override {
-		return NodeDataType {"DistanceFieldData", "DISTANCE"};
+		return NodeDataType {"DistanceFieldData", "DISTANCE", Qt::green};
 	}
 };
 
@@ -23,14 +23,15 @@ public:
 
 	virtual ~DistanceFieldOutputDataModel();
 
-	QString caption() const override { return QString(""); }
+	QString caption() const override { return QString("DFO"); }
+	bool captionVisible() const override { return false; }
 
 	static QString name()
 	{
 		return QString("");
 	}
 
-	void save(Properties &p) const override;
+	void save(Properties &p) const override {}
 
 	unsigned int nPorts(PortType portType) const override;
 

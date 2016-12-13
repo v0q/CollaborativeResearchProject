@@ -46,6 +46,7 @@ public:
   void setCurrentColor(const QColor &color);
 
   void save(Properties &p) const override;
+	void restore(const Properties &p) override;
   void setInData(std::shared_ptr<NodeData>, int) override;
   void updateWidgets() override;
 
@@ -71,6 +72,7 @@ private:
   QColor current_color;
   QColor label_color;
   unsigned int m_w, m_h, m_px, m_py, m_margin;
+	bool m_vars;
 
   std::shared_ptr<ColorData> m_cd;
 

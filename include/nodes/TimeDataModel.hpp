@@ -27,7 +27,7 @@ public:
     return QString("Time");
 	}
 
-	void save(Properties &p) const override {}
+	void save(Properties &p) const override {	p.put("model_name", name()); }
 	void setInData(std::shared_ptr<NodeData>, int) override {}
 
 	unsigned int nPorts(PortType portType) const override;
@@ -37,7 +37,7 @@ public:
 	std::vector<QWidget *> embeddedWidget() override;
 
 	DFNodeType getNodeType() const { return DFNodeType::SCALAR; }
-  std::string getShaderCode();
+	std::string getShaderCode();
 
 private:
   std::shared_ptr<ScalarData> m_v;
