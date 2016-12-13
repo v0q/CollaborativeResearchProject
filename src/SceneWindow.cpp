@@ -2,6 +2,7 @@
 #include <string>
 #include <memory>
 
+
 #include "nodeEditor/Node.hpp"
 #include "nodeEditor/NodeDataModel.hpp"
 #include "SceneWindow.hpp"
@@ -156,10 +157,17 @@ namespace hsitho
 
   std::string SceneWindow::recurseNodeTree(std::shared_ptr<Node> _node, Mat4f _t)
   {
+//    char copyIn[80] = "NodeTree: ";
+//    char t =  't';
+//    char p = 'p';
+//    char m = 'm';
+      int copies = 5;
+
     std::string shadercode;
+
     if(_node->nodeDataModel()->getNodeType() == DFNodeType::TRANSFORM)
     {
-			_t = _t * _node->nodeDataModel()->getTransform();
+      _t = _t * _node->nodeDataModel()->getTransform();
     }
     else if(_node->nodeDataModel()->getNodeType() == DFNodeType::PRIMITIVE)
     {
@@ -171,21 +179,37 @@ namespace hsitho
       shadercode += _node->nodeDataModel()->getShaderCode();
     }
 
-    std::vector<std::shared_ptr<Connection>> inConns = _node->nodeState().connection(PortType::In);
-    unsigned int i = 0;
-    for(auto connection : inConns)
+    if(copies == 0)
     {
-      if(connection.get() && connection->getNode(PortType::Out).lock()) {
-        ++i;
-        shadercode += recurseNodeTree(connection->getNode(PortType::Out).lock(), _t);
-        if(_node->nodeDataModel()->getNodeType() == DFNodeType::MIX) {
-          if(i < inConns.size())
-            shadercode += ",";
-          else
-						shadercode += _node->nodeDataModel()->getExtraParams() + ")";
+
+
+      return shadercode;
+    }
+    else
+    {
+    for(unsigned int k = 1; k <= copies; ++k)
+    {
+      std::vector<std::shared_ptr<Connection>> inConns = _node->nodeState().connection(PortType::In);
+      unsigned int i = 0;
+      for(auto connection : inConns)
+      {
+        if(connection.get() && connection->getNode(PortType::Out).lock()) {
+          ++i;
+          shadercode += recurseNodeTree(connection->getNode(PortType::Out).lock(), _t);
+          if(_node->nodeDataModel()->getNodeType() == DFNodeType::MIX) {
+            if(i < inConns.size())
+              shadercode += ",";
+            else
+              shadercode += _node->nodeDataModel()->getExtraParams() + ")";
+          }
         }
       }
     }
     return shadercode;
+    }
 	}
+
+
+
+
 }
