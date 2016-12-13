@@ -109,12 +109,21 @@ void RotateDataModel::setInData(std::shared_ptr<NodeData> _data, PortIndex portI
 			m_t = Mat4f();
 			if(v.m_x != "0.0") {
 				m_t = m_t * rx;
+				std::cout << "1 : \n";
+				m_t.print();
+				std::cout << "\n";
 			}
 			if(v.m_y != "0.0") {
 				m_t = m_t * ry;
+				std::cout << "2 : \n";
+				m_t.print();
+				std::cout << "\n";
 			}
 			if(v.m_z != "0.0") {
 				m_t = m_t * rz;
+				std::cout << "3 : \n";
+				m_t.print();
+				std::cout << "\n\n";
 			}
     }
 	}

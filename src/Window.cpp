@@ -24,7 +24,10 @@ namespace hsitho
     initializeOpenGLFunctions();
     glInfo();
     glClearColor(0.f, 0.f, 0.f, 1.f);
-    startTimer(10);
+		m_fpsTimer = startTimer(0);
+		m_fps = 0;
+		m_frames = 0;
+		m_timer.start();
 	}
 
   void GLWindow::paintGL()
@@ -48,8 +51,19 @@ namespace hsitho
     }
   }
 
-  void GLWindow::timerEvent(QTimerEvent *_timer)
+	void GLWindow::timerEvent(QTimerEvent *_event)
   {
+		if(_event->timerId() == m_fpsTimer)
+		{
+			if(m_timer.elapsed() > 1000.0)
+			{
+				m_fps = m_frames;
+				m_frames = 0;
+				m_timer.restart();
+			}
+		}
+
+		this->window()->setWindowTitle(QString("FPS: ") + QString::number(m_fps));
     m_timePassed += 0.1;
     update();
   }

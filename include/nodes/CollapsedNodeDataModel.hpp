@@ -43,10 +43,12 @@ public:
 	void setInData(std::shared_ptr<NodeData>, int) override {}
 	std::vector<QWidget *> embeddedWidget() override { return std::vector<QWidget *>(); }
 	std::vector<std::shared_ptr<Node>> getNodes() const { return m_nodes; }
+	std::vector<std::shared_ptr<Node>> getOutputs() const { return m_outputs; }
 
-	DFNodeType getNodeType() const { return DFNodeType::OUTPUT; }
+	DFNodeType getNodeType() const { return DFNodeType::COLLAPSED; }
 
 private:
 	NodeDataType m_nodeDataType;
 	std::vector<std::shared_ptr<Node>> m_nodes;
+	std::vector<std::shared_ptr<Node>> m_outputs;
 };

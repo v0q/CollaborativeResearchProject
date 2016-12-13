@@ -4,6 +4,7 @@
 
 #include "nodeEditor/Node.hpp"
 #include "nodeEditor/NodeDataModel.hpp"
+#include "nodes/CollapsedNodeDataModel.hpp"
 #include "SceneWindow.hpp"
 
 
@@ -110,6 +111,8 @@ namespace hsitho
 
     m_vbo.release();
     m_vao->release();
+
+		++m_frames;
   }
 
   void SceneWindow::nodeChanged(std::unordered_map<QUuid, std::shared_ptr<Node>> _nodes)
@@ -156,7 +159,7 @@ namespace hsitho
 
   std::string SceneWindow::recurseNodeTree(std::shared_ptr<Node> _node, Mat4f _t)
   {
-    std::string shadercode;
+		std::string shadercode;
     if(_node->nodeDataModel()->getNodeType() == DFNodeType::TRANSFORM)
     {
 			_t = _t * _node->nodeDataModel()->getTransform();
@@ -172,6 +175,17 @@ namespace hsitho
     }
 
     std::vector<std::shared_ptr<Connection>> inConns = _node->nodeState().connection(PortType::In);
+		if(_node->nodeDataModel()->getNodeType() == DFNodeType::COLLAPSED) {
+			std::vector<std::shared_ptr<Connection>> inConnsTmp;
+			for(auto &o : dynamic_cast<CollapsedNodeDataModel *>(_node->nodeDataModel().get())->getOutputs())
+			{
+				for(auto &c : o->nodeState().connection(PortType::In))
+					inConnsTmp.push_back(c);
+			}
+			inConns.swap(inConnsTmp);
+			inConnsTmp.clear();
+		}
+
     unsigned int i = 0;
     for(auto connection : inConns)
     {

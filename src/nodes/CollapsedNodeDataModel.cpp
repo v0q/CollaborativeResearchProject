@@ -1,10 +1,18 @@
+#include "nodeEditor/Connection.hpp"
 #include "CollapsedNodeDataModel.hpp"
+#include "MathsDataModels.hpp"
 
 CollapsedNodeDataModel::CollapsedNodeDataModel(const NodeDataType &_type, std::vector<std::shared_ptr<Node> > &_nodes) :
 	m_nodeDataType(_type),
 	m_nodes(_nodes)
 {
-
+	for(auto &n : m_nodes)
+	{
+		if(n->nodeDataModel()->getNodeType() == DFNodeType::OUTPUT)
+		{
+			m_outputs.push_back(n);
+		}
+	}
 }
 
 void CollapsedNodeDataModel::save(Properties &p) const
@@ -39,5 +47,5 @@ NodeDataType CollapsedNodeDataModel::dataType(PortType, PortIndex) const
 
 std::shared_ptr<NodeData> CollapsedNodeDataModel::outData(PortIndex port)
 {
-	return nullptr;
+	return m_outputs[0]->nodeState().getEntries(PortType::In)[0][0].lock()->getNode(PortType::Out).lock()->nodeDataModel()->outData(port);
 }

@@ -22,6 +22,7 @@
 
 #include "Node.hpp"
 #include "NodeGraphicsObject.hpp"
+#include "ConnectionGraphicsObject.hpp"
 #include "NodeDataModel.hpp"
 #include "CollapsedNodeDataModel.hpp"
 
@@ -78,17 +79,32 @@ contextMenuEvent(QContextMenuEvent *event)
           outputs.push_back(node->nodeDataModel()->dataType(PortType::In, 0));
         }
       }
-      for(auto &o : outputs) {
-//        std::unique_ptr<NodeDataModel> node = std::make_unique<CollapsedNodeDataModel>(o);
+			for(auto &o : outputs) {
 				auto sceneNode = _scene->createNode(std::make_unique<CollapsedNodeDataModel>(o, selectedNodes));
 
         QPoint pos = event->pos();
         QPointF posView = this->mapToScene(pos);
 
         sceneNode->nodeGraphicsObject()->setPos(posView);
+
+				for(auto &n : selectedNodes)
+				{
+					n->nodeGraphicsObject()->hide();
+
+					auto hideConnections =
+					[&](PortType portType)
+					{
+						for(auto &port : n->nodeState().getEntries(portType))
+						{
+							for(auto &c : port)
+								c.lock()->getConnectionGraphicsObject()->hide();
+						}
+					};
+					hideConnections(PortType::In);
+					hideConnections(PortType::Out);
+				}
         return;
-      }
-			std::cout << action->text().toStdString() << "\n";
+			}
 		}
 	} else {
 		QMenu modelMenu;

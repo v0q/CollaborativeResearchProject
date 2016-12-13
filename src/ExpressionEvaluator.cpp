@@ -151,17 +151,27 @@ namespace hsitho {
       {
         try {
           size_t pos;
-          if((pos = o.find("sin(")) != std::string::npos) {
+					if((pos = o.find("-sin(")) != std::string::npos) {
             unsigned int startPos = pos+4;
-            std::string sineval = boost::lexical_cast<std::string>(std::sin(boost::lexical_cast<float>(o.substr(startPos, o.find(")", pos) - startPos))));
+						std::string sineval = "-" + boost::lexical_cast<std::string>(std::sin(boost::lexical_cast<float>(o.substr(startPos, o.find(")", pos) - startPos))));
             stack.push_back(sineval);
             continue;
-          } else if((pos = o.find("cos(")) != std::string::npos) {
+					} else if((pos = o.find("sin(")) != std::string::npos) {
+						unsigned int startPos = pos+4;
+						std::string sineval = boost::lexical_cast<std::string>(std::sin(boost::lexical_cast<float>(o.substr(startPos, o.find(")", pos) - startPos))));
+						stack.push_back(sineval);
+						continue;
+					} else if((pos = o.find("-cos(")) != std::string::npos) {
             unsigned int startPos = pos+4;
-            std::string cosineval = boost::lexical_cast<std::string>(std::cos(boost::lexical_cast<float>(o.substr(startPos, o.find(")", pos) - startPos))));
+						std::string cosineval = "-" + boost::lexical_cast<std::string>(std::cos(boost::lexical_cast<float>(o.substr(startPos, o.find(")", pos) - startPos))));
             stack.push_back(cosineval);
             continue;
-          } else {
+					} else if((pos = o.find("cos(")) != std::string::npos) {
+						unsigned int startPos = pos+4;
+						std::string cosineval = boost::lexical_cast<std::string>(std::cos(boost::lexical_cast<float>(o.substr(startPos, o.find(")", pos) - startPos))));
+						stack.push_back(cosineval);
+						continue;
+					} else {
             boost::lexical_cast<float>(o);
             stack.push_back(o);
             continue;

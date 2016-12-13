@@ -279,7 +279,8 @@ mouseMoveEvent(QGraphicsSceneMouseEvent * event)
 
 		if(event->lastPos() != event->pos()) {
 			if(node->nodeDataModel()->caption() == QString("Collapsed Node")) {
-				for(auto &n : node->nodeDataModel()->getNodes()) {
+				CollapsedNodeDataModel *cndm = dynamic_cast<CollapsedNodeDataModel *>(node->nodeDataModel().get());
+				for(auto &n : cndm->getNodes()) {
 					n->nodeGraphicsObject()->moveBy(event->pos().x() - event->lastPos().x(), event->pos().y() - event->lastPos().y());
 				}
 			}

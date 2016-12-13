@@ -44,7 +44,8 @@ enum DFNodeType
 	VECTOR,
   SCALAR,
 	COLOR,
-	OUTPUT
+	OUTPUT,
+	COLLAPSED
 };
 
 class Mat4f
@@ -107,11 +108,6 @@ public:
 	{
 		Mat4f temp;
 		std::ostringstream row;
-
-		std::cout << "Matrices to multiply: \n";
-		this->print();
-		_m.print();
-		std::cout << "\n";
 
 		row << "( " << m_m4f[0][0] << " ) * ( " << _m.m_m4f[0][0] << " ) + ( " << m_m4f[1][0] << " ) * ( " << _m.m_m4f[0][1] << " ) + ( " << m_m4f[2][0] << " ) * ( " << _m.m_m4f[0][2] << " ) + ( " << m_m4f[3][0] << " ) * ( " << _m.m_m4f[0][3] << " )";
 		temp.m_m4f[0][0] = hsitho::Expressions::evaluate(row.str());
@@ -204,43 +200,12 @@ public:
 	}
 
 private:
-//	union
-//	{
-		std::string m_m4f[4][4] = {
-			{"1.0", "0.0", "0.0", "0.0"},
-			{"0.0", "1.0", "0.0", "0.0"},
-			{"0.0", "0.0", "1.0", "0.0"},
-			{"0.0", "0.0", "0.0", "1.0"}
-		};
-//		std::string m_matrix[16] = {
-//			"1.0", "0.0", "0.0", "0.0",
-//			"0.0", "1.0", "0.0", "0.0",
-//			"0.0", "0.0", "1.0", "0.0",
-//			"0.0", "0.0", "0.0", "1.0"
-//		};
-//		struct
-//		{
-//			struct
-//			{
-//				std::string m_00;
-//				std::string m_01;
-//				std::string m_02;
-//				std::string m_03;
-//				std::string m_10;
-//				std::string m_11;
-//				std::string m_12;
-//				std::string m_13;
-//				std::string m_20;
-//				std::string m_21;
-//				std::string m_22;
-//				std::string m_23;
-//				std::string m_30;
-//				std::string m_31;
-//				std::string m_32;
-//				std::string m_33;
-//			};
-//		};
-//	};
+	std::string m_m4f[4][4] = {
+		{"1.0", "0.0", "0.0", "0.0"},
+		{"0.0", "1.0", "0.0", "0.0"},
+		{"0.0", "0.0", "1.0", "0.0"},
+		{"0.0", "0.0", "0.0", "1.0"}
+	};
 };
 
 
