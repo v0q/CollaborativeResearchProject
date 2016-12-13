@@ -26,6 +26,10 @@
 #include "nodes/OutputDataModel.hpp"
 #include "nodes/CylinderPrimitiveDataModel.hpp"
 #include "nodes/CapsulePrimitiveDataModel.hpp"
+#include "nodes/PlanePrimitiveDataModel.hpp"
+#include "nodes/TriangularPrismPrimitiveDataModel.hpp"
+#include "nodes/HexagonalPrismPrimitiveDataModel.hpp"
+#include "nodes/ConePrimitiveDataModel.hpp"
 //#include "nodes/CopyDataModel.hpp"
 
 #include "nodes/MathsDataModels.hpp"
@@ -44,6 +48,10 @@ MainWindow::MainWindow(QWidget *_parent) :
   DataModelRegistry::registerModel<SpherePrimitiveDataModel>("Primitives");
   DataModelRegistry::registerModel<CylinderPrimitiveDataModel>("Primitives");
   DataModelRegistry::registerModel<CapsulePrimitiveDataModel>("Primitives");
+  DataModelRegistry::registerModel<PlanePrimitiveDataModel>("Primitives");
+  DataModelRegistry::registerModel<ConePrimitiveDataModel>("Primitives");
+  DataModelRegistry::registerModel<TriangularPrismPrimitiveDataModel>("Primitives");
+  DataModelRegistry::registerModel<HexagonalPrismPrimitiveDataModel>("Primitives");
   DataModelRegistry::registerModel<UnionDataModel>("Operations");
   DataModelRegistry::registerModel<BlendDataModel>("Operations");
   DataModelRegistry::registerModel<TranslateDataModel>("Transforms");
