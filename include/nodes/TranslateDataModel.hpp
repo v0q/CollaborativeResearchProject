@@ -42,7 +42,19 @@ public:
 
 	DFNodeType getNodeType() const { return DFNodeType::TRANSFORM; }
 	std::string getShaderCode();
-	Mat4f getTransform() { return m_t; }
+	std::string getTransform() {
+		std::ostringstream ss;
+		for(int y = 0; y < 4; ++y)
+		{
+			for(int x = 0; x < 4; ++x)
+			{
+				if(x || y)
+					ss << ", ";
+				ss << m_t.matrix(x, y);
+			}
+		}
+		return "mat4x4(" + ss.str() + ")";
+	}
 
 private:
 	Mat4f m_t;

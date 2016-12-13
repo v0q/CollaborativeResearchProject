@@ -133,11 +133,12 @@ namespace hsitho
       Branch branches;
       std::string shadercode;
       Mat4f translation;
+			std::string t("mat4x4(1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0)");
       for(auto connection : m_outputNode->nodeState().connection(PortType::In, 0))
       {
         if(connection.get() && connection->getNode(PortType::Out).lock())
         {
-          shadercode += recurseNodeTree(connection->getNode(PortType::Out).lock(), translation);
+					shadercode += recurseNodeTree(connection->getNode(PortType::Out).lock(), t);
 //					branches.m_branches.push_back(recurseNodeTree(connection->getNode(PortType::Out).lock()));
         }
 			}
@@ -157,16 +158,17 @@ namespace hsitho
     }
   }
 
-  std::string SceneWindow::recurseNodeTree(std::shared_ptr<Node> _node, Mat4f _t)
+	std::string SceneWindow::recurseNodeTree(std::shared_ptr<Node> _node, std::string _t)
   {
 		std::string shadercode;
     if(_node->nodeDataModel()->getNodeType() == DFNodeType::TRANSFORM)
     {
-			_t = _t * _node->nodeDataModel()->getTransform();
+			_t += "*" + _node->nodeDataModel()->getTransform();
     }
     else if(_node->nodeDataModel()->getNodeType() == DFNodeType::PRIMITIVE)
     {
       _node->nodeDataModel()->setTransform(_t);
+			std::cout << _t << "\n";
       shadercode += _node->nodeDataModel()->getShaderCode();
     }
     else if(_node->nodeDataModel()->getNodeType() == DFNodeType::MIX)

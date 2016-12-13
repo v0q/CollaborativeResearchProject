@@ -45,18 +45,8 @@ public:
 
 	DFNodeType getNodeType() const { return DFNodeType::PRIMITIVE; }
 	std::string getShaderCode();
-	void setTransform(const Mat4f &_t) {
-		std::ostringstream ss;
-		for(int y = 0; y < 4; ++y)
-		{
-			for(int x = 0; x < 4; ++x)
-			{
-				if(x || y)
-					ss << ", ";
-				ss << _t.matrix(x, y);
-			}
-		}
-		m_transform = "mat4x4(" + ss.str() + ")";
+	void setTransform(const std::string &_t) {
+		m_transform = _t;
   }
 
 private:
