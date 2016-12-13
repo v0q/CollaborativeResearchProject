@@ -1,5 +1,3 @@
-#include "FlowView.hpp"
-
 #include <QtWidgets/QGraphicsScene>
 
 #include <QtGui/QPen>
@@ -8,18 +6,24 @@
 
 #include <QtCore/QRectF>
 
+#include <QGraphicsView>
 #include <QtOpenGL>
 #include <QtWidgets>
+#include <QList>
 
 #include <QDebug>
+#include <memory>
 #include <iostream>
 
+#include "FlowView.hpp"
 #include "FlowScene.hpp"
 
 #include "DataModelRegistry.hpp"
 
 #include "Node.hpp"
 #include "NodeGraphicsObject.hpp"
+#include "NodeDataModel.hpp"
+#include "CollapsedNodeDataModel.hpp"
 
 FlowView::
 FlowView(FlowScene *scene)
@@ -48,16 +52,40 @@ void
 FlowView::
 contextMenuEvent(QContextMenuEvent *event)
 {
-//	for(auto &d : _scene->selectedItems())
-//	{
-//		std::dynamic_pointer_cast<NodeGraphicsObject>(d)->
-//	}
-	if(_scene->selectedItems().size() > 1)
+  bool canCollapse = false;
+  for(auto &d : _scene->selectedItems())
+  {
+    std::shared_ptr<Node> node = ((NodeGraphicsObject *)d)->node().lock();
+    if(node->nodeDataModel()->caption() == QString("Output") && node->nodeState().getEntries(PortType::In)[0].size() && node->nodeState().getEntries(PortType::In)[0][0].lock())
+    {
+      canCollapse = true;
+    }
+  }
+  if(_scene->selectedItems().size() > 1 && canCollapse)
 	{
 		QMenu collapseMenu;
 		collapseMenu.addAction("Collapse");
 		if(QAction *action = collapseMenu.exec(event->globalPos()))
 		{
+      std::vector<NodeDataType> outputs;
+      for(auto &d : _scene->selectedItems())
+      {
+        std::shared_ptr<Node> node = ((NodeGraphicsObject *)d)->node().lock();
+        if(node->nodeDataModel()->caption() == QString("Output") && node->nodeState().getEntries(PortType::In)[0].size() && node->nodeState().getEntries(PortType::In)[0][0].lock())
+        {
+          outputs.push_back(node->nodeDataModel()->dataType(PortType::In, 0));
+        }
+      }
+      for(auto &o : outputs) {
+//        std::unique_ptr<NodeDataModel> node = std::make_unique<CollapsedNodeDataModel>(o);
+        auto sceneNode = _scene->createNode(std::make_unique<CollapsedNodeDataModel>(o));
+
+        QPoint pos = event->pos();
+        QPointF posView = this->mapToScene(pos);
+
+        sceneNode->nodeGraphicsObject()->setPos(posView);
+        return;
+      }
 			std::cout << action->text().toStdString() << "\n";
 		}
 	} else {
@@ -73,8 +101,6 @@ contextMenuEvent(QContextMenuEvent *event)
 			}
 		}
 
-		std::cout << "Global: " << event->globalPos().x() << " " << event->globalPos().y() << "\n";
-
 		if(QAction * action = modelMenu.exec(event->globalPos()))
 		{
 			QString modelName = action->text();
@@ -85,7 +111,7 @@ contextMenuEvent(QContextMenuEvent *event)
 
 				if(it != category.second.end())
 				{
-					auto node = _scene->createNode(it->second->create() );
+          auto node = _scene->createNode(it->second->create());
 
 					QPoint pos = event->pos();
 					QPointF posView = this->mapToScene(pos);

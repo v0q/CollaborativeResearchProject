@@ -106,7 +106,7 @@ removeConnection(PortType portType,
 				break;
 			}
 			++i;
-		}
+    }
 		if(port.begin() + i != port.end()) {
 			port.erase(port.begin() + i);
 		}

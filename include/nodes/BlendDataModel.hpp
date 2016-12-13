@@ -43,6 +43,6 @@ public:
 	std::vector<QWidget *> embeddedWidget() override;
 
 	DFNodeType getNodeType() const { return DFNodeType::MIX; }
-	std::string getShaderCode();
+  std::string getShaderCode() override;
 	std::string getExtraParams() const override { return ", 0.6"; }
 };
