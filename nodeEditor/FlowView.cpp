@@ -13,6 +13,7 @@
 
 #include <QDebug>
 #include <memory>
+#include <functional>
 #include <iostream>
 
 #include "FlowView.hpp"
@@ -57,23 +58,39 @@ contextMenuEvent(QContextMenuEvent *event)
 	std::vector<std::shared_ptr<Node>> selectedNodes;
   for(auto &d : _scene->selectedItems())
   {
-    std::shared_ptr<Node> node = ((NodeGraphicsObject *)d)->node().lock();
-		selectedNodes.push_back(node);
+		std::shared_ptr<Node> node = ((NodeGraphicsObject *)d)->node().lock();
     if(node->nodeDataModel()->caption() == QString("Output") && node->nodeState().getEntries(PortType::In)[0].size() && node->nodeState().getEntries(PortType::In)[0][0].lock())
     {
-      canCollapse = true;
+			selectedNodes.push_back(node);
+			canCollapse = true;
+			std::function<int(std::shared_ptr<Node>)> getConnectedNodes =
+			[&](std::shared_ptr<Node> _node)
+			{
+				std::vector<std::shared_ptr<Connection>> inConns = _node->nodeState().connection(PortType::In);
+				for(auto connection : inConns)
+				{
+					if(connection.get() && connection->getNode(PortType::Out).lock())
+					{
+						std::shared_ptr<Node> n = connection->getNode(PortType::Out).lock();
+						selectedNodes.push_back(n);
+						getConnectedNodes(n);
+					}
+				}
+				return 0;
+			};
+			getConnectedNodes(node);
     }
   }
-  if(_scene->selectedItems().size() > 1 && canCollapse)
+	if(canCollapse)
 	{
 		QMenu collapseMenu;
 		collapseMenu.addAction("Collapse");
 		if(QAction *action = collapseMenu.exec(event->globalPos()))
 		{
       std::vector<NodeDataType> outputs;
-      for(auto &d : _scene->selectedItems())
+			for(auto &d : selectedNodes)
       {
-        std::shared_ptr<Node> node = ((NodeGraphicsObject *)d)->node().lock();
+				std::shared_ptr<Node> node = d;
         if(node->nodeDataModel()->caption() == QString("Output") && node->nodeState().getEntries(PortType::In)[0].size() && node->nodeState().getEntries(PortType::In)[0][0].lock())
         {
           outputs.push_back(node->nodeDataModel()->dataType(PortType::In, 0));
@@ -97,7 +114,14 @@ contextMenuEvent(QContextMenuEvent *event)
 						for(auto &port : n->nodeState().getEntries(portType))
 						{
 							for(auto &c : port)
-								c.lock()->getConnectionGraphicsObject()->hide();
+							{
+								if(c.lock() && c.lock()->getNode(PortType::In).lock()->nodeDataModel()->caption() == QString("DFO"))
+								{
+									_scene->deleteConnection(c.lock());
+								} else {
+									c.lock()->getConnectionGraphicsObject()->hide();
+								}
+							}
 						}
 					};
 					hideConnections(PortType::In);

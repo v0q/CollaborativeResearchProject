@@ -15,9 +15,9 @@
 //------------------------------------------------------------------------------
 
 Node::
-Node(std::unique_ptr<NodeDataModel> && dataModel, bool _m)
+Node(std::unique_ptr<NodeDataModel> && dataModel, bool _m, const QUuid &_static)
 	: m_movable(_m)
-	,	_id(QUuid::createUuid())
+	,	_id(_static)
   , _nodeDataModel(std::move(dataModel))
   , _nodeState(_nodeDataModel)
   , _nodeGeometry(_nodeDataModel)
@@ -28,6 +28,7 @@ Node(std::unique_ptr<NodeDataModel> && dataModel, bool _m)
   // propagate data: model => node
   connect(_nodeDataModel.get(), &NodeDataModel::dataUpdated,
           this, &Node::onDataUpdated);
+
 }
 
 

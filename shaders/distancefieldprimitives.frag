@@ -327,7 +327,7 @@ TraceResult castRay(mat2x3 _ray)
 ////    trace.t = candidate_error;
 //  return trace;
 
-  for(int i = 0; i < 80; ++i)
+  for(int i = 0; i < 60; ++i)
   {
     vec4 r = map(_ray[0] + trace.t * _ray[1]);
     trace.d = r.x;

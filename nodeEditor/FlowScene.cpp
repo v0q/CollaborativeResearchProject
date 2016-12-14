@@ -21,6 +21,7 @@
 #include "FlowItemInterface.hpp"
 #include "FlowView.hpp"
 #include "DataModelRegistry.hpp"
+#include "nodes/CollapsedNodeDataModel.hpp"
 
 std::shared_ptr<Connection>
 FlowScene::
@@ -99,10 +100,10 @@ deleteConnection(std::shared_ptr<Connection> connection)
 
 std::shared_ptr<Node>
 FlowScene::
-createNode(std::unique_ptr<NodeDataModel> && dataModel, bool _m)
+createNode(std::unique_ptr<NodeDataModel> && dataModel, bool _m, const QUuid &_static)
 {
-	auto node = std::make_shared<Node>(std::move(dataModel), _m);
-  auto ngo  = std::make_unique<NodeGraphicsObject>(*this, node);
+	auto node = std::make_shared<Node>(std::move(dataModel), _m, _static);
+	auto ngo  = std::make_unique<NodeGraphicsObject>(*this, node);
 
   node->setGraphicsObject(std::move(ngo));
 
@@ -171,6 +172,29 @@ removeNode(QGraphicsItem* item)
 
 	deleteConnections(PortType::Out);
   deleteConnections(PortType::In);
+
+	if(node->nodeDataModel()->getNodeType() == DFNodeType::COLLAPSED)
+	{
+		CollapsedNodeDataModel *cn = dynamic_cast<CollapsedNodeDataModel *>(node->nodeDataModel().get());
+		for(auto &n : cn->getNodes())
+		{
+			n->nodeGraphicsObject()->show();
+
+			auto showConnections =
+			[&](PortType portType)
+			{
+				for(auto &port : n->nodeState().getEntries(portType))
+				{
+					for(auto &c : port)
+					{
+						c.lock()->getConnectionGraphicsObject()->show();
+					}
+				}
+			};
+			showConnections(PortType::In);
+			showConnections(PortType::Out);
+		}
+	}
 
   _nodes.erase(node->id());
 	emit nodeEditorChanged();

@@ -26,7 +26,7 @@ class Node
 public:
 
   /// NodeDataModel should be an rvalue and is moved into the Node
-	Node(std::unique_ptr<NodeDataModel> && dataModel, bool _m = true);
+	Node(std::unique_ptr<NodeDataModel> && dataModel, bool _m = true, const QUuid &_static = QUuid::createUuid());
 
   ~Node();
 

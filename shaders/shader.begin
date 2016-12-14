@@ -150,8 +150,8 @@ float w2(float a, float b, float t)
 
 vec3 lerp(vec4 a, vec4 b, float t)
 {
-//  return t*a.yzw + (1-t)*b.yzw;
-  return w1(a.x, b.x, t)*a.yzw + w2(a.x, b.x, t)*b.yzw;
+  return t*a.yzw + (1-t)*b.yzw;
+//  return w1(a.x, b.x, t)*a.yzw + w2(a.x, b.x, t)*b.yzw;
 }
 
 vec4 opBlend(vec4 a, vec4 b, float k)
