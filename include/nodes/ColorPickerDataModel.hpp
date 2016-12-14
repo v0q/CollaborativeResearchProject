@@ -56,14 +56,14 @@ public:
 
   std::vector<QWidget *> embeddedWidget() override;
 
-  DFNodeType getNodeType() const { return DFNodeType::COLOR; }
-  std::string getShaderCode();
+  DFNodeType getNodeType() const override { return DFNodeType::COLOR; }
+  std::string getShaderCode() override;
 
 private slots:
   void colorEdit(QString const &string);
 
 protected:
-  bool eventFilter(QObject *object, QEvent *event);
+  bool eventFilter(QObject *object, QEvent *event) override;
 
 private:
   QPalette m_palColor;

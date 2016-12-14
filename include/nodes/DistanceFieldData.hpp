@@ -5,58 +5,58 @@
 
 struct Vec4f
 {
-	Vec4f() {}
-	Vec4f(const std::string &_x, const std::string &_y, const std::string &_z, const std::string &_w) :
-		m_x(_x),
-		m_y(_y),
-		m_z(_z),
-		m_w(_w)
-	{}
+  Vec4f() {}
+  Vec4f(const std::string &_x, const std::string &_y, const std::string &_z, const std::string &_w) :
+    m_x(_x),
+    m_y(_y),
+    m_z(_z),
+    m_w(_w)
+  {}
 
 
-	Vec4f operator +(const Vec4f &_rhs) {
-		m_x = _rhs.m_x;
-		m_y = _rhs.m_y;
-		m_z = _rhs.m_z;
-		m_w = _rhs.m_w;
+  Vec4f operator +(const Vec4f &_rhs) {
+    m_x = _rhs.m_x;
+    m_y = _rhs.m_y;
+    m_z = _rhs.m_z;
+    m_w = _rhs.m_w;
 
-		return *this;
-	}
+    return *this;
+  }
 
-	void operator =(const Vec4f &_rhs) {
-		m_x = _rhs.m_x;
-		m_y = _rhs.m_y;
-		m_z = _rhs.m_z;
-		m_w = _rhs.m_w;
-	}
+  void operator =(const Vec4f &_rhs) {
+    m_x = _rhs.m_x;
+    m_y = _rhs.m_y;
+    m_z = _rhs.m_z;
+    m_w = _rhs.m_w;
+  }
 
-	std::string m_x = "0.0";
-	std::string m_y = "0.0";
-	std::string m_z = "0.0";
+  std::string m_x = "0.0";
+  std::string m_y = "0.0";
+  std::string m_z = "0.0";
   std::string m_w = "1.0";
 };
 
 enum DFNodeType
 {
-	PRIMITIVE,
-	TRANSFORM,
-	MIX,
-	VECTOR,
+  PRIMITIVE,
+  TRANSFORM,
+  MIX,
+  VECTOR,
   SCALAR,
 	COLOR,
 	OUTPUT,
-	COLLAPSED
+  COLLAPSED
 };
 
 class Mat4f
 {
 public:
-	Mat4f() {}
+  Mat4f() {}
   Mat4f(const std::string &_m00, const std::string &_m10, const std::string &_m20, const std::string &_m30,
         const std::string &_m01, const std::string &_m11, const std::string &_m21, const std::string &_m31,
         const std::string &_m02, const std::string &_m12, const std::string &_m22, const std::string &_m32,
         const std::string &_m03, const std::string &_m13, const std::string &_m23, const std::string &_m33)
-	{
+  {
     m_m4f[0][0] = _m00;
     m_m4f[0][1] = _m01;
     m_m4f[0][2] = _m02;
@@ -212,55 +212,55 @@ private:
 class DistanceFieldInput : public NodeData
 {
 public:
-	NodeDataType type() const override
-	{
-		return NodeDataType {"DistanceFieldData", "     ", Qt::green};
-	}
+  NodeDataType type() const override
+  {
+    return NodeDataType {"DistanceFieldData", "     ", Qt::green};
+  }
 };
 
 class DistanceFieldOutput : public NodeData
 {
 public:
-	NodeDataType type() const override
-	{
-		return NodeDataType {"DistanceFieldData", "Result", Qt::green};
-	}
+  NodeDataType type() const override
+  {
+    return NodeDataType {"DistanceFieldData", "Result", Qt::green};
+  }
 };
 
 class ScalarData : public NodeData
 {
 public:
-	ScalarData() : m_value("0.0") {}
-	ScalarData(const std::string &_v) : m_value(_v) {}
-	NodeDataType type() const override
-	{
-		return NodeDataType {"Scalar", " ", Qt::red};
-	}
-	std::string value() const { return m_value; }
+  ScalarData() : m_value("0.0") {}
+  ScalarData(const std::string &_v) : m_value(_v) {}
+  NodeDataType type() const override
+  {
+    return NodeDataType {"Scalar", " ", Qt::red};
+  }
+  std::string value() const { return m_value; }
 private:
-	std::string m_value;
+  std::string m_value;
 };
 
 class VectorData : public NodeData
 {
 public:
-	VectorData() : m_v(Vec4f()) {}
-	VectorData(const std::string &_x, const std::string &_y, const std::string &_z) :
-		m_v(Vec4f(_x, _y, _z, "1.0"))
-	{}
+  VectorData() : m_v(Vec4f()) {}
+  VectorData(const std::string &_x, const std::string &_y, const std::string &_z) :
+    m_v(Vec4f(_x, _y, _z, "1.0"))
+  {}
 
-	NodeDataType type() const override
-	{
-		return NodeDataType {"Vector", "Vec", Qt::yellow};
-	}
+  NodeDataType type() const override
+  {
+    return NodeDataType {"Vector", "Vec", Qt::yellow};
+  }
 
-	Vec4f vector() const
-	{
+  Vec4f vector() const
+  {
     return m_v;
-	}
+  }
 
 private:
-	Vec4f m_v;
+  Vec4f m_v;
 };
 
 class ColorData : public NodeData
@@ -273,7 +273,7 @@ public:
 
   NodeDataType type() const override
   {
-		return NodeDataType {"Color", "Cd", Qt::white};
+    return NodeDataType {"Color", "Cd", Qt::white};
   }
 
   Vec4f color() const
@@ -287,9 +287,9 @@ private:
 class GenericData : public NodeData
 {
 public:
-	GenericData() {}
-	NodeDataType type() const override {
-		return NodeDataType {"Generic", "Out", Qt::gray};
-	}
+  GenericData() {}
+  NodeDataType type() const override {
+    return NodeDataType {"Generic", "Out", Qt::gray};
+  }
 };
 

@@ -35,7 +35,7 @@ public:
 
 	std::vector<QWidget *> embeddedWidget() override;
 
-	DFNodeType getNodeType() const { return DFNodeType::SCALAR; }
+  DFNodeType getNodeType() const override { return DFNodeType::SCALAR; }
 
 private slots:
 	void valueEdit(QString const);
@@ -75,7 +75,7 @@ public:
 
 	std::vector<QWidget *> embeddedWidget() override;
 
-	DFNodeType getNodeType() const { return DFNodeType::VECTOR; }
+  DFNodeType getNodeType() const override { return DFNodeType::VECTOR; }
 
 private slots:
 	void valueEdit(QString const);
@@ -121,7 +121,7 @@ public:
 
 	std::vector<QWidget *> embeddedWidget() override;
 
-	DFNodeType getNodeType() const { return DFNodeType::SCALAR; }
+  DFNodeType getNodeType() const override { return DFNodeType::SCALAR; }
 
 private slots:
 	void valueEdit(QString const);
@@ -160,7 +160,7 @@ public:
 
 	std::vector<QWidget *> embeddedWidget() override;
 
-	DFNodeType getNodeType() const { return DFNodeType::SCALAR; }
+  DFNodeType getNodeType() const override { return DFNodeType::SCALAR; }
 
 private slots:
 	void valueEdit(QString const);
@@ -200,7 +200,7 @@ public:
 
 	std::vector<QWidget *> embeddedWidget() override;
 
-	DFNodeType getNodeType() const { return DFNodeType::SCALAR; }
+  DFNodeType getNodeType() const override { return DFNodeType::SCALAR; }
 
 private slots:
 	void valueEdit(QString const);
@@ -246,7 +246,7 @@ public:
 
 	std::vector<QWidget *> embeddedWidget() override;
 
-	DFNodeType getNodeType() const { return DFNodeType::SCALAR; }
+  DFNodeType getNodeType() const override { return DFNodeType::SCALAR; }
 
 private slots:
 	void valueEdit(QString const);

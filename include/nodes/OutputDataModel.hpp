@@ -31,7 +31,7 @@ public:
 	NodeDataType dataType(PortType, PortIndex) const override;
 	std::shared_ptr<NodeData> outData(PortIndex port) override { return nullptr; }
 	std::vector<QWidget *> embeddedWidget() override { return std::vector<QWidget *>(); }
-	DFNodeType getNodeType() const { return DFNodeType::OUTPUT; }
+  DFNodeType getNodeType() const override { return DFNodeType::OUTPUT; }
 
 private:
 	NodeDataType m_dataType;
