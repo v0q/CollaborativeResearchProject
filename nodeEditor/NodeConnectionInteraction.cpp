@@ -34,8 +34,8 @@ canConnect(PortIndex &portIndex) const
   // 3) Node port is vacant
 
   // port should be empty
-  if (!nodePortIsEmpty(requiredPort, portIndex))
-    return false;
+//  if (!nodePortIsEmpty(requiredPort, portIndex))
+//    return false;
 
   // 4) Connection type == node port type (not implemented yet)
 
@@ -71,6 +71,10 @@ bool NodeConnectionInteraction::tryConnect() const
   // 2) Assign node to required port in Connection
 
   PortType requiredPort = connectionRequiredPort();
+	QPointF connectionPoint = connectionEndScenePosition(requiredPort);
+	portIndex = nodePortIndexUnderScenePoint(requiredPort,
+																					 connectionPoint);
+
   _node->nodeState().setConnection(requiredPort,
                                    portIndex,
                                    _connection);

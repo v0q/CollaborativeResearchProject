@@ -79,6 +79,9 @@ private:
 
 signals:
   void nodeEditorChanged();
+
+public slots:
+	void connectionDeleteRequested(std::shared_ptr<Connection> _conn) { deleteConnection(_conn); }
 };
 
 std::shared_ptr<Node>

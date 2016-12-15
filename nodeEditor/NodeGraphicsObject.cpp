@@ -200,7 +200,6 @@ mousePressEvent(QGraphicsSceneMouseEvent * event)
 			if(connections.size() && connections[0] && portToCheck == PortType::In)
 			{
 				NodeConnectionInteraction interaction(node, connections[0]);
-
 				interaction.disconnect(portToCheck);
 			}
 			// initialize new Connection

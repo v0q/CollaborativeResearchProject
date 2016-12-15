@@ -157,7 +157,7 @@ namespace hsitho
     }
   }
 
-  std::string SceneWindow::recurseNodeTree(std::shared_ptr<Node> _node, Mat4f _t)
+	std::string SceneWindow::recurseNodeTree(std::shared_ptr<Node> _node, Mat4f _t, PortIndex portIndex)
   {
 		std::string shadercode;
     if(_node->nodeDataModel()->getNodeType() == DFNodeType::TRANSFORM)
@@ -177,10 +177,9 @@ namespace hsitho
     std::vector<std::shared_ptr<Connection>> inConns = _node->nodeState().connection(PortType::In);
 		if(_node->nodeDataModel()->getNodeType() == DFNodeType::COLLAPSED) {
 			std::vector<std::shared_ptr<Connection>> inConnsTmp;
-			for(auto &o : dynamic_cast<CollapsedNodeDataModel *>(_node->nodeDataModel().get())->getOutputs())
-			{
-				for(auto &c : o->nodeState().connection(PortType::In))
-					inConnsTmp.push_back(c);
+			std::shared_ptr<Node> o = dynamic_cast<CollapsedNodeDataModel *>(_node->nodeDataModel().get())->getOutputs()[portIndex];
+			for(auto &c : o->nodeState().connection(PortType::In)) {
+				inConnsTmp.push_back(c);
 			}
 			inConns.swap(inConnsTmp);
 			inConnsTmp.clear();
@@ -189,9 +188,9 @@ namespace hsitho
     unsigned int i = 0;
     for(auto connection : inConns)
     {
-      if(connection.get() && connection->getNode(PortType::Out).lock()) {
+			if(connection.get() && connection->getNode(PortType::Out).lock()) {
         ++i;
-        shadercode += recurseNodeTree(connection->getNode(PortType::Out).lock(), _t);
+				shadercode += recurseNodeTree(connection->getNode(PortType::Out).lock(), _t, connection->getPortIndex(PortType::Out));
         if(_node->nodeDataModel()->getNodeType() == DFNodeType::MIX) {
           if(i < inConns.size())
             shadercode += ",";

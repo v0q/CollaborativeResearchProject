@@ -2,6 +2,7 @@
 
 #include <memory>
 
+#include "FlowScene.hpp"
 #include "Node.hpp"
 #include "Connection.hpp"
 
@@ -12,10 +13,10 @@ class NodeConnectionInteraction
 {
 public:
   NodeConnectionInteraction(std::shared_ptr<Node> node,
-                            std::shared_ptr<Connection> connection)
+														std::shared_ptr<Connection> connection)
     : _node(node)
     , _connection(connection)
-  {}
+	{ }
 
   /// Can connect when following conditions are met:
   /// 1) Connection 'requires' a port
@@ -29,7 +30,7 @@ public:
   /// 3) Assign Connection to empty port in NodeState
   /// 4) Adjust Connection geometry
   /// 5) Poke model to intiate data transfer
-  bool tryConnect() const;
+	bool tryConnect() const;
 
 
   /// 1) Node and Connection should be already connected
@@ -55,6 +56,5 @@ private:
 private:
 
   std::shared_ptr<Node> _node;
-
   std::shared_ptr<Connection> _connection;
 };

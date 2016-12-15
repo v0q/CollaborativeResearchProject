@@ -2,8 +2,7 @@
 #include "CollapsedNodeDataModel.hpp"
 #include "MathsDataModels.hpp"
 
-CollapsedNodeDataModel::CollapsedNodeDataModel(const NodeDataType &_type, std::vector<std::shared_ptr<Node> > &_nodes) :
-	m_nodeDataType(_type),
+CollapsedNodeDataModel::CollapsedNodeDataModel(std::vector<std::shared_ptr<Node> > &_nodes) :
 	m_nodes(_nodes)
 {
 	for(auto &n : m_nodes)
@@ -31,7 +30,7 @@ unsigned int CollapsedNodeDataModel::nPorts(PortType portType) const
 			break;
 
 		case PortType::Out:
-			result = 1;
+			result = m_outputs.size();
 
 		default:
 			break;
@@ -40,12 +39,23 @@ unsigned int CollapsedNodeDataModel::nPorts(PortType portType) const
 	return result;
 }
 
-NodeDataType CollapsedNodeDataModel::dataType(PortType, PortIndex) const
+NodeDataType CollapsedNodeDataModel::dataType(PortType portType, PortIndex portIndex) const
 {
-	return m_nodeDataType;
+	switch(portType)
+	{
+		case PortType::Out:
+			return m_outputs[portIndex]->nodeDataModel()->dataType(PortType::In, 0);
+//			return m_nodeDataType;
+		break;
+		default:
+			return NodeDataType{};
+		break;
+	}
 }
 
 std::shared_ptr<NodeData> CollapsedNodeDataModel::outData(PortIndex port)
 {
-	return m_outputs[0]->nodeState().getEntries(PortType::In)[0][0].lock()->getNode(PortType::Out).lock()->nodeDataModel()->outData(port);
+	QString test = m_outputs[port]->nodeState().getEntries(PortType::In)[0][0].lock()->getNode(PortType::Out).lock()->nodeDataModel()->caption();
+	std::cout << (int)port << " " << test.toStdString() << "\n";
+	return m_outputs[port]->nodeState().getEntries(PortType::In)[0][0].lock()->getNode(PortType::Out).lock()->nodeDataModel()->outData(port);
 }

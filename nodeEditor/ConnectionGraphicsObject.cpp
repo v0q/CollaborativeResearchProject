@@ -188,6 +188,7 @@ mouseMoveEvent(QGraphicsSceneMouseEvent* event)
   event->accept();
 }
 
+#include "NodeDataModel.hpp"
 
 void
 ConnectionGraphicsObject::
@@ -201,10 +202,16 @@ mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
 
   auto connection = _connection.lock();
 
-  NodeConnectionInteraction interaction(node, connection);
+	NodeConnectionInteraction interaction(node, connection);
 
-  if (node && interaction.tryConnect())
-  {
+	PortIndex ind = INVALID;
+	if(node && interaction.canConnect(ind))
+	{
+		std::shared_ptr<Connection> existingConn;
+		if(node->nodeState().getEntries(PortType::In)[ind].size() && (existingConn = node->nodeState().getEntries(PortType::In)[ind][0].lock())) {
+			_scene.deleteConnection(existingConn);
+		}
+		interaction.tryConnect();
 		node->resetReactionToConnection();
 		emit _scene.nodeEditorChanged();
 	}

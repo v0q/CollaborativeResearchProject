@@ -14,6 +14,7 @@
 
 #include "Node.hpp"
 #include "NodeGraphicsObject.hpp"
+#include "NodeConnectionInteraction.hpp"
 
 #include "ConnectionGraphicsObject.hpp"
 
@@ -187,7 +188,8 @@ removeNode(QGraphicsItem* item)
 				{
 					for(auto &c : port)
 					{
-						c.lock()->getConnectionGraphicsObject()->show();
+						if(c.lock())
+							c.lock()->getConnectionGraphicsObject()->show();
 					}
 				}
 			};
@@ -296,7 +298,7 @@ load()
   QDataStream in(&file);
 
   qint64 nNodes;
-  in >> nNodes;
+	in >> nNodes;
 
   for (unsigned int i = 0; i < nNodes; ++i)
   {

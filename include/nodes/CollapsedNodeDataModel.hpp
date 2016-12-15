@@ -19,7 +19,7 @@ class CollapsedNodeDataModel : public NodeDataModel
 
 public:
 
-	CollapsedNodeDataModel(const NodeDataType &_type, std::vector<std::shared_ptr<Node>> &_nodes);
+	CollapsedNodeDataModel(std::vector<std::shared_ptr<Node>> &_nodes);
 	virtual ~CollapsedNodeDataModel() {}
 
 	QString caption() const override
@@ -37,7 +37,7 @@ public:
 
 	unsigned int nPorts(PortType portType) const override;
 
-	NodeDataType dataType(PortType, PortIndex) const override;
+	NodeDataType dataType(PortType portType, PortIndex portIndex) const override;
 
 	std::shared_ptr<NodeData> outData(PortIndex port) override;
 	void setInData(std::shared_ptr<NodeData>, int) override {}
@@ -48,7 +48,6 @@ public:
   DFNodeType getNodeType() const override { return DFNodeType::COLLAPSED; }
 
 private:
-	NodeDataType m_nodeDataType;
 	std::vector<std::shared_ptr<Node>> m_nodes;
 	std::vector<std::shared_ptr<Node>> m_outputs;
 };

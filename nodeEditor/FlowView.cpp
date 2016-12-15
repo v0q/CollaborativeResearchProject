@@ -13,6 +13,7 @@
 
 #include <QDebug>
 #include <memory>
+#include <algorithm>
 #include <functional>
 #include <iostream>
 
@@ -95,40 +96,45 @@ contextMenuEvent(QContextMenuEvent *event)
         {
           outputs.push_back(node->nodeDataModel()->dataType(PortType::In, 0));
         }
-      }
-			for(auto &o : outputs) {
-				auto sceneNode = _scene->createNode(std::make_unique<CollapsedNodeDataModel>(o, selectedNodes));
+			}
+			auto sceneNode = _scene->createNode(std::make_unique<CollapsedNodeDataModel>(selectedNodes));
 
-        QPoint pos = event->pos();
-        QPointF posView = this->mapToScene(pos);
+			QPoint pos = event->pos();
+			QPointF posView = this->mapToScene(pos);
 
-        sceneNode->nodeGraphicsObject()->setPos(posView);
+			sceneNode->nodeGraphicsObject()->setPos(posView);
 
-				for(auto &n : selectedNodes)
+			for(auto &n : selectedNodes)
+			{
+				n->nodeGraphicsObject()->hide();
+
+				auto hideConnections =
+				[&](PortType portType)
 				{
-					n->nodeGraphicsObject()->hide();
-
-					auto hideConnections =
-					[&](PortType portType)
+					for(auto &port : n->nodeState().getEntries(portType))
 					{
-						for(auto &port : n->nodeState().getEntries(portType))
+						for(auto &c : port)
 						{
-							for(auto &c : port)
+							if(c.lock())
 							{
-								if(c.lock() && c.lock()->getNode(PortType::In).lock()->nodeDataModel()->caption() == QString("DFO"))
+								std::shared_ptr<Node> connectedNode = c.lock()->getNode(PortType::In).lock();
+								if(connectedNode)
 								{
-									_scene->deleteConnection(c.lock());
-								} else {
-									c.lock()->getConnectionGraphicsObject()->hide();
+									if(std::find(selectedNodes.begin(), selectedNodes.end(), connectedNode) == selectedNodes.end()) {
+										_scene->deleteConnection(c.lock());
+									}
+									else {
+										c.lock()->getConnectionGraphicsObject()->hide();
+									}
 								}
 							}
 						}
-					};
-					hideConnections(PortType::In);
-					hideConnections(PortType::Out);
-				}
-        return;
+					}
+				};
+				hideConnections(PortType::In);
+				hideConnections(PortType::Out);
 			}
+			return;
 		}
 	} else {
 		QMenu modelMenu;

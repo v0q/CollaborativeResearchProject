@@ -24,7 +24,8 @@ public:
 		return QString("Output");
 	}
 
-	void save(Properties &p) const override {}
+	void save(Properties &p) const override;
+	void restore(const Properties &p) override;
 	void setInData(std::shared_ptr<NodeData>, int) override {}
 	void setDataType(const NodeDataType &_dt) override { m_dataType = _dt; }
 	unsigned int nPorts(PortType portType) const override;
