@@ -192,6 +192,7 @@ namespace hsitho
         ++i;
 				shadercode += recurseNodeTree(connection->getNode(PortType::Out).lock(), _t, connection->getPortIndex(PortType::Out));
         if(_node->nodeDataModel()->getNodeType() == DFNodeType::MIX) {
+          std::cout << inConns.size() << "\n";
           if(i < inConns.size())
             shadercode += ",";
           else

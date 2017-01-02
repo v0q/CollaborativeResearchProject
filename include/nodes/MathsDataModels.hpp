@@ -26,7 +26,8 @@ public:
 		return QString("Scalar");
 	}
 
-	void save(Properties &p) const override {	p.put("model_name", name()); }
+  void save(Properties &p) const override;
+  void restore(const Properties &p) override;
 	void setInData(std::shared_ptr<NodeData>, int) override {}
 
 	unsigned int nPorts(PortType portType) const override;
@@ -66,7 +67,8 @@ public:
 		return QString("Vector");
 	}
 
-	void save(Properties &p) const override {	p.put("model_name", name()); }
+  void save(Properties &p) const override;
+  void restore(const Properties &p) override;
 	void setInData(std::shared_ptr<NodeData>, PortIndex portIndex) override;
 
 	unsigned int nPorts(PortType portType) const override;
@@ -112,7 +114,8 @@ public:
 		return QString("Sine");
 	}
 
-	void save(Properties &p) const override {	p.put("model_name", name()); }
+  void save(Properties &p) const override;
+  void restore(const Properties &p) override;
 
 	unsigned int nPorts(PortType portType) const override;
 	NodeDataType dataType(PortType portType, PortIndex portIndex) const override;
@@ -151,12 +154,13 @@ public:
 		return QString("Cosine");
 	}
 
-	void save(Properties &p) const override {	p.put("model_name", name()); }
+  void save(Properties &p) const override;
+  void restore(const Properties &p) override;
+  void setInData(std::shared_ptr<NodeData> _data, PortIndex portIndex) override;
 
 	unsigned int nPorts(PortType portType) const override;
 	NodeDataType dataType(PortType portType, PortIndex portIndex) const override;
 	std::shared_ptr<NodeData> outData(PortIndex) override;
-	void setInData(std::shared_ptr<NodeData> _data, PortIndex portIndex) override;
 
 	std::vector<QWidget *> embeddedWidget() override;
 
@@ -191,7 +195,8 @@ public:
 		return QString("Multiply");
 	}
 
-	void save(Properties &p) const override {	p.put("model_name", name()); }
+  void save(Properties &p) const override;
+  void restore(const Properties &p) override;
 	void setInData(std::shared_ptr<NodeData>, PortIndex portIndex) override;
 
 	unsigned int nPorts(PortType portType) const override;
@@ -237,7 +242,8 @@ public:
 		return QString("Divide");
 	}
 
-	void save(Properties &p) const override {	p.put("model_name", name()); }
+  void save(Properties &p) const override;
+  void restore(const Properties &p) override;
 	void setInData(std::shared_ptr<NodeData>, PortIndex portIndex) override;
 
 	unsigned int nPorts(PortType portType) const override;
@@ -255,10 +261,10 @@ private:
 	std::shared_ptr<ScalarData> m_v;
 	union {
 		QLineEdit *m_inputs[2];
-		struct {
+    struct {
 			QLineEdit *m_x;
 			QLineEdit *m_y;
-		};
-	};
+    };
+  };
 };
 

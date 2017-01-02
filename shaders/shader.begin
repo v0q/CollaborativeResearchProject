@@ -173,7 +173,7 @@ vec4 opIntersection(vec4 a, vec4 b)
 
 vec4 opSubtraction(vec4 a, vec4 b)
 {
-  return -a.x >= b.x ? a : b;
+  return -a.x >= b.x ? vec4(-a.x, a.yzw) : b;
 }
 
 vec3 opRepetition(vec3 p, vec3 c)

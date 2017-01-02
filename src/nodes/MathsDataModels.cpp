@@ -13,7 +13,9 @@ ScalarDataModel::ScalarDataModel() :
 	int w = m_value->sizeHint().width()/2;
 	int h = m_value->sizeHint().height();
 
-	m_value->setValidator(new QDoubleValidator);
+  auto d = new QDoubleValidator;
+  d->setLocale(QLocale("en_GB"));
+  m_value->setValidator(d);
 	m_value->setMaximumSize(m_value->sizeHint());
 	m_value->setGeometry(x, y, w, h);
 	m_value->setContentsMargins(0, 0, 0, 0);
@@ -36,6 +38,17 @@ void ScalarDataModel::valueEdit(QString const)
 	emit dataUpdated(0);
 }
 
+void ScalarDataModel::save(Properties &p) const
+{
+  p.put("model_name", name());
+  p.put("m_value", m_value->text());
+}
+
+void ScalarDataModel::restore(const Properties &p)
+{
+  m_value->setText(p.values().find("m_value").value().toString());
+}
+
 unsigned int ScalarDataModel::nPorts(PortType portType) const
 {
 	unsigned int result = 1;
@@ -44,13 +57,14 @@ unsigned int ScalarDataModel::nPorts(PortType portType) const
 	{
 		case PortType::In:
 			result = 0;
-			break;
+    break;
 
 		case PortType::Out:
 			result = 1;
+    break;
 
-		default:
-			break;
+    default:
+    break;
 	}
 
 	return result;
@@ -124,6 +138,25 @@ void VectorDataModel::valueEdit(QString const)
 	emit dataUpdated(0);
 }
 
+void VectorDataModel::save(Properties &p) const
+{
+  p.put("model_name", name());
+  p.put("m_x", m_x->text());
+  p.put("m_y", m_y->text());
+  p.put("m_z", m_z->text());
+}
+
+void VectorDataModel::restore(const Properties &p)
+{
+  m_x->setText(p.values().find("m_x").value().toString());
+  m_y->setText(p.values().find("m_y").value().toString());
+  m_z->setText(p.values().find("m_z").value().toString());
+
+  m_v = std::make_shared<VectorData>(m_x->text().toStdString(),
+                                     m_y->text().toStdString(),
+                                     m_z->text().toStdString());
+}
+
 unsigned int VectorDataModel::nPorts(PortType portType) const
 {
 	unsigned int result = 1;
@@ -132,13 +165,14 @@ unsigned int VectorDataModel::nPorts(PortType portType) const
 	{
 		case PortType::In:
 			result = 3;
-			break;
+    break;
 
 		case PortType::Out:
 			result = 1;
+    break;
 
 		default:
-			break;
+    break;
 	}
 
 	return result;
@@ -165,7 +199,7 @@ NodeDataType VectorDataModel::dataType(PortType portType, PortIndex portIndex) c
 			return VectorData().type();
 		break;
 		default:
-			break;
+    break;
 	}
 	return VectorData().type();
 }
@@ -222,6 +256,18 @@ void SineDataModel::valueEdit(QString const)
 {
 	m_v = std::make_shared<ScalarData>(boost::lexical_cast<std::string>("sin(" + m_value->text().toStdString() + ")"));
 	emit dataUpdated(0);
+}
+
+void SineDataModel::save(Properties &p) const
+{
+  p.put("model_name", name());
+  p.put("m_value", m_value->text());
+}
+
+void SineDataModel::restore(const Properties &p)
+{
+  m_value->setText(p.values().find("m_value").value().toString());
+  m_v = std::make_shared<ScalarData>(boost::lexical_cast<std::string>("sin(" + m_value->text().toStdString() + ")"));
 }
 
 unsigned int SineDataModel::nPorts(PortType portType) const
@@ -313,6 +359,18 @@ void CosineDataModel::valueEdit(QString const)
 	emit dataUpdated(0);
 }
 
+void CosineDataModel::save(Properties &p) const
+{
+  p.put("model_name", name());
+  p.put("m_value", m_value->text());
+}
+
+void CosineDataModel::restore(const Properties &p)
+{
+  m_value->setText(p.values().find("m_value").value().toString());
+  m_v = std::make_shared<ScalarData>(boost::lexical_cast<std::string>("cos(" + m_value->text().toStdString() + ")"));
+}
+
 unsigned int CosineDataModel::nPorts(PortType portType) const
 {
 	unsigned int result = 1;
@@ -321,13 +379,14 @@ unsigned int CosineDataModel::nPorts(PortType portType) const
 	{
 		case PortType::In:
 			result = 1;
-			break;
+    break;
 
 		case PortType::Out:
 			result = 1;
+    break;
 
 		default:
-			break;
+    break;
 	}
 
 	return result;
@@ -343,7 +402,7 @@ NodeDataType CosineDataModel::dataType(PortType portType, PortIndex portIndex) c
 			return ScalarData().type();
 		break;
 		default:
-			break;
+    break;
 	}
 	return ScalarData().type();
 }
@@ -411,6 +470,21 @@ void MultiplyDataModel::valueEdit(QString const)
 	emit dataUpdated(0);
 }
 
+void MultiplyDataModel::save(Properties &p) const
+{
+  p.put("model_name", name());
+  p.put("m_x", m_x->text());
+  p.put("m_y", m_y->text());
+}
+
+void MultiplyDataModel::restore(const Properties &p)
+{
+  m_x->setText(p.values().find("m_x").value().toString());
+  m_y->setText(p.values().find("m_y").value().toString());
+
+  m_v = std::make_shared<ScalarData>(std::string(m_x->text().toStdString() + "*" + m_y->text().toStdString()));
+}
+
 unsigned int MultiplyDataModel::nPorts(PortType portType) const
 {
 	unsigned int result = 1;
@@ -423,9 +497,10 @@ unsigned int MultiplyDataModel::nPorts(PortType portType) const
 
 		case PortType::Out:
 			result = 1;
+    break;
 
 		default:
-			break;
+    break;
 	}
 
 	return result;
@@ -445,11 +520,13 @@ NodeDataType MultiplyDataModel::dataType(PortType portType, PortIndex portIndex)
 				break;
 			}
 		break;
+
 		case PortType::Out:
 			return ScalarData().type();
 		break;
+
 		default:
-			break;
+    break;
 	}
 	return ScalarData().type();
 }
@@ -517,6 +594,21 @@ void DivideDataModel::valueEdit(QString const)
 	emit dataUpdated(0);
 }
 
+void DivideDataModel::save(Properties &p) const
+{
+  p.put("model_name", name());
+  p.put("m_x", m_x->text());
+  p.put("m_y", m_y->text());
+}
+
+void DivideDataModel::restore(const Properties &p)
+{
+  m_x->setText(p.values().find("m_x").value().toString());
+  m_y->setText(p.values().find("m_y").value().toString());
+
+  m_v = std::make_shared<ScalarData>(std::string(m_x->text().toStdString() + "/" + m_y->text().toStdString()));
+}
+
 unsigned int DivideDataModel::nPorts(PortType portType) const
 {
 	unsigned int result = 1;
@@ -529,9 +621,10 @@ unsigned int DivideDataModel::nPorts(PortType portType) const
 
 		case PortType::Out:
 			result = 1;
+    break;
 
 		default:
-			break;
+    break;
 	}
 
 	return result;
@@ -551,11 +644,13 @@ NodeDataType DivideDataModel::dataType(PortType portType, PortIndex portIndex) c
 				break;
 			}
 		break;
+
 		case PortType::Out:
 			return ScalarData().type();
 		break;
+
 		default:
-			break;
+    break;
 	}
 	return ScalarData().type();
 }
