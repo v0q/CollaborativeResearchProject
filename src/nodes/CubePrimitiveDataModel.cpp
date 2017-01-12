@@ -88,11 +88,12 @@ void CubePrimitiveDataModel::setTransform(const Mat4f &_t)
     for(int x = 0; x < 4; ++x)
     {
       if(x || y)
-        ss << ", ";
-      ss << _t.matrix(x, y);
+				ss << ", ";
+			ss << hsitho::Expressions::evaluate(_t.matrix(x, y), "", m_copyNum);
     }
-  }
+	}
   m_transform = "mat4x4(" + ss.str() + ")";
+
 }
 
 std::vector<QWidget *> CubePrimitiveDataModel::embeddedWidget()
@@ -102,6 +103,7 @@ std::vector<QWidget *> CubePrimitiveDataModel::embeddedWidget()
 
 std::string CubePrimitiveDataModel::getShaderCode()
 {
+	std::cout << "Num: " << m_copyNum << "\n";
   if(m_transform == "")
   {
     m_transform = "mat4x4(cos(u_GlobalTime)*1.0+0, sin(u_GlobalTime)*1.0+0, 0, 2.5,	-sin(u_GlobalTime)*1.0+0, cos(u_GlobalTime)*1.0+0, 0, 0.600000024, 0, 0, 1, 0, 0, 0, 0, 1)";

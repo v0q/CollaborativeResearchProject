@@ -12,8 +12,8 @@ namespace hsitho {
   {
     void parseExpression(std::string &_expression);
     std::string addSpaces(const std::string &_expression);
-    std::string evaluate(const std::string &_expression, const std::string &_prev = "");
-    std::string evaluatePostFix(std::vector<std::string> outputQueue);
+		std::string evaluate(const std::string &_expression, const std::string &_prev = "", const int &_copyNum = -1);
+		std::string evaluatePostFix(std::vector<std::string> outputQueue, const int &_copyNum);
     template<typename T>
     T clamp(const T _val, const T _v1, const T _v2)
     {

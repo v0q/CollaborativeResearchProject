@@ -11,6 +11,7 @@
 #include "Export.hpp"
 
 #include "nodes/DistanceFieldData.hpp"
+#include "ExpressionEvaluator.hpp"
 
 class NODE_EDITOR_PUBLIC NodeDataModel
   : public QObject
@@ -76,6 +77,6 @@ signals:
 	void computingStarted();
 	void computingFinished();
 
-private:
+protected:
 	unsigned int m_copyNum;
 };

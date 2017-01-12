@@ -5,8 +5,7 @@
 TimeDataModel::TimeDataModel() :
   m_v(nullptr)
 {
-  m_v = std::make_shared<ScalarData>("u_GlobalTime");
-  std::cout << m_v->value() << "\n";
+	m_v = std::make_shared<ScalarData>("u_GlobalTime");
 }
 
 unsigned int TimeDataModel::nPorts(PortType portType) const
@@ -17,10 +16,11 @@ unsigned int TimeDataModel::nPorts(PortType portType) const
 	{
 		case PortType::In:
 			result = 0;
-			break;
+		break;
 
 		case PortType::Out:
 			result = 1;
+		break;
 
 		default:
 			break;

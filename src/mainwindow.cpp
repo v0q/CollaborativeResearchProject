@@ -9,6 +9,7 @@
 #include "ExpressionEvaluator.hpp"
 #include "nodes/DistanceFieldOutputDataModel.hpp"
 #include "nodes/OperationDataModels.hpp"
+#include "nodes/CopyNumDataModel.hpp"
 #include "nodes/TimeDataModel.hpp"
 #include "nodes/TranslateDataModel.hpp"
 #include "nodes/RotateDataModel.hpp"
@@ -69,6 +70,7 @@ MainWindow::MainWindow(QWidget *_parent) :
 	DataModelRegistry::registerModel<ColorPickerDataModel>("Color");
   DataModelRegistry::registerModel<OutputDataModel>("Generic");
 	DataModelRegistry::registerModel<CopyDataModel>("Generic");
+	DataModelRegistry::registerModel<CopyNumDataModel>("Generic");
 
   connect(this, SIGNAL(nodeEditorModified(std::unordered_map<QUuid, std::shared_ptr<Node>>)), m_gl, SLOT(nodeChanged(std::unordered_map<QUuid, std::shared_ptr<Node>>)));
 

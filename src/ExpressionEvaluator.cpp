@@ -63,7 +63,7 @@ namespace hsitho {
       return newOutput.str();
     }
 
-    std::string evaluate(const std::string &_expression, const std::string &_prev)
+		std::string evaluate(const std::string &_expression, const std::string &_prev, const int &_copyNum)
     {
       // Generate postfix notation for the expression
       std::string exp = _expression;
@@ -126,7 +126,7 @@ namespace hsitho {
       }
 
       // Evaluate the postfix expression
-      std::string s = evaluatePostFix(outputQueue);
+			std::string s = evaluatePostFix(outputQueue, _copyNum);
       if(s.find("+") == 0)
         s.erase(0, 1);
 
@@ -143,7 +143,7 @@ namespace hsitho {
       return finalOutput;
     }
 
-    std::string evaluatePostFix(std::vector<std::string> outputQueue)
+		std::string evaluatePostFix(std::vector<std::string> outputQueue, const int &_copyNum)
     {
       std::vector<std::string> stack;
 
@@ -151,7 +151,10 @@ namespace hsitho {
       {
         try {
           size_t pos;
-					if((pos = o.find("-sin(")) != std::string::npos) {
+					if((pos = o.find("copyNum")) != std::string::npos && _copyNum != -1) {
+						stack.push_back(boost::lexical_cast<std::string>(_copyNum));
+						continue;
+					}	else if((pos = o.find("-sin(")) != std::string::npos) {
             unsigned int startPos = pos+4;
 						std::string sineval = "-" + boost::lexical_cast<std::string>(std::sin(boost::lexical_cast<float>(o.substr(startPos, o.find(")", pos) - startPos))));
             stack.push_back(sineval);

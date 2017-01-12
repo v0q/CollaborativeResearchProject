@@ -64,12 +64,12 @@ namespace hsitho
     };
 
     float uvs[] = {
-      0.0f, 1.0f,
-      0.0f, 0.0f,
-      1.0f, 1.0f,
-      0.0f, 0.0f,
-      1.0f, 0.0f,
-      1.0f, 1.0f
+			1.0f, 1.0f,
+			1.0f, 0.0f,
+			0.0f, 1.0f,
+			1.0f, 0.0f,
+			0.0f, 0.0f,
+			0.0f, 1.0f
     };
 
     m_vbo.create();
@@ -157,11 +157,12 @@ namespace hsitho
     }
   }
 
-	std::string SceneWindow::recurseNodeTree(std::shared_ptr<Node> _node, Mat4f &_t, PortIndex portIndex, bool _propagate)
+	std::string SceneWindow::recurseNodeTree(std::shared_ptr<Node> _node, Mat4f _t, PortIndex portIndex, unsigned int _cp)
 	{
 		unsigned int iter = 1;
-		Mat4f localCopy = _t;
 		std::string shadercode;
+		_node->nodeDataModel()->setCopyNum(_cp);
+
     if(_node->nodeDataModel()->getNodeType() == DFNodeType::TRANSFORM)
 		{
 			_t = _t * _node->nodeDataModel()->getTransform();
@@ -178,15 +179,17 @@ namespace hsitho
 		else if(_node->nodeDataModel()->getNodeType() == DFNodeType::COPY)
 		{
 			iter = boost::lexical_cast<unsigned int>(_node->nodeDataModel()->getShaderCode());
-			if(iter > 1)
-				_propagate = true;
 		}
 
 		for(unsigned int it = 0; it < iter; ++it)
 		{
-			if(iter > 1 && iter - it > 1)
+			if(iter > 1)
 			{
-				shadercode += "opUnion(";
+				_cp = it;
+				if(iter - it > 1)
+				{
+					shadercode += "opUnion(";
+				}
 			}
 			std::vector<std::shared_ptr<Connection>> inConns = _node->nodeState().connection(PortType::In);
 			if(_node->nodeDataModel()->getNodeType() == DFNodeType::COLLAPSED) {
@@ -204,7 +207,7 @@ namespace hsitho
 			{
 				if(connection.get() && connection->getNode(PortType::Out).lock()) {
 					++i;
-					shadercode += recurseNodeTree(connection->getNode(PortType::Out).lock(), _t, connection->getPortIndex(PortType::Out), _propagate);
+					shadercode += recurseNodeTree(connection->getNode(PortType::Out).lock(), _t, connection->getPortIndex(PortType::Out), _cp);
 					if(_node->nodeDataModel()->getNodeType() == DFNodeType::MIX) {
 						std::cout << inConns.size() << "\n";
 						if(i < inConns.size())
@@ -224,8 +227,6 @@ namespace hsitho
 			for(unsigned int it = 0; it < iter - 1; ++it)
 				shadercode += ")";
 		}
-		if(!_propagate)
-			_t = localCopy;
     return shadercode;
   }
 }
