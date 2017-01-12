@@ -30,7 +30,7 @@
 #include "nodes/TriangularPrismPrimitiveDataModel.hpp"
 #include "nodes/HexagonalPrismPrimitiveDataModel.hpp"
 #include "nodes/ConePrimitiveDataModel.hpp"
-//#include "nodes/CopyDataModel.hpp"
+#include "nodes/CopyDataModel.hpp"
 
 #include "nodes/MathsDataModels.hpp"
 
@@ -64,7 +64,7 @@ MainWindow::MainWindow(QWidget *_parent) :
   DataModelRegistry::registerModel<DivideDataModel>("Maths");
   DataModelRegistry::registerModel<ColorPickerDataModel>("Color");
   DataModelRegistry::registerModel<OutputDataModel>("Generic");
- // DataModelRegistry::registerModel<CopyDataModel>("Copy");
+  DataModelRegistry::registerModel<CopyDataModel>("Copy");
 
   connect(this, SIGNAL(nodeEditorModified(std::unordered_map<QUuid, std::shared_ptr<Node>>)), m_gl, SLOT(nodeChanged(std::unordered_map<QUuid, std::shared_ptr<Node>>)));
 

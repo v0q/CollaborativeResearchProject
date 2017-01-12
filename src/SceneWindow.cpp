@@ -156,6 +156,7 @@ namespace hsitho
       }
     }
   }
+  int copies = 2;
 
 	std::string SceneWindow::recurseNodeTree(std::shared_ptr<Node> _node, Mat4f _t, PortIndex portIndex)
   {
@@ -174,31 +175,74 @@ namespace hsitho
       shadercode += _node->nodeDataModel()->getShaderCode();
     }
 
-    std::vector<std::shared_ptr<Connection>> inConns = _node->nodeState().connection(PortType::In);
-		if(_node->nodeDataModel()->getNodeType() == DFNodeType::COLLAPSED) {
-			std::vector<std::shared_ptr<Connection>> inConnsTmp;
-			std::shared_ptr<Node> o = dynamic_cast<CollapsedNodeDataModel *>(_node->nodeDataModel().get())->getOutputs()[portIndex];
-			for(auto &c : o->nodeState().connection(PortType::In)) {
-				inConnsTmp.push_back(c);
-			}
-			inConns.swap(inConnsTmp);
-			inConnsTmp.clear();
-		}
 
-    unsigned int i = 0;
-    for(auto connection : inConns)
+    if(copies >= 1)
     {
-			if(connection.get() && connection->getNode(PortType::Out).lock()) {
-        ++i;
-				shadercode += recurseNodeTree(connection->getNode(PortType::Out).lock(), _t, connection->getPortIndex(PortType::Out));
-        if(_node->nodeDataModel()->getNodeType() == DFNodeType::MIX) {
-          if(i < inConns.size())
-            shadercode += ",";
-          else
-            shadercode += _node->nodeDataModel()->getExtraParams() + ")";
+      for(int j = 0; j <= copies; j++)
+      {
+          std::vector<std::shared_ptr<Connection>> inConns = _node->nodeState().connection(PortType::In);
+          if(_node->nodeDataModel()->getNodeType() == DFNodeType::COLLAPSED) {
+            std::vector<std::shared_ptr<Connection>> inConnsTmp;
+            std::shared_ptr<Node> o = dynamic_cast<CollapsedNodeDataModel *>(_node->nodeDataModel().get())->getOutputs()[portIndex];
+            for(auto &c : o->nodeState().connection(PortType::In)) {
+              inConnsTmp.push_back(c);
+            }
+            inConns.swap(inConnsTmp);
+            inConnsTmp.clear();
+          }
+
+
+          unsigned int i = 0;
+          for(auto connection : inConns)
+          {
+            if(connection.get() && connection->getNode(PortType::Out).lock()) {
+              ++i;
+              shadercode += recurseNodeTree(connection->getNode(PortType::Out).lock(), _t, connection->getPortIndex(PortType::Out));
+              if(_node->nodeDataModel()->getNodeType() == DFNodeType::MIX)
+              {
+                if(i < inConns.size())
+                  shadercode += ", ";
+                else
+                  shadercode += _node->nodeDataModel()->getExtraParams() + ")";
+              }
+            }
+          }
+        std::cout << "J equals: " << j << "\n";
+        }
+    }
+    else
+    {
+      std::vector<std::shared_ptr<Connection>> inConns = _node->nodeState().connection(PortType::In);
+      if(_node->nodeDataModel()->getNodeType() == DFNodeType::COLLAPSED) {
+        std::vector<std::shared_ptr<Connection>> inConnsTmp;
+        std::shared_ptr<Node> o = dynamic_cast<CollapsedNodeDataModel *>(_node->nodeDataModel().get())->getOutputs()[portIndex];
+        for(auto &c : o->nodeState().connection(PortType::In)) {
+          inConnsTmp.push_back(c);
+        }
+        inConns.swap(inConnsTmp);
+        inConnsTmp.clear();
+      }
+
+
+      unsigned int i = 0;
+      for(auto connection : inConns)
+      {
+        if(connection.get() && connection->getNode(PortType::Out).lock()) {
+          ++i;
+          shadercode += recurseNodeTree(connection->getNode(PortType::Out).lock(), _t, connection->getPortIndex(PortType::Out));
+          if(_node->nodeDataModel()->getNodeType() == DFNodeType::MIX)
+          {
+            if(i < inConns.size())
+              shadercode += ",";
+            else
+              shadercode += _node->nodeDataModel()->getExtraParams() + ")";
+          }
         }
       }
     }
+
+
     return shadercode;
-  }
+    }
+
 }
