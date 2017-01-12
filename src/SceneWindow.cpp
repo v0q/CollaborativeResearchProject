@@ -1,38 +1,23 @@
 #include <iostream>
 #include <string>
 #include <memory>
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 #include "nodeEditor/Node.hpp"
 #include "nodeEditor/NodeDataModel.hpp"
-#include "nodes/CollapsedNodeDataModel.hpp"
 #include "SceneWindow.hpp"
 
 
-void printBranch(Branch _b, int _level, int _bn)
-{
-  if(_b.m_sc != "")
-  {
-    std::cout << "L" << _level << " - B" << _bn << ":\n";
-    std::cout << _b.m_sc << "\n";
-  }
-  int i = 0;
-  for(auto &e : _b.m_branches)
-  {
-    printBranch(e, _level + 1, i);
-    ++i;
-  }
-}
+
+
 namespace hsitho
 {
   SceneWindow::SceneWindow(QWidget *_parent) :
     GLWindow(_parent),
-    m_shaderMan(ShaderManager::instance()),
-    m_outputNode(nullptr)
+    m_shaderMan(ShaderManager::instance())
   {
-    std::ifstream s("shaders/shader.begin");
-    std::ifstream e("shaders/shader.end");
-    m_shaderStart = std::string((std::istreambuf_iterator<char>(s)), std::istreambuf_iterator<char>());
-    m_shaderEnd = std::string((std::istreambuf_iterator<char>(e)), std::istreambuf_iterator<char>());
   }
 
   SceneWindow::~SceneWindow()
@@ -44,6 +29,9 @@ namespace hsitho
   {
     GLWindow::initializeGL();
 
+    glm::vec3 cameraPos = glm::vec3(0,0,0);
+    glm::vec3 upVector = glm::vec3(0,0,0);
+
     m_shaderMan->createShader("ScreenQuad", "screenQuad.vert", "distancefieldprimitives.frag");
     m_shaderMan->useShader("ScreenQuad");
 
@@ -51,6 +39,8 @@ namespace hsitho
     m_vao = new QOpenGLVertexArrayObject(dynamic_cast<QObject*>(this));
     m_vao->create();
     m_vao->bind();
+
+
 
     float vertices[] = {
       // First triangle
@@ -82,6 +72,7 @@ namespace hsitho
 
   void SceneWindow::paintGL()
   {
+
     const qreal retinaScale = devicePixelRatio();
     GLfloat resolution[] = {width() * (float)retinaScale, height() * (float)retinaScale};
     glViewport(0, 0, width() * retinaScale, height() * retinaScale);
@@ -111,138 +102,106 @@ namespace hsitho
 
     m_vbo.release();
     m_vao->release();
-
-		++m_frames;
   }
 
   void SceneWindow::nodeChanged(std::unordered_map<QUuid, std::shared_ptr<Node>> _nodes)
   {
-    if(m_outputNode == nullptr)
+    std::string fragmentShader = "#version 410 core\n"
+      "uniform float u_GlobalTime;"
+      "uniform vec2 u_Resolution;"
+      "in vec2 o_FragCoord;"
+      "out vec4 o_FragColor;"
+
+      "float cube(vec3 _position, float _w)"
+      "{"
+      "  vec3 pos = abs(_position);"
+      "  float dx = pos.x - _w;"
+      "  float dy = pos.y - _w;"
+      "  float dz = pos.z - _w;"
+      "  float m = max(dx, max(dy, dz));"
+      "  return m;"
+      "}"
+
+      "float p_union(float a, float b)"
+      "{"
+      "  return min(a, b);"
+      "}"
+
+      "float map(vec3 _position)"
+      "{"
+      "  float pos = 1.f;";
+
+//    char userInput[35];
+
+    for(auto _node : _nodes)
     {
-      for(auto node : _nodes)
-      {
-        if(node.second.get()->nodeDataModel()->getShaderCode() == "final")
-        {
-          m_outputNode = node.second.get();
-          break;
-        }
-      }
+      fragmentShader += "pos = p_union(pos, ";
+      fragmentShader += _node.second.get()->nodeDataModel()->getShaderCode();
+      fragmentShader += ");";
     }
-    if(m_outputNode != nullptr)
-    {
-      Branch branches;
-      std::string shadercode;
-      Mat4f translation;
-      for(auto connection : m_outputNode->nodeState().connection(PortType::In, 0))
-      {
-        if(connection.get() && connection->getNode(PortType::Out).lock())
-        {
-          shadercode += recurseNodeTree(connection->getNode(PortType::Out).lock(), translation);
-//					branches.m_branches.push_back(recurseNodeTree(connection->getNode(PortType::Out).lock()));
-        }
-      }
+//    char fragmentShader[32768];
+//    strcat(fragmentShader, fragmentStart);
+//    strcat(fragmentShader, userInput);
+//    strcat(fragmentShader, fragmentEnd);
 
-      if(shadercode != "")
-      {
-        std::string fragmentShader = m_shaderStart;
+    fragmentShader += " return pos;"
+                      "}"
 
-        fragmentShader += "pos = ";
-        fragmentShader += shadercode;
-        fragmentShader += ";";
+                      "mat2x3 createRay(vec3 _origin, vec3 _lookAt, vec3 _upV, vec2 _uv, float _fov, float _aspect)"
+                      "{"
+                      "  mat2x3 ray;"
+                      "  vec3 direction, rayUpV, rightV;"
+                      "  vec2 uv;"
+                      "  float fieldOfViewRad;"
 
-        fragmentShader += m_shaderEnd;
+                      "  ray[0] = _origin;"
+                      "  direction = normalize(_lookAt - _origin);"
+                      "  rayUpV = normalize( _upV - direction * dot(direction, _upV));"
+                      "  rightV = cross(direction, rayUpV);"
+                      "  uv = _uv * 2 - vec2(1.);"
+                      "  fieldOfViewRad = _fov * 3.1415 / 180;"
 
-        m_shaderMan->updateShader(fragmentShader.c_str());
-      }
-    }
+                      "  ray[1] = direction + tan(fieldOfViewRad / 2.f) * rightV * uv.x + tan(fieldOfViewRad / 2.f) / _aspect * rayUpV * uv.y;"
+                      "  ray[1] = normalize(ray[1]);"
+
+                      "  return ray;"
+                      "}"
+
+                      "vec3 render(mat2x3 _ray)"
+                      "{"
+                      "  float distance = 1.f;"
+                      "  float traceprecision = 0.01f;"
+                      "  float position;"
+                      "  int  i;"
+                      "  for(i = 0; i < 60; ++i)"
+                      "  {"
+                      "    position = map(_ray[0] + distance * _ray[1]);"
+                      "    if(position <= traceprecision) {"
+                      "      break;"
+                      "    }"
+                      "    distance += position;"
+                      "  }"
+
+                      "  if(position <= traceprecision)"
+                      "  {"
+                      "    vec3 diffuse = vec3(0.8f, 0.6f, 0.f);"
+                      "    return vec3(i/60.f, 1 - i/60.f, 0.f);"
+                      "  }"
+                      "  return vec3(1.f);"
+                      "}"
+
+                      "void main()"
+                      "{"
+                      "  vec3 cameraPosition = vec3(sin(u_GlobalTime/10.f)*5.f, 2.5f, cos(u_GlobalTime/10.f)*5.f);"
+                      "  vec3 lookAt = vec3(0.f);"
+                      "  vec3 upVector = vec3(0.f, 1.f, 0.f);"
+                      "  float aspectRatio = u_Resolution.x / u_Resolution.y;"
+
+                      "  mat2x3 ray = createRay(cameraPosition, lookAt, upVector, o_FragCoord, 90.f, aspectRatio);"
+                      "  vec3 color = render(ray);"
+                      "  o_FragColor = vec4(color, 1.f);"
+                      "}";
+
+    m_shaderMan->updateShader(fragmentShader.c_str());
   }
-  int copies = 2;
-
-	std::string SceneWindow::recurseNodeTree(std::shared_ptr<Node> _node, Mat4f _t, PortIndex portIndex)
-  {
-		std::string shadercode;
-    if(_node->nodeDataModel()->getNodeType() == DFNodeType::TRANSFORM)
-    {
-      _t = _t * _node->nodeDataModel()->getTransform();
-    }
-    else if(_node->nodeDataModel()->getNodeType() == DFNodeType::PRIMITIVE)
-    {
-      _node->nodeDataModel()->setTransform(_t);
-      shadercode += _node->nodeDataModel()->getShaderCode();
-    }
-    else if(_node->nodeDataModel()->getNodeType() == DFNodeType::MIX)
-    {
-      shadercode += _node->nodeDataModel()->getShaderCode();
-    }
-
-
-    if(copies >= 1)
-    {
-      for(int j = 0; j <= copies; j++)
-      {
-          std::vector<std::shared_ptr<Connection>> inConns = _node->nodeState().connection(PortType::In);
-          if(_node->nodeDataModel()->getNodeType() == DFNodeType::COLLAPSED) {
-            std::vector<std::shared_ptr<Connection>> inConnsTmp;
-            std::shared_ptr<Node> o = dynamic_cast<CollapsedNodeDataModel *>(_node->nodeDataModel().get())->getOutputs()[portIndex];
-            for(auto &c : o->nodeState().connection(PortType::In)) {
-              inConnsTmp.push_back(c);
-            }
-            inConns.swap(inConnsTmp);
-            inConnsTmp.clear();
-          }
-
-
-          unsigned int i = 0;
-          for(auto connection : inConns)
-          {
-            if(connection.get() && connection->getNode(PortType::Out).lock()) {
-              ++i;
-              shadercode += recurseNodeTree(connection->getNode(PortType::Out).lock(), _t, connection->getPortIndex(PortType::Out));
-              if(_node->nodeDataModel()->getNodeType() == DFNodeType::MIX)
-              {
-                if(i < inConns.size())
-                  shadercode += ", ";
-                else
-                  shadercode += _node->nodeDataModel()->getExtraParams() + ")";
-              }
-            }
-          }
-        std::cout << "J equals: " << j << "\n";
-        }
-    }
-    else
-    {
-      std::vector<std::shared_ptr<Connection>> inConns = _node->nodeState().connection(PortType::In);
-      if(_node->nodeDataModel()->getNodeType() == DFNodeType::COLLAPSED) {
-        std::vector<std::shared_ptr<Connection>> inConnsTmp;
-        std::shared_ptr<Node> o = dynamic_cast<CollapsedNodeDataModel *>(_node->nodeDataModel().get())->getOutputs()[portIndex];
-        for(auto &c : o->nodeState().connection(PortType::In)) {
-          inConnsTmp.push_back(c);
-        }
-        inConns.swap(inConnsTmp);
-        inConnsTmp.clear();
-      }
-
-
-      unsigned int i = 0;
-      for(auto connection : inConns)
-      {
-        if(connection.get() && connection->getNode(PortType::Out).lock()) {
-          ++i;
-          shadercode += recurseNodeTree(connection->getNode(PortType::Out).lock(), _t, connection->getPortIndex(PortType::Out));
-          if(_node->nodeDataModel()->getNodeType() == DFNodeType::MIX)
-          {
-            if(i < inConns.size())
-              shadercode += ",";
-            else
-              shadercode += _node->nodeDataModel()->getExtraParams() + ")";
-          }
-        }
-      }
-    }
-
-
-    return shadercode;
-    }
-
 }

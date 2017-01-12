@@ -1,5 +1,4 @@
 #include <iostream>
-#include <boost/lexical_cast.hpp>
 
 #include "mainwindow.hpp"
 #include "ui_mainwindow.h"
@@ -7,23 +6,18 @@
 #include "nodeEditor/NodeData.hpp"
 #include "nodeEditor/DataModelRegistry.hpp"
 
-#include "CubePrimitiveDataModel.hpp"
-
-#include "UnionDataModel.hpp"
-#include "DistanceFieldOutputDataModel.hpp"
-
 #include "ExpressionEvaluator.hpp"
-#include "nodes/SpherePrimitiveDataModel.hpp"
-#include "nodes/CubePrimitiveDataModel.hpp"
-#include "nodes/TorusPrimitiveDataModel.hpp"
-#include "nodes/UnionDataModel.hpp"
-#include "nodes/BlendDataModel.hpp"
+#include "nodes/DistanceFieldOutputDataModel.hpp"
+#include "nodes/OperationDataModels.hpp"
 #include "nodes/TimeDataModel.hpp"
 #include "nodes/TranslateDataModel.hpp"
 #include "nodes/RotateDataModel.hpp"
 #include "nodes/DistanceFieldOutputDataModel.hpp"
 #include "nodes/ColorPickerDataModel.hpp"
 #include "nodes/OutputDataModel.hpp"
+#include "nodes/CubePrimitiveDataModel.hpp"
+#include "nodes/SpherePrimitiveDataModel.hpp"
+#include "nodes/TorusPrimitiveDataModel.hpp"
 #include "nodes/CylinderPrimitiveDataModel.hpp"
 #include "nodes/CapsulePrimitiveDataModel.hpp"
 #include "nodes/PlanePrimitiveDataModel.hpp"
@@ -53,6 +47,8 @@ MainWindow::MainWindow(QWidget *_parent) :
   DataModelRegistry::registerModel<TriangularPrismPrimitiveDataModel>("Primitives");
   DataModelRegistry::registerModel<HexagonalPrismPrimitiveDataModel>("Primitives");
   DataModelRegistry::registerModel<UnionDataModel>("Operations");
+  DataModelRegistry::registerModel<SubtractionDataModel>("Operations");
+  DataModelRegistry::registerModel<IntersectionDataModel>("Operations");
   DataModelRegistry::registerModel<BlendDataModel>("Operations");
   DataModelRegistry::registerModel<TranslateDataModel>("Transforms");
   DataModelRegistry::registerModel<RotateDataModel>("Transforms");

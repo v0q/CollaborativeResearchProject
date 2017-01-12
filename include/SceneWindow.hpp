@@ -3,17 +3,10 @@
 #include <QOpenGLShaderProgram>
 #include <QOpenGLVertexArrayObject>
 #include <QOpenGLBuffer>
-#include <fstream>
+#include <iostream>
 
-#include "nodes/DistanceFieldData.hpp"
 #include "ShaderManager.hpp"
 #include "Window.hpp"
-
-struct Branch
-{
-  std::string m_sc;
-  std::vector<Branch> m_branches;
-};
 
 namespace hsitho
 {
@@ -26,14 +19,18 @@ namespace hsitho
     void initializeGL();
     void paintGL();
 
+    void createCamera();
+
+
   private:
-		std::string recurseNodeTree(std::shared_ptr<Node> _node, Mat4f _t, PortIndex portIndex = 0);
     std::shared_ptr<ShaderManager> m_shaderMan;
-    Node *m_outputNode;
     QOpenGLVertexArrayObject *m_vao;
     QOpenGLBuffer m_vbo;
-    std::string m_shaderStart;
-    std::string m_shaderEnd;
+
+
+
+
+    const char *m_shaderUserInput;
 
   public slots:
     virtual void nodeChanged(std::unordered_map<QUuid, std::shared_ptr<Node>> _nodes);
