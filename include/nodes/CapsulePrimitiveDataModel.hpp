@@ -7,27 +7,14 @@
 #include "nodeEditor/NodeDataModel.hpp"
 #include "nodes/DistanceFieldData.hpp"
 
-class CapsuleData : public NodeData
-{
-public:
-
-  NodeDataType
-  type() const override
-  { return NodeDataType {"DistanceFieldData", "Capsule Data"}; }
-
-};
-
-//------------------------------------------------------------------------------
-
-/// The model dictates the number of inputs and outputs for the Node.
-/// In this example it has no logic.
 class CapsulePrimitiveDataModel : public NodeDataModel
 {
   Q_OBJECT
 
 public:
 
-  virtual ~CapsulePrimitiveDataModel();
+	CapsulePrimitiveDataModel();
+	virtual ~CapsulePrimitiveDataModel() {}
 
   QString caption() const override
   {
@@ -41,14 +28,15 @@ public:
 
 
   void save(Properties &p) const override;
+	void restore(const Properties &p) override;
 
   unsigned int nPorts(PortType portType) const override;
-
   NodeDataType dataType(PortType portType, PortIndex portIndex) const override;
 
   std::shared_ptr<NodeData> outData(PortIndex port) override;
+	void setInData(std::shared_ptr<NodeData>, PortIndex _portIndex) override;
 
-  void setInData(std::shared_ptr<NodeData>, int) override;
+	void sizeEdit(QString const);
 
   std::vector<QWidget *> embeddedWidget() override;
 
@@ -70,5 +58,8 @@ public:
 
 private:
   Vec4f m_color;
+	Vec4f m_startPos;
+	Vec4f m_endPos;
+	QLineEdit *m_r;
   std::string m_transform;
 };

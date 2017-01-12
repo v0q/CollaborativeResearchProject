@@ -33,6 +33,7 @@ namespace hsitho
 		m_fragShader->compileSourceCode(QString(_shaderCode));
 		if(m_program != nullptr && m_fragShader->isCompiled() == 1)
 		{
+			std::cout << _shaderCode << "\n";
 			m_program->release();
 
 			m_program->removeAllShaders();

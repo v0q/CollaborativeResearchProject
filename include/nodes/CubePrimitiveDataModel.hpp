@@ -49,7 +49,7 @@ public:
 
 private:
   Vec4f m_color;
-  QLineEdit *m_size;
+	Vec4f m_dimensions;
 	std::string m_transform;
 };
 

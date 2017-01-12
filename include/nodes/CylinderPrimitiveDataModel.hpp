@@ -27,7 +27,8 @@ class CylinderPrimitiveDataModel : public NodeDataModel
 
 public:
 
-  virtual ~CylinderPrimitiveDataModel();
+	CylinderPrimitiveDataModel();
+	virtual ~CylinderPrimitiveDataModel() {}
 
   QString caption() const override
   {
@@ -39,16 +40,15 @@ public:
     return QString("Cylinder");
   }
 
-
   void save(Properties &p) const override;
+	void restore(const Properties &p) override;
 
   unsigned int nPorts(PortType portType) const override;
-
   NodeDataType dataType(PortType portType, PortIndex portIndex) const override;
 
   std::shared_ptr<NodeData> outData(PortIndex port) override;
-
-  void setInData(std::shared_ptr<NodeData>, int) override;
+	void setInData(std::shared_ptr<NodeData>, PortIndex portIndex) override;
+	void sizeEdit(QString const);
 
   std::vector<QWidget *> embeddedWidget() override;
 
@@ -70,5 +70,7 @@ public:
 
 private:
   Vec4f m_color;
+	QLineEdit *m_r;
+	QLineEdit *m_height;
   std::string m_transform;
 };

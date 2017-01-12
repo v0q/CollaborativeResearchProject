@@ -1,64 +1,47 @@
-//#pragma once
+#pragma once
 
-//#include <QtCore/QObject>
-//#include <QtWidgets/QLineEdit>
+#include <QtCore/QObject>
+#include <QtWidgets/QLineEdit>
 
-//#include "nodeEditor/NodeDataModel.hpp"
-//#include "nodes/DistanceFieldData.hpp"
+#include "nodeEditor/NodeDataModel.hpp"
+#include "nodes/DistanceFieldData.hpp"
 
-//#include <iostream>
+#include <iostream>
 
-////------------------------------------------------------------------------------
+class CopyDataModel : public NodeDataModel
+{
+	Q_OBJECT
 
-///// The model dictates the number of inputs and outputs for the Node.
-///// In this example it has no logic.
-//class CopyDataModel : public NodeDataModel
-//{
-//  Q_OBJECT
+public:
 
-//public:
+	CopyDataModel();
+	virtual ~CopyDataModel() {}
 
-//  CopyDataModel();
+	QString caption() const override
+	{
+		return QString("Copy");
+	}
 
+	static QString name()
+	{
+		return QString("Copy");
+	}
 
-//  virtual ~CopyDataModel();
+	void save(Properties &p) const override;
+	void valueEdit(QString const);
 
-//  QString caption() const override
-//  {
-//    return QString("Copy");
-//  }
+	unsigned int nPorts(PortType portType) const override;
+	NodeDataType dataType(PortType portType, PortIndex) const override;
 
-//  static QString name()
-//  {
-//    return QString("Copy");
-//  }
+	std::shared_ptr<NodeData> outData(PortIndex port) override { return nullptr; }
+	void setInData(std::shared_ptr<NodeData>, PortIndex) override;
 
+	std::vector<QWidget *> embeddedWidget() override { return std::vector<QWidget *>{m_cp}; }
 
-
-//  void save(Properties &p) const override;
-
-//  unsigned int nPorts(PortType portType) const override;
-
-//  NodeDataType dataType(PortType portType, PortIndex portIndex) const override;
-
-//  std::shared_ptr<NodeData> outData(PortIndex port) override;
-
-//  void setInData(std::shared_ptr<NodeData> _data, PortIndex portIndex) override;
-
-//  std::vector<QWidget *> embeddedWidget() override;
-
-//  DFNodeType getNodeType() const { return DFNodeType::SCALAR; }
-//  std::string getShaderCode();
-//  std::string getExtraParams() const override { return ", 0.6"; }
+	DFNodeType getNodeType() const { return DFNodeType::COPY; }
+	std::string getShaderCode() { return m_cp->text().toStdString(); }
 
 
-//private slots:
-//  void valueEdit(QString string);
-
-
-//private:
-//  std::shared_ptr<ScalarData> m_v;
-
-//  QLineEdit *m_cp;
-
-//};
+private:
+	QLineEdit *m_cp;
+};

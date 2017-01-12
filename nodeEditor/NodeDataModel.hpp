@@ -19,7 +19,7 @@ class NODE_EDITOR_PUBLIC NodeDataModel
   Q_OBJECT
 
 public:
-
+	NodeDataModel() : m_copyNum(1) {}
   virtual
   ~NodeDataModel() {}
 
@@ -67,7 +67,7 @@ public:
 
   virtual void updateWidgets() {}
   static QString nodeCategory() { return QString("Primitive"); }
-
+	virtual void setCopyNum(const unsigned int &_i) { m_copyNum = _i; }
 
 signals:
 
@@ -75,4 +75,7 @@ signals:
 	void dataInvalidated(PortIndex index);
 	void computingStarted();
 	void computingFinished();
+
+private:
+	unsigned int m_copyNum;
 };

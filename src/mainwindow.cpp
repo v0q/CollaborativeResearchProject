@@ -12,6 +12,7 @@
 #include "nodes/TimeDataModel.hpp"
 #include "nodes/TranslateDataModel.hpp"
 #include "nodes/RotateDataModel.hpp"
+#include "nodes/ScaleDataModel.hpp"
 #include "nodes/DistanceFieldOutputDataModel.hpp"
 #include "nodes/ColorPickerDataModel.hpp"
 #include "nodes/OutputDataModel.hpp"
@@ -24,7 +25,7 @@
 #include "nodes/TriangularPrismPrimitiveDataModel.hpp"
 #include "nodes/HexagonalPrismPrimitiveDataModel.hpp"
 #include "nodes/ConePrimitiveDataModel.hpp"
-//#include "nodes/CopyDataModel.hpp"
+#include "nodes/CopyDataModel.hpp"
 
 #include "nodes/MathsDataModels.hpp"
 
@@ -36,8 +37,7 @@ MainWindow::MainWindow(QWidget *_parent) :
   m_ui->setupUi(this);
   m_gl = new hsitho::SceneWindow(this);
 
-  DataModelRegistry::registerModel<TimeDataModel>("Misc");
-  DataModelRegistry::registerModel<CubePrimitiveDataModel>("Primitives");
+	DataModelRegistry::registerModel<CubePrimitiveDataModel>("Primitives");
   DataModelRegistry::registerModel<TorusPrimitiveDataModel>("Primitives");
   DataModelRegistry::registerModel<SpherePrimitiveDataModel>("Primitives");
   DataModelRegistry::registerModel<CylinderPrimitiveDataModel>("Primitives");
@@ -46,21 +46,29 @@ MainWindow::MainWindow(QWidget *_parent) :
   DataModelRegistry::registerModel<ConePrimitiveDataModel>("Primitives");
   DataModelRegistry::registerModel<TriangularPrismPrimitiveDataModel>("Primitives");
   DataModelRegistry::registerModel<HexagonalPrismPrimitiveDataModel>("Primitives");
-  DataModelRegistry::registerModel<UnionDataModel>("Operations");
-  DataModelRegistry::registerModel<SubtractionDataModel>("Operations");
+
+	DataModelRegistry::registerModel<UnionDataModel>("Operations");
+	DataModelRegistry::registerModel<SubtractionOpDataModel>("Operations");
   DataModelRegistry::registerModel<IntersectionDataModel>("Operations");
   DataModelRegistry::registerModel<BlendDataModel>("Operations");
-  DataModelRegistry::registerModel<TranslateDataModel>("Transforms");
+
+	DataModelRegistry::registerModel<TranslateDataModel>("Transforms");
+	DataModelRegistry::registerModel<ScaleDataModel>("Transforms");
   DataModelRegistry::registerModel<RotateDataModel>("Transforms");
-  DataModelRegistry::registerModel<VectorDataModel>("Maths");
+
+	DataModelRegistry::registerModel<VectorDataModel>("Maths");
   DataModelRegistry::registerModel<ScalarDataModel>("Maths");
   DataModelRegistry::registerModel<SineDataModel>("Maths");
   DataModelRegistry::registerModel<CosineDataModel>("Maths");
   DataModelRegistry::registerModel<MultiplyDataModel>("Maths");
   DataModelRegistry::registerModel<DivideDataModel>("Maths");
-  DataModelRegistry::registerModel<ColorPickerDataModel>("Color");
+	DataModelRegistry::registerModel<AdditionDataModel>("Maths");
+	DataModelRegistry::registerModel<SubtractionDataModel>("Maths");
+
+	DataModelRegistry::registerModel<TimeDataModel>("Misc");
+	DataModelRegistry::registerModel<ColorPickerDataModel>("Color");
   DataModelRegistry::registerModel<OutputDataModel>("Generic");
- // DataModelRegistry::registerModel<CopyDataModel>("Copy");
+	DataModelRegistry::registerModel<CopyDataModel>("Generic");
 
   connect(this, SIGNAL(nodeEditorModified(std::unordered_map<QUuid, std::shared_ptr<Node>>)), m_gl, SLOT(nodeChanged(std::unordered_map<QUuid, std::shared_ptr<Node>>)));
 

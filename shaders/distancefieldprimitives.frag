@@ -197,11 +197,16 @@ vec4 map(vec3 _position)
 //                                           0, 1.0 * cos(u_GlobalTime) * 1.0 * 1.0,  - sin(u_GlobalTime) * 1.0 * 1.0, 0,
 //                                            - sin(u_GlobalTime) * 1.0, 1.0 * sin(u_GlobalTime) * cos(u_GlobalTime) * 1.0, 1.0 * cos(u_GlobalTime) * cos(u_GlobalTime) * 1.0, 0,
 //                                           0, 0, 0, 1) * vec4(_position, 1.0)), 0.6, vec3(clamp(-1, 0, 1), 0, 0)));
-  _position = opRepetition(_position, vec3(4.0, 4.0, 4.0));
+//  _position = opRepetition(_position, vec3(4.0, 4.0, 4.0));
+  pos = sdFastBox(vec3(mat4x4(1.0, 0.0, 0.0, 0.0,
+                              0.0, 1.0, 0.0, 0.0,
+                              0.0, 0.0, 1.5, 0.0,
+                              0.0, 0.0, 0.0, 1.0)
+                       *vec4(_position, 1.0)), 1.0, vec3(0.0, 0.0, 0.0));
 ////  pos = opUnion(pos, sdPlane(_position, vec4(0.0, 1.0, 0.0, 1.0), vec3(0.85, 0.85, 0.85)));
 //  float sg = sin(u_GlobalTime/300.f)*180;
 //  float gg = cos(u_GlobalTime/200.f)*90;
-  pos = sdTorus(vec3(mat4x4(1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0) * vec4(_position, 1.0)).xyz, vec2(1.0, 0.2), vec3(clamp(0.0, 0.0, 1.0), clamp(0.0, 0.0, 1.0), clamp(0.0, 0.0, 1.0)));
+//  pos = sdTorus(vec3(mat4x4(1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0) * vec4(_position, 1.0)).xyz, vec2(1.0, 0.2), vec3(clamp(0.0, 0.0, 1.0), clamp(0.0, 0.0, 1.0), clamp(0.0, 0.0, 1.0)));
 //  float sg = sin(1)*180;
 //  float gg = cos(5)*90;
 //  pos = opUnion(pos, sdSphere(_position, 0.6, vec3(1.0, 1.078, 0.576)));

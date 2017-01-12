@@ -268,3 +268,98 @@ private:
   };
 };
 
+
+// **********************************************
+//	Addition
+// **********************************************
+class AdditionDataModel : public NodeDataModel
+{
+	Q_OBJECT
+
+public:
+
+	AdditionDataModel();
+	virtual ~AdditionDataModel() {}
+
+	QString caption() const override {
+		return QString("Add");
+	}
+
+	static QString name() {
+		return QString("Add");
+	}
+
+	void save(Properties &p) const override;
+	void restore(const Properties &p) override;
+	void setInData(std::shared_ptr<NodeData>, PortIndex portIndex) override;
+
+	unsigned int nPorts(PortType portType) const override;
+	NodeDataType dataType(PortType portType, PortIndex portIndex) const override;
+	std::shared_ptr<NodeData> outData(PortIndex) override;
+
+	std::vector<QWidget *> embeddedWidget() override;
+
+	DFNodeType getNodeType() const override { return DFNodeType::SCALAR; }
+
+private slots:
+	void valueEdit(QString const);
+
+private:
+	std::shared_ptr<ScalarData> m_v;
+	union {
+		QLineEdit *m_inputs[2];
+		struct {
+			QLineEdit *m_x;
+			QLineEdit *m_y;
+		};
+	};
+};
+
+
+// **********************************************
+//	Subtraction
+// **********************************************
+class SubtractionDataModel : public NodeDataModel
+{
+	Q_OBJECT
+
+public:
+
+	SubtractionDataModel();
+	virtual ~SubtractionDataModel() {}
+
+	QString caption() const override {
+		return QString("Subtract");
+	}
+
+	static QString name() {
+		return QString("Subtract");
+	}
+
+	void save(Properties &p) const override;
+	void restore(const Properties &p) override;
+	void setInData(std::shared_ptr<NodeData>, PortIndex portIndex) override;
+
+	unsigned int nPorts(PortType portType) const override;
+	NodeDataType dataType(PortType portType, PortIndex portIndex) const override;
+	std::shared_ptr<NodeData> outData(PortIndex) override;
+
+	std::vector<QWidget *> embeddedWidget() override;
+
+	DFNodeType getNodeType() const override { return DFNodeType::SCALAR; }
+
+private slots:
+	void valueEdit(QString const);
+
+private:
+	std::shared_ptr<ScalarData> m_v;
+	union {
+		QLineEdit *m_inputs[2];
+		struct {
+			QLineEdit *m_x;
+			QLineEdit *m_y;
+		};
+	};
+};
+
+

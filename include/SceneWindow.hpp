@@ -27,7 +27,7 @@ namespace hsitho
     void paintGL();
 
   private:
-		std::string recurseNodeTree(std::shared_ptr<Node> _node, Mat4f _t, PortIndex portIndex = 0);
+		std::string recurseNodeTree(std::shared_ptr<Node> _node, Mat4f &_t, PortIndex portIndex = 0, bool _propagate = false);
     std::shared_ptr<ShaderManager> m_shaderMan;
     Node *m_outputNode;
     QOpenGLVertexArrayObject *m_vao;

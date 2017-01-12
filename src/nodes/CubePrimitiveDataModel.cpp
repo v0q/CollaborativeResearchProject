@@ -2,36 +2,19 @@
 #include "CubePrimitiveDataModel.hpp"
 
 CubePrimitiveDataModel::CubePrimitiveDataModel() :
-  m_size(new QLineEdit())
+	m_dimensions(Vec4f("1.0", "1.0", "1.0", "1.0"))
 {
-  auto d = new QDoubleValidator();
-  d->setLocale(QLocale("en_GB"));
 
-  int x = 0, y = 0;
-  int w = m_size->sizeHint().width()/3;
-  int h = m_size->sizeHint().height();
-
-  m_size->setValidator(d);
-  m_size->setMaximumSize(m_size->sizeHint());
-  m_size->setGeometry(x, y, w, h);
-  m_size->setText("1.0");
-  connect(m_size, &QLineEdit::textChanged, this, &CubePrimitiveDataModel::sizeEdit);
 }
 
 void CubePrimitiveDataModel::save(Properties &p) const
 {
 	p.put("model_name", name());
-  p.put("size", m_size->text());
 }
 
 void CubePrimitiveDataModel::restore(const Properties &p)
 {
-  m_size->setText(p.values().find("size").value().toString());
-}
 
-void CubePrimitiveDataModel::sizeEdit(QString const)
-{
-  emit dataUpdated(0);
 }
 
 unsigned int CubePrimitiveDataModel::nPorts(PortType portType) const
@@ -62,7 +45,7 @@ NodeDataType CubePrimitiveDataModel::dataType(PortType portType, PortIndex portI
       switch(portIndex)
       {
         case 0:
-          return NodeDataType{"Scalar", "Size", Qt::red};
+					return VectorData("Dim").type();
         break;
         case 1:
           return ColorData().type();
@@ -90,15 +73,11 @@ void CubePrimitiveDataModel::setInData(std::shared_ptr<NodeData> _data, int)
     m_color = cd->color();
     return;
   }
-  auto szdata = std::dynamic_pointer_cast<ScalarData>(_data);
-  if(szdata) {
-    m_size->setVisible(false);
-    m_size->setText(szdata->value().c_str());
+	auto vecdata = std::dynamic_pointer_cast<VectorData>(_data);
+	if(vecdata) {
+		m_dimensions = vecdata->vector();
     return;
-  }
-
-  m_size->setVisible(true);
-  m_size->setText("1.0");
+	}
 }
 
 void CubePrimitiveDataModel::setTransform(const Mat4f &_t)
@@ -118,7 +97,7 @@ void CubePrimitiveDataModel::setTransform(const Mat4f &_t)
 
 std::vector<QWidget *> CubePrimitiveDataModel::embeddedWidget()
 {
-  return std::vector<QWidget *>{m_size};
+	return std::vector<QWidget *>();
 }
 
 std::string CubePrimitiveDataModel::getShaderCode()
@@ -127,5 +106,5 @@ std::string CubePrimitiveDataModel::getShaderCode()
   {
     m_transform = "mat4x4(cos(u_GlobalTime)*1.0+0, sin(u_GlobalTime)*1.0+0, 0, 2.5,	-sin(u_GlobalTime)*1.0+0, cos(u_GlobalTime)*1.0+0, 0, 0.600000024, 0, 0, 1, 0, 0, 0, 0, 1)";
 	}
-  return "sdFastBox(vec3(" + m_transform + " * vec4(_position, 1.0)).xyz, " + m_size->text().toStdString() + ", vec3(clamp(" + m_color.m_x + ", 0.0, 1.0), clamp(" + m_color.m_y + ", 0.0, 1.0), clamp(" +m_color.m_z + ", 0.0, 1.0)))";
+	return "sdBox(vec3(" + m_transform + " * vec4(_position, 1.0)).xyz, vec3(" + m_dimensions.m_x + ", " + m_dimensions.m_y + ", " + m_dimensions.m_z + "), vec3(clamp(" + m_color.m_x + ", 0.0, 1.0), clamp(" + m_color.m_y + ", 0.0, 1.0), clamp(" + m_color.m_z + ", 0.0, 1.0)))";
 }

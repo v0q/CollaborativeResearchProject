@@ -679,3 +679,252 @@ std::vector<QWidget *> DivideDataModel::embeddedWidget()
 {
 	return std::vector<QWidget *>{m_x, m_y};
 }
+
+// **********************************************
+//	Addition
+// **********************************************
+AdditionDataModel::AdditionDataModel() :
+	m_v(nullptr),
+	m_x(new QLineEdit()),
+	m_y(new QLineEdit())
+{
+	int margin = 12;
+	int y = 0, x = 0;
+	int w = m_x->sizeHint().width()/2;
+	int h = m_x->sizeHint().height();
+
+	auto d = new QDoubleValidator;
+	d->setLocale(QLocale("en_GB"));
+	m_x->setValidator(d);
+	m_x->setMaximumSize(m_x->sizeHint());
+	m_x->setGeometry(x, y, w, h);
+	connect(m_x, &QLineEdit::textChanged, this, &AdditionDataModel::valueEdit);
+
+	m_x->setText("0.0");
+
+	d = new QDoubleValidator;
+	d->setLocale(QLocale("en_GB"));
+	m_y->setValidator(d);
+	m_y->setMaximumSize(m_y->sizeHint());
+	m_y->setGeometry(x, y + h + margin, w, h);
+	connect(m_y, &QLineEdit::textChanged, this, &AdditionDataModel::valueEdit);
+
+	m_y->setText("0.0");
+}
+
+void AdditionDataModel::valueEdit(QString const)
+{
+	m_v = std::make_shared<ScalarData>(std::string(m_x->text().toStdString() + "+" + m_y->text().toStdString()));
+	emit dataUpdated(0);
+}
+
+void AdditionDataModel::save(Properties &p) const
+{
+	p.put("model_name", name());
+	p.put("m_x", m_x->text());
+	p.put("m_y", m_y->text());
+}
+
+void AdditionDataModel::restore(const Properties &p)
+{
+	m_x->setText(p.values().find("m_x").value().toString());
+	m_y->setText(p.values().find("m_y").value().toString());
+
+	m_v = std::make_shared<ScalarData>(std::string(m_x->text().toStdString() + "+" + m_y->text().toStdString()));
+}
+
+unsigned int AdditionDataModel::nPorts(PortType portType) const
+{
+	unsigned int result = 1;
+
+	switch (portType)
+	{
+		case PortType::In:
+			result = 2;
+			break;
+
+		case PortType::Out:
+			result = 1;
+		break;
+
+		default:
+		break;
+	}
+
+	return result;
+}
+
+NodeDataType AdditionDataModel::dataType(PortType portType, PortIndex portIndex) const
+{
+	switch(portType) {
+		case PortType::In:
+			switch(portIndex)
+			{
+				case 0:
+					return NodeDataType{"Scalar", " ", Qt::red};
+				break;
+				case 1:
+					return NodeDataType{"Scalar", " ", Qt::red};
+				break;
+			}
+		break;
+
+		case PortType::Out:
+			return ScalarData().type();
+		break;
+
+		default:
+		break;
+	}
+	return ScalarData().type();
+}
+
+std::shared_ptr<NodeData> AdditionDataModel::outData(PortIndex)
+{
+	if(m_v)
+		return m_v;
+	else
+		return nullptr;
+}
+
+void AdditionDataModel::setInData(std::shared_ptr<NodeData> _data, PortIndex portIndex)
+{
+	auto data = std::dynamic_pointer_cast<ScalarData>(_data);
+	if(data) {
+		m_inputs[portIndex]->setVisible(false);
+		m_inputs[portIndex]->setText(data->value().c_str());
+	} else {
+		m_inputs[portIndex]->setVisible(true);
+		m_inputs[portIndex]->setText("0.0");
+	}
+}
+
+std::vector<QWidget *> AdditionDataModel::embeddedWidget()
+{
+	return std::vector<QWidget *>{m_x, m_y};
+}
+
+
+// **********************************************
+//	Subtraction
+// **********************************************
+SubtractionDataModel::SubtractionDataModel() :
+	m_v(nullptr),
+	m_x(new QLineEdit()),
+	m_y(new QLineEdit())
+{
+	int margin = 12;
+	int y = 0, x = 0;
+	int w = m_x->sizeHint().width()/2;
+	int h = m_x->sizeHint().height();
+
+	auto d = new QDoubleValidator;
+	d->setLocale(QLocale("en_GB"));
+	m_x->setValidator(d);
+	m_x->setMaximumSize(m_x->sizeHint());
+	m_x->setGeometry(x, y, w, h);
+	connect(m_x, &QLineEdit::textChanged, this, &SubtractionDataModel::valueEdit);
+
+	m_x->setText("0.0");
+
+	d = new QDoubleValidator;
+	d->setLocale(QLocale("en_GB"));
+	m_y->setValidator(d);
+	m_y->setMaximumSize(m_y->sizeHint());
+	m_y->setGeometry(x, y + h + margin, w, h);
+	connect(m_y, &QLineEdit::textChanged, this, &SubtractionDataModel::valueEdit);
+
+	m_y->setText("0.0");
+}
+
+void SubtractionDataModel::valueEdit(QString const)
+{
+	m_v = std::make_shared<ScalarData>(std::string(m_x->text().toStdString() + "-" + m_y->text().toStdString()));
+	emit dataUpdated(0);
+}
+
+void SubtractionDataModel::save(Properties &p) const
+{
+	p.put("model_name", name());
+	p.put("m_x", m_x->text());
+	p.put("m_y", m_y->text());
+}
+
+void SubtractionDataModel::restore(const Properties &p)
+{
+	m_x->setText(p.values().find("m_x").value().toString());
+	m_y->setText(p.values().find("m_y").value().toString());
+
+	m_v = std::make_shared<ScalarData>(std::string(m_x->text().toStdString() + "-" + m_y->text().toStdString()));
+}
+
+unsigned int SubtractionDataModel::nPorts(PortType portType) const
+{
+	unsigned int result = 1;
+
+	switch (portType)
+	{
+		case PortType::In:
+			result = 2;
+			break;
+
+		case PortType::Out:
+			result = 1;
+		break;
+
+		default:
+		break;
+	}
+
+	return result;
+}
+
+NodeDataType SubtractionDataModel::dataType(PortType portType, PortIndex portIndex) const
+{
+	switch(portType) {
+		case PortType::In:
+			switch(portIndex)
+			{
+				case 0:
+					return NodeDataType{"Scalar", " ", Qt::red};
+				break;
+				case 1:
+					return NodeDataType{"Scalar", " ", Qt::red};
+				break;
+			}
+		break;
+
+		case PortType::Out:
+			return ScalarData().type();
+		break;
+
+		default:
+		break;
+	}
+	return ScalarData().type();
+}
+
+std::shared_ptr<NodeData> SubtractionDataModel::outData(PortIndex)
+{
+	if(m_v)
+		return m_v;
+	else
+		return nullptr;
+}
+
+void SubtractionDataModel::setInData(std::shared_ptr<NodeData> _data, PortIndex portIndex)
+{
+	auto data = std::dynamic_pointer_cast<ScalarData>(_data);
+	if(data) {
+		m_inputs[portIndex]->setVisible(false);
+		m_inputs[portIndex]->setText(data->value().c_str());
+	} else {
+		m_inputs[portIndex]->setVisible(true);
+		m_inputs[portIndex]->setText("0.0");
+	}
+}
+
+std::vector<QWidget *> SubtractionDataModel::embeddedWidget()
+{
+	return std::vector<QWidget *>{m_x, m_y};
+}

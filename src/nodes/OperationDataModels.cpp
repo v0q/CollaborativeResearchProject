@@ -44,7 +44,7 @@ NodeDataType UnionDataModel::dataType(PortType portType, PortIndex portIndex) co
 //------------------------------------------------------------------------------
 // Subtraction
 //------------------------------------------------------------------------------
-unsigned int SubtractionDataModel::nPorts(PortType portType) const
+unsigned int SubtractionOpDataModel::nPorts(PortType portType) const
 {
   unsigned int result = 1;
 
@@ -65,7 +65,7 @@ unsigned int SubtractionDataModel::nPorts(PortType portType) const
   return result;
 }
 
-NodeDataType SubtractionDataModel::dataType(PortType portType, PortIndex portIndex) const
+NodeDataType SubtractionOpDataModel::dataType(PortType portType, PortIndex portIndex) const
 {
   switch (portType)
   {

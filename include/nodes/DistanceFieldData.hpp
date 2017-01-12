@@ -45,7 +45,8 @@ enum DFNodeType
   SCALAR,
 	COLOR,
 	OUTPUT,
-  COLLAPSED
+	COLLAPSED,
+	COPY
 };
 
 class Mat4f
@@ -230,28 +231,31 @@ public:
 class ScalarData : public NodeData
 {
 public:
-  ScalarData() : m_value("0.0") {}
-  ScalarData(const std::string &_v) : m_value(_v) {}
-  NodeDataType type() const override
-  {
-    return NodeDataType {"Scalar", " ", Qt::red};
-  }
-  std::string value() const { return m_value; }
+	ScalarData() : m_id(" "), m_value("0.0") {}
+	ScalarData(const std::string &_v) : m_id(" "), m_value(_v) {}
+	ScalarData(const std::string &_id, const std::string &_v) : m_id(_id), m_value(_v) {}
+	NodeDataType type() const override
+	{
+		return NodeDataType {"Scalar", m_id.c_str(), Qt::red};
+	}
+	std::string value() const { return m_value; }
 private:
-  std::string m_value;
+	std::string m_id;
+	std::string m_value;
 };
 
 class VectorData : public NodeData
 {
 public:
-  VectorData() : m_v(Vec4f()) {}
-  VectorData(const std::string &_x, const std::string &_y, const std::string &_z) :
-    m_v(Vec4f(_x, _y, _z, "1.0"))
+	VectorData(const std::string &_id = "Vec") : m_v(Vec4f()), m_id(_id) {}
+	VectorData(const std::string &_x, const std::string &_y, const std::string &_z, const std::string &_id = "Vec") :
+		m_v(Vec4f(_x, _y, _z, "1.0")),
+		m_id(_id)
   {}
 
   NodeDataType type() const override
   {
-    return NodeDataType {"Vector", "Vec", Qt::yellow};
+		return NodeDataType {"Vector", m_id.c_str(), Qt::yellow};
   }
 
   Vec4f vector() const
@@ -261,6 +265,7 @@ public:
 
 private:
   Vec4f m_v;
+	std::string m_id;
 };
 
 class ColorData : public NodeData

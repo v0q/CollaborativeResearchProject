@@ -45,13 +45,13 @@ public:
 //------------------------------------------------------------------------------
 // Subtraction
 //------------------------------------------------------------------------------
-class SubtractionDataModel : public NodeDataModel
+class SubtractionOpDataModel : public NodeDataModel
 {
   Q_OBJECT
 
 public:
 
-  virtual ~SubtractionDataModel() { }
+	virtual ~SubtractionOpDataModel() { }
 
   QString caption() const override
   {

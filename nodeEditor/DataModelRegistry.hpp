@@ -49,7 +49,7 @@ class NODE_EDITOR_PUBLIC DataModelRegistry
 public:
 
   using RegistryItemPtr     = std::unique_ptr<RegistryItem>;
-  using RegisteredModelsMap = std::map<QString, std::map<QString ,RegistryItemPtr>>;
+	using RegisteredModelsMap = std::map<QString, std::map<QString ,RegistryItemPtr>>;
 
 public:
 
