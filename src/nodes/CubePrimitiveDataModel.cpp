@@ -83,6 +83,10 @@ void CubePrimitiveDataModel::setInData(std::shared_ptr<NodeData> _data, int)
 void CubePrimitiveDataModel::setTransform(const Mat4f &_t)
 {
   std::ostringstream ss;
+	if(Mat4f() == _t) {
+		m_transform = "";
+		return;
+	}
   for(int y = 0; y < 4; ++y)
   {
     for(int x = 0; x < 4; ++x)
@@ -93,7 +97,6 @@ void CubePrimitiveDataModel::setTransform(const Mat4f &_t)
     }
 	}
   m_transform = "mat4x4(" + ss.str() + ")";
-
 }
 
 std::vector<QWidget *> CubePrimitiveDataModel::embeddedWidget()
@@ -103,10 +106,8 @@ std::vector<QWidget *> CubePrimitiveDataModel::embeddedWidget()
 
 std::string CubePrimitiveDataModel::getShaderCode()
 {
-	std::cout << "Num: " << m_copyNum << "\n";
-  if(m_transform == "")
-  {
-    m_transform = "mat4x4(cos(u_GlobalTime)*1.0+0, sin(u_GlobalTime)*1.0+0, 0, 2.5,	-sin(u_GlobalTime)*1.0+0, cos(u_GlobalTime)*1.0+0, 0, 0.600000024, 0, 0, 1, 0, 0, 0, 0, 1)";
-	}
-	return "sdBox(vec3(" + m_transform + " * vec4(_position, 1.0)).xyz, vec3(" + m_dimensions.m_x + ", " + m_dimensions.m_y + ", " + m_dimensions.m_z + "), vec3(clamp(" + m_color.m_x + ", 0.0, 1.0), clamp(" + m_color.m_y + ", 0.0, 1.0), clamp(" + m_color.m_z + ", 0.0, 1.0)))";
+	if(m_transform == "")
+		return "sdBox(_position, vec3(" + m_dimensions.m_x + ", " + m_dimensions.m_y + ", " + m_dimensions.m_z + "), vec3(clamp(" + m_color.m_x + ", 0.0, 1.0), clamp(" + m_color.m_y + ", 0.0, 1.0), clamp(" + m_color.m_z + ", 0.0, 1.0)))";
+	else
+		return "sdBox(vec3(" + m_transform + " * vec4(_position, 1.0)).xyz, vec3(" + m_dimensions.m_x + ", " + m_dimensions.m_y + ", " + m_dimensions.m_z + "), vec3(clamp(" + m_color.m_x + ", 0.0, 1.0), clamp(" + m_color.m_y + ", 0.0, 1.0), clamp(" + m_color.m_z + ", 0.0, 1.0)))";
 }

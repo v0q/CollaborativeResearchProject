@@ -2,6 +2,8 @@
 
 uniform float u_GlobalTime;
 uniform vec2 u_Resolution;
+uniform vec3 u_Camera;
+uniform vec3 u_CameraUp;
 in vec2 o_FragCoord;
 out vec4 o_FragColor;
 

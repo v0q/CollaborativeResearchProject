@@ -5,7 +5,7 @@
  */
 namespace hsitho {
   namespace Expressions {
-    void parseExpression(std::string &_expression) {
+		void parseExpression(std::string &_expression) {
       size_t pos;
       while((pos = _expression.find("*+")) != std::string::npos) {
         _expression.replace(pos, 2, "*");
@@ -25,7 +25,7 @@ namespace hsitho {
       }
       while((pos = _expression.find("-+")) != std::string::npos) {
         _expression.replace(pos, 2, "-");
-      }
+			}
     }
 
     std::string addSpaces(const std::string &_expression) {
@@ -36,7 +36,7 @@ namespace hsitho {
         size_t plus = o.find("+");
         size_t minus = o.find("-");
         size_t multiply = o.find("*");
-        size_t divide = o.find("/");
+				size_t divide = o.find("/");
         if(plus == std::string::npos && minus == std::string::npos && multiply == std::string::npos && divide == std::string::npos) {
           parsed = true;
         }	else if(plus < minus && plus < multiply && plus < divide) {
@@ -58,15 +58,60 @@ namespace hsitho {
           o.erase(0, divide + 1);
         }
       } while(!parsed);
-      newOutput << o;
 
-      return newOutput.str();
-    }
+			newOutput << o;
+			std::string no = newOutput.str();
+
+			parsed = false;
+			size_t cos = 0;
+			size_t sin = 0;
+			do {
+				cos = no.find("cos(", cos);
+				sin = no.find("sin(", sin);
+				if(cos == std::string::npos && sin == std::string::npos) {
+					parsed = true;
+				}	else if(cos < sin) {
+					size_t pos = no.find(" ", cos);
+					size_t end = no.find(")", cos);
+					if(pos < end) {
+						do {
+							no.replace(pos, 1, "");
+							pos = no.find(" ", cos);
+							--end;
+							--sin;
+						} while(pos != std::string::npos && pos < end);
+					}
+					cos = end;
+				} else {
+					size_t pos = no.find(" ", sin);
+					size_t end = no.find(")", sin);
+					if(pos < end) {
+						do {
+							no.replace(pos, 1, "");
+							pos = no.find(" ", sin);
+							--end;
+							--cos;
+						} while(pos != std::string::npos && pos < end);
+					}
+					sin = end;
+				}
+			} while(!parsed);
+
+			return no;
+		}
 
 		std::string evaluate(const std::string &_expression, const std::string &_prev, const int &_copyNum)
     {
       // Generate postfix notation for the expression
-      std::string exp = _expression;
+			std::string exp = _expression;
+			if(_copyNum != -1) {
+				size_t pos;
+				while((pos = exp.find("copyNum")) != std::string::npos) {
+					try {
+						exp.replace(pos, 7, boost::lexical_cast<std::string>(_copyNum));
+					} catch(const boost::bad_lexical_cast e) {}
+				}
+			}
       std::vector<std::string> expElements;
       size_t poss = 0;
       while((poss = exp.find(" ")) != std::string::npos) {
@@ -85,7 +130,7 @@ namespace hsitho {
           boost::lexical_cast<float>(i);
           outputQueue.push_back(i);
           continue;
-        } catch(const boost::bad_lexical_cast &) {}
+				} catch(const boost::bad_lexical_cast &) {}
         if(i == "*" || i == "/") {
           if(stack.size()) {
             std::string op = stack.back();
@@ -125,8 +170,8 @@ namespace hsitho {
         stack.pop_back();
       }
 
-      // Evaluate the postfix expression
-			std::string s = evaluatePostFix(outputQueue, _copyNum);
+			// Evaluate the postfix expression
+			std::string s = evaluatePostFix(outputQueue);
       if(s.find("+") == 0)
         s.erase(0, 1);
 
@@ -143,43 +188,40 @@ namespace hsitho {
       return finalOutput;
     }
 
-		std::string evaluatePostFix(std::vector<std::string> outputQueue, const int &_copyNum)
+		std::string evaluatePostFix(std::vector<std::string> outputQueue)
     {
       std::vector<std::string> stack;
 
       for(auto &o : outputQueue)
       {
         try {
-          size_t pos;
-					if((pos = o.find("copyNum")) != std::string::npos && _copyNum != -1) {
-						stack.push_back(boost::lexical_cast<std::string>(_copyNum));
-						continue;
-					}	else if((pos = o.find("-sin(")) != std::string::npos) {
-            unsigned int startPos = pos+4;
+					size_t pos;
+					if((pos = o.find("-sin(")) != std::string::npos) {
+						unsigned int startPos = pos+4;
 						std::string sineval = "-" + boost::lexical_cast<std::string>(std::sin(boost::lexical_cast<float>(o.substr(startPos, o.find(")", pos) - startPos))));
-            stack.push_back(sineval);
-            continue;
+						stack.push_back(sineval);
+						continue;
 					} else if((pos = o.find("sin(")) != std::string::npos) {
 						unsigned int startPos = pos+4;
 						std::string sineval = boost::lexical_cast<std::string>(std::sin(boost::lexical_cast<float>(o.substr(startPos, o.find(")", pos) - startPos))));
 						stack.push_back(sineval);
 						continue;
 					} else if((pos = o.find("-cos(")) != std::string::npos) {
-            unsigned int startPos = pos+4;
+						unsigned int startPos = pos+4;
 						std::string cosineval = "-" + boost::lexical_cast<std::string>(std::cos(boost::lexical_cast<float>(o.substr(startPos, o.find(")", pos) - startPos))));
-            stack.push_back(cosineval);
-            continue;
+						stack.push_back(cosineval);
+						continue;
 					} else if((pos = o.find("cos(")) != std::string::npos) {
 						unsigned int startPos = pos+4;
 						std::string cosineval = boost::lexical_cast<std::string>(std::cos(boost::lexical_cast<float>(o.substr(startPos, o.find(")", pos) - startPos))));
 						stack.push_back(cosineval);
 						continue;
 					} else {
-            boost::lexical_cast<float>(o);
-            stack.push_back(o);
-            continue;
-          }
-        } catch(const boost::bad_lexical_cast &) {}
+						boost::lexical_cast<float>(o);
+						stack.push_back(o);
+						continue;
+					}
+				} catch(const boost::bad_lexical_cast &) {}
 
         if((o == "*" || o == "/" || o == "+" || o == "-") && stack.size()) {
           std::string vals[2];
@@ -206,7 +248,7 @@ namespace hsitho {
               result = v2 - v1;
             }
             stack.push_back(boost::lexical_cast<std::string>(result));
-          } catch(const boost::bad_lexical_cast &) {
+					} catch(const boost::bad_lexical_cast &) {
             if(o == "*") {
               bool parsed = false;
               if(vals[0] != "0.0" && vals[0] != "0" && vals[1] != "0.0" && vals[1] != "0") {
@@ -321,20 +363,4 @@ namespace hsitho {
 /*
  * Please do not look at these!
       std::cout << "\n";
- */
-//=======
-//			std::ostringstream output;
-//			for(auto &s : stack)
-//			{
-//				output << s;
-//			}
-//			std::string final = output.str();
-//			parseExpression(final);
-//			return final;
-//		}
-//>>>>>>> 7e1e020b4e4d1e226a11be0f4cbd170a7534230f
-
-/*
- * Please do not look at these!
-			std::cout << "\n";
  */

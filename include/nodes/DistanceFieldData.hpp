@@ -52,11 +52,12 @@ enum DFNodeType
 class Mat4f
 {
 public:
-  Mat4f() {}
+	Mat4f() : m_cpn(-1) {}
   Mat4f(const std::string &_m00, const std::string &_m10, const std::string &_m20, const std::string &_m30,
         const std::string &_m01, const std::string &_m11, const std::string &_m21, const std::string &_m31,
         const std::string &_m02, const std::string &_m12, const std::string &_m22, const std::string &_m32,
         const std::string &_m03, const std::string &_m13, const std::string &_m23, const std::string &_m33)
+	 : m_cpn(-1)
   {
     m_m4f[0][0] = _m00;
     m_m4f[0][1] = _m01;
@@ -111,69 +112,82 @@ public:
 		std::ostringstream row;
 
 		row << "( " << m_m4f[0][0] << " ) * ( " << _m.m_m4f[0][0] << " ) + ( " << m_m4f[1][0] << " ) * ( " << _m.m_m4f[0][1] << " ) + ( " << m_m4f[2][0] << " ) * ( " << _m.m_m4f[0][2] << " ) + ( " << m_m4f[3][0] << " ) * ( " << _m.m_m4f[0][3] << " )";
-		temp.m_m4f[0][0] = hsitho::Expressions::evaluate(row.str());
+		temp.m_m4f[0][0] = hsitho::Expressions::evaluate(row.str(), "", m_cpn);
 		row.clear();
 		row.str("");
 		row << "( " << m_m4f[0][1] << " ) * ( " << _m.m_m4f[0][0] << " ) + ( " << m_m4f[1][1] << " ) * ( " << _m.m_m4f[0][1] << " ) + ( " << m_m4f[2][1] << " ) * ( " << _m.m_m4f[0][2] << " ) + ( " << m_m4f[3][1] << " ) * ( " << _m.m_m4f[0][3] << " )";
-		temp.m_m4f[0][1] = hsitho::Expressions::evaluate(row.str());
+		temp.m_m4f[0][1] = hsitho::Expressions::evaluate(row.str(), "", m_cpn);
 		row.clear();
 		row.str("");
 		row << "( " << m_m4f[0][2] << " ) * ( " << _m.m_m4f[0][0] << " ) + ( " << m_m4f[1][2] << " ) * ( " << _m.m_m4f[0][1] << " ) + ( " << m_m4f[2][2] << " ) * ( " << _m.m_m4f[0][2] << " ) + ( " << m_m4f[3][2] << " ) * ( " << _m.m_m4f[0][3] << " )";
-		temp.m_m4f[0][2] = hsitho::Expressions::evaluate(row.str());
+		temp.m_m4f[0][2] = hsitho::Expressions::evaluate(row.str(), "", m_cpn);
 		row.clear();
 		row.str("");
 		row << "( " << m_m4f[0][3] << " ) * ( " << _m.m_m4f[0][0] << " ) + ( " << m_m4f[1][3] << " ) * ( " << _m.m_m4f[0][1] << " ) + ( " << m_m4f[2][3] << " ) * ( " << _m.m_m4f[0][2] << " ) + ( " << m_m4f[3][3] << " ) * ( " << _m.m_m4f[0][3] << " )";
-		temp.m_m4f[0][3] = hsitho::Expressions::evaluate(row.str());
+		temp.m_m4f[0][3] = hsitho::Expressions::evaluate(row.str(), "", m_cpn);
 		row.clear();
 		row.str("");
 		row << "( " << m_m4f[0][0] << " ) * ( " << _m.m_m4f[1][0] << " ) + ( " << m_m4f[1][0] << " ) * ( " << _m.m_m4f[1][1] << " ) + ( " << m_m4f[2][0] << " ) * ( " << _m.m_m4f[1][2] << " ) + ( " << m_m4f[3][0] << " ) * ( " << _m.m_m4f[1][3] << " )";
-		temp.m_m4f[1][0] = hsitho::Expressions::evaluate(row.str());
+		temp.m_m4f[1][0] = hsitho::Expressions::evaluate(row.str(), "", m_cpn);
 		row.clear();
 		row.str("");
 		row << "( " << m_m4f[0][1] << " ) * ( " << _m.m_m4f[1][0] << " ) + ( " << m_m4f[1][1] << " ) * ( " << _m.m_m4f[1][1] << " ) + ( " << m_m4f[2][1] << " ) * ( " << _m.m_m4f[1][2] << " ) + ( " << m_m4f[3][1] << " ) * ( " << _m.m_m4f[1][3] << " )";
-		temp.m_m4f[1][1] = hsitho::Expressions::evaluate(row.str());
+		temp.m_m4f[1][1] = hsitho::Expressions::evaluate(row.str(), "", m_cpn);
 		row.clear();
 		row.str("");
 		row << "( " << m_m4f[0][2] << " ) * ( " << _m.m_m4f[1][0] << " ) + ( " << m_m4f[1][2] << " ) * ( " << _m.m_m4f[1][1] << " ) + ( " << m_m4f[2][2] << " ) * ( " << _m.m_m4f[1][2] << " ) + ( " << m_m4f[3][2] << " ) * ( " << _m.m_m4f[1][3] << " )";
-		temp.m_m4f[1][2] = hsitho::Expressions::evaluate(row.str());
+		temp.m_m4f[1][2] = hsitho::Expressions::evaluate(row.str(), "", m_cpn);
 		row.clear();
 		row.str("");
 		row << "( " << m_m4f[0][3] << " ) * ( " << _m.m_m4f[1][0] << " ) + ( " << m_m4f[1][3] << " ) * ( " << _m.m_m4f[1][1] << " ) + ( " << m_m4f[2][3] << " ) * ( " << _m.m_m4f[1][2] << " ) + ( " << m_m4f[3][3] << " ) * ( " << _m.m_m4f[1][3] << " )";
-		temp.m_m4f[1][3] = hsitho::Expressions::evaluate(row.str());
+		temp.m_m4f[1][3] = hsitho::Expressions::evaluate(row.str(), "", m_cpn);
 		row.clear();
 		row.str("");
 		row << "( " << m_m4f[0][0] << " ) * ( " << _m.m_m4f[2][0] << " ) + ( " << m_m4f[1][0] << " ) * ( " << _m.m_m4f[2][1] << " ) + ( " << m_m4f[2][0] << " ) * ( " << _m.m_m4f[2][2] << " ) + ( " << m_m4f[3][0] << " ) * ( " << _m.m_m4f[2][3] << " )";
-		temp.m_m4f[2][0] = hsitho::Expressions::evaluate(row.str());
+		temp.m_m4f[2][0] = hsitho::Expressions::evaluate(row.str(), "", m_cpn);
 		row.clear();
 		row.str("");
 		row << "( " << m_m4f[0][1] << " ) * ( " << _m.m_m4f[2][0] << " ) + ( " << m_m4f[1][1] << " ) * ( " << _m.m_m4f[2][1] << " ) + ( " << m_m4f[2][1] << " ) * ( " << _m.m_m4f[2][2] << " ) + ( " << m_m4f[3][1] << " ) * ( " << _m.m_m4f[2][3] << " )";
-		temp.m_m4f[2][1] = hsitho::Expressions::evaluate(row.str());
+		temp.m_m4f[2][1] = hsitho::Expressions::evaluate(row.str(), "", m_cpn);
 		row.clear();
 		row.str("");
 		row << "( " << m_m4f[0][2] << " ) * ( " << _m.m_m4f[2][0] << " ) + ( " << m_m4f[1][2] << " ) * ( " << _m.m_m4f[2][1] << " ) + ( " << m_m4f[2][2] << " ) * ( " << _m.m_m4f[2][2] << " ) + ( " << m_m4f[3][2] << " ) * ( " << _m.m_m4f[2][3] << " )";
-		temp.m_m4f[2][2] = hsitho::Expressions::evaluate(row.str());
+		temp.m_m4f[2][2] = hsitho::Expressions::evaluate(row.str(), "", m_cpn);
 		row.clear();
 		row.str("");
 		row << "( " << m_m4f[0][3] << " ) * ( " << _m.m_m4f[2][0] << " ) + ( " << m_m4f[1][3] << " ) * ( " << _m.m_m4f[2][1] << " ) + ( " << m_m4f[2][3] << " ) * ( " << _m.m_m4f[2][2] << " ) + ( " << m_m4f[3][3] << " ) * ( " << _m.m_m4f[2][3] << " )";
-		temp.m_m4f[2][3] = hsitho::Expressions::evaluate(row.str());
+		temp.m_m4f[2][3] = hsitho::Expressions::evaluate(row.str(), "", m_cpn);
 		row.clear();
 		row.str("");
 		row << "( " << m_m4f[0][0] << " ) * ( " << _m.m_m4f[3][0] << " ) + ( " << m_m4f[1][0] << " ) * ( " << _m.m_m4f[3][1] << " ) + ( " << m_m4f[2][0] << " ) * ( " << _m.m_m4f[3][2] << " ) + ( " << m_m4f[3][0] << " ) * ( " << _m.m_m4f[3][3] << " )";
-		temp.m_m4f[3][0] = hsitho::Expressions::evaluate(row.str());
+		temp.m_m4f[3][0] = hsitho::Expressions::evaluate(row.str(), "", m_cpn);
 		row.clear();
 		row.str("");
 		row << "( " << m_m4f[0][1] << " ) * ( " << _m.m_m4f[3][0] << " ) + ( " << m_m4f[1][1] << " ) * ( " << _m.m_m4f[3][1] << " ) + ( " << m_m4f[2][1] << " ) * ( " << _m.m_m4f[3][2] << " ) + ( " << m_m4f[3][1] << " ) * ( " << _m.m_m4f[3][3] << " )";
-		temp.m_m4f[3][1] = hsitho::Expressions::evaluate(row.str());
+		temp.m_m4f[3][1] = hsitho::Expressions::evaluate(row.str(), "", m_cpn);
 		row.clear();
 		row.str("");
 		row << "( " << m_m4f[0][2] << " ) * ( " << _m.m_m4f[3][0] << " ) + ( " << m_m4f[1][2] << " ) * ( " << _m.m_m4f[3][1] << " ) + ( " << m_m4f[2][2] << " ) * ( " << _m.m_m4f[3][2] << " ) + ( " << m_m4f[3][2] << " ) * ( " << _m.m_m4f[3][3] << " )";
-		temp.m_m4f[3][2] = hsitho::Expressions::evaluate(row.str());
+		temp.m_m4f[3][2] = hsitho::Expressions::evaluate(row.str(), "", m_cpn);
 		row.clear();
 		row.str("");
 		row << "( " << m_m4f[0][3] << " ) * ( " << _m.m_m4f[3][0] << " ) + ( " << m_m4f[1][3] << " ) * ( " << _m.m_m4f[3][1] << " ) + ( " << m_m4f[2][3] << " ) * ( " << _m.m_m4f[3][2] << " ) + ( " << m_m4f[3][3] << " ) * ( " << _m.m_m4f[3][3] << " )";
-		temp.m_m4f[3][3] = hsitho::Expressions::evaluate(row.str());
+		temp.m_m4f[3][3] = hsitho::Expressions::evaluate(row.str(), "", m_cpn);
 
 		return temp;
+	}
+
+	bool operator==(const Mat4f& _m) noexcept
+	{
+		for(unsigned int x = 0; x < 4; ++x)
+		{
+			for(unsigned int y = 0; y < 4; ++y)
+			{
+				if(m_m4f[x][y] != _m.m_m4f[x][y])
+					return false;
+			}
+		}
+		return true;
 	}
 
 	std::string matrix(int _x, int _y) const { return m_m4f[_x][_y]; }
@@ -200,7 +214,10 @@ public:
 		}
 	}
 
+	void setCpn(const int &_cpn) { m_cpn = _cpn; }
+
 private:
+	int m_cpn;
 	std::string m_m4f[4][4] = {
 		{"1.0", "0.0", "0.0", "0.0"},
 		{"0.0", "1.0", "0.0", "0.0"},

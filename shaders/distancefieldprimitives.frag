@@ -2,6 +2,8 @@
 
 uniform float u_GlobalTime;
 uniform vec2 u_Resolution;
+uniform vec3 u_Camera;
+uniform vec3 u_CameraUp;
 in vec2 o_FragCoord;
 out vec4 o_FragColor;
 
@@ -13,7 +15,7 @@ struct TraceResult
   float t;
   float d;
 };
-float traceprecision = 0.001f;
+float traceprecision = 0.01f;
 vec3 lightPos = vec3(1.0f, 2.5f, 1.0f);
 
 /**
@@ -198,11 +200,48 @@ vec4 map(vec3 _position)
 //                                            - sin(u_GlobalTime) * 1.0, 1.0 * sin(u_GlobalTime) * cos(u_GlobalTime) * 1.0, 1.0 * cos(u_GlobalTime) * cos(u_GlobalTime) * 1.0, 0,
 //                                           0, 0, 0, 1) * vec4(_position, 1.0)), 0.6, vec3(clamp(-1, 0, 1), 0, 0)));
 //  _position = opRepetition(_position, vec3(4.0, 4.0, 4.0));
-  pos = sdFastBox(vec3(mat4x4(1.0, 0.0, 0.0, 0.0,
-                              0.0, 1.0, 0.0, 0.0,
-                              0.0, 0.0, 1.5, 0.0,
-                              0.0, 0.0, 0.0, 1.0)
-                       *vec4(_position, 1.0)), 1.0, vec3(0.0, 0.0, 0.0));
+  pos = opUnion(
+    sdBox(vec3(vec4(_position, 1.0)).xyz,
+    vec3(0.5, 0.2, 0.5),
+    vec3(clamp(0.0, 0.0, 1.0), clamp(0.0, 0.0, 1.0), clamp(0.0, 0.0, 1.0))), pos);
+  pos = opUnion(
+    sdBox(vec3(vec4(_position, 1.0)).xyz,
+    vec3(0.5, 0.2, 0.5),
+    vec3(clamp(0.0, 0.0, 1.0), clamp(0.0, 0.0, 1.0), clamp(0.0, 0.0, 1.0))), pos);
+  pos = opUnion(
+    sdBox(vec3(vec4(_position, 1.0)).xyz,
+    vec3(0.5, 0.2, 0.5),
+    vec3(clamp(0.0, 0.0, 1.0), clamp(0.0, 0.0, 1.0), clamp(0.0, 0.0, 1.0))), pos);
+  pos = opUnion(
+    sdBox(vec3(vec4(_position, 1.0)).xyz,
+    vec3(0.5, 0.2, 0.5),
+    vec3(clamp(0.0, 0.0, 1.0), clamp(0.0, 0.0, 1.0), clamp(0.0, 0.0, 1.0))), pos);
+  pos = opUnion(
+    sdBox(vec3(vec4(_position, 1.0)).xyz,
+    vec3(0.5, 0.2, 0.5),
+    vec3(clamp(0.0, 0.0, 1.0), clamp(0.0, 0.0, 1.0), clamp(0.0, 0.0, 1.0))), pos);
+  pos = opUnion(
+    sdBox(vec3(vec4(_position, 1.0)).xyz,
+    vec3(0.5, 0.2, 0.5),
+    vec3(clamp(0.0, 0.0, 1.0), clamp(0.0, 0.0, 1.0), clamp(0.0, 0.0, 1.0))), pos);
+  pos = opUnion(
+    sdBox(vec3(vec4(_position, 1.0)).xyz,
+    vec3(0.5, 0.2, 0.5),
+    vec3(clamp(0.0, 0.0, 1.0), clamp(0.0, 0.0, 1.0), clamp(0.0, 0.0, 1.0))), pos);
+  pos = opUnion(
+    sdBox(vec3(vec4(_position, 1.0)).xyz,
+    vec3(0.5, 0.2, 0.5),
+    vec3(clamp(0.0, 0.0, 1.0), clamp(0.0, 0.0, 1.0), clamp(0.0, 0.0, 1.0))),
+    pos);
+  pos = opUnion(
+    sdBox(vec3(vec4(_position, 1.0)).xyz, vec3(0.5, 0.2, 0.5),
+    vec3(clamp(0.0, 0.0, 1.0), clamp(0.0, 0.0, 1.0), clamp(0.0, 0.0, 1.0))),
+    pos);
+//  pos = sdFastBox(vec3(mat4x4(1.0, 0.0, 0.0, 0.0,
+//                              0.0, 1.0, 0.0, 0.0,
+//                              0.0, 0.0, 1.5, 0.0,
+//                              0.0, 0.0, 0.0, 1.0)
+//                       *vec4(_position, 1.0)), 1.0, vec3(0.0, 0.0, 0.0));
 ////  pos = opUnion(pos, sdPlane(_position, vec4(0.0, 1.0, 0.0, 1.0), vec3(0.85, 0.85, 0.85)));
 //  float sg = sin(u_GlobalTime/300.f)*180;
 //  float gg = cos(u_GlobalTime/200.f)*90;
@@ -300,6 +339,7 @@ TraceResult castRay(mat2x3 _ray)
 {
   TraceResult trace;
   trace.t = 1.f;
+  float tmax = 10.f;
 //  float omega = 1.2;
 //  float candidate_error = 1.f;
 //  float candidate_t = 1.f;
@@ -332,12 +372,12 @@ TraceResult castRay(mat2x3 _ray)
 ////    trace.t = candidate_error;
 //  return trace;
 
-  for(int i = 0; i < 60; ++i)
+  for(int i = 0; i < 64; ++i)
   {
     vec4 r = map(_ray[0] + trace.t * _ray[1]);
     trace.d = r.x;
     trace.color = r.yzw;
-    if(trace.d <= traceprecision) {
+    if(trace.d <= traceprecision || trace.t > tmax) {
       break;
     }
     trace.t += trace.d;
@@ -382,10 +422,11 @@ float softshadow(vec3 ro, vec3 rd, float mint, float tmax)
 vec3 render(mat2x3 _ray)
 {
   TraceResult trace = castRay(_ray);
+
   if(trace.d <= traceprecision)
   {
     vec3 p = _ray[0] + trace.t * _ray[1];
-    vec3 n = calcNormal(p);
+//    vec3 n = calcNormal(p);
 //    vec3 lightDir = normalize(lightPos - p);
 ////    vec3 ref = reflect(_ray[1], n);
 //    float intensity = clamp(dot(n, lightDir), 0.0, 1.0);
@@ -400,7 +441,7 @@ vec3 render(mat2x3 _ray)
 //    trace.color *= shadow;
 //    trace.color = n;
 
-    return n;
+    return trace.color;
 //    return clamp(trace.color, 0.0, 1.0);
   }
   return vec3(0.529, 0.807, 0.9215);
@@ -412,9 +453,11 @@ void main()
 //  vec3 cameraPosition = vec3(sin(u_GlobalTime/10.f)*5.f, 2.5f, cos(u_GlobalTime/10.f)*5.f);
 //  vec3 lookAt = vec3(cameraPosition.x - sin(u_GlobalTime/10.f)*5.f, cameraPosition.y + sin(u_GlobalTime/5.f)*7.f, cameraPosition.z - cos(u_GlobalTime/10.f)*5.f);
   // Static camera
-  vec3 cameraPosition = vec3(5.f, 2.5f, 5.f);
+//  vec3 cameraPosition = vec3(5.f, 2.5f, 5.f);
+  vec3 cameraPosition = u_Camera;
   vec3 lookAt = vec3(0.f);
-  vec3 upVector = vec3(0.f, 1.f, 0.f);
+//  vec3 upVector = vec3(0.f, 1.f, 0.f);
+  vec3 upVector = u_CameraUp;
   float aspectRatio = u_Resolution.x / u_Resolution.y;
 
   mat2x3 ray = createRay(cameraPosition, lookAt, upVector, o_FragCoord, 90.f, aspectRatio);

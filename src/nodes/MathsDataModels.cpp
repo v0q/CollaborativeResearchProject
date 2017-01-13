@@ -34,7 +34,9 @@ void ScalarDataModel::valueEdit(QString const)
 		return;
 	}
 
-	m_v = std::make_shared<ScalarData>(boost::lexical_cast<std::string>(value));
+	try {
+		m_v = std::make_shared<ScalarData>(boost::lexical_cast<std::string>(value));
+	} catch( const boost::bad_lexical_cast &) { std::cerr << "1\n"; exit(0); }
 	emit dataUpdated(0);
 }
 
@@ -254,7 +256,9 @@ SineDataModel::SineDataModel() :
 
 void SineDataModel::valueEdit(QString const)
 {
-	m_v = std::make_shared<ScalarData>(boost::lexical_cast<std::string>("sin(" + m_value->text().toStdString() + ")"));
+	try {
+		m_v = std::make_shared<ScalarData>(boost::lexical_cast<std::string>("sin(" + m_value->text().toStdString() + ")"));
+	} catch( const boost::bad_lexical_cast &) { std::cerr << "2\n"; exit(0); }
 	emit dataUpdated(0);
 }
 
@@ -267,7 +271,9 @@ void SineDataModel::save(Properties &p) const
 void SineDataModel::restore(const Properties &p)
 {
   m_value->setText(p.values().find("m_value").value().toString());
-  m_v = std::make_shared<ScalarData>(boost::lexical_cast<std::string>("sin(" + m_value->text().toStdString() + ")"));
+	try {
+		m_v = std::make_shared<ScalarData>(boost::lexical_cast<std::string>("sin(" + m_value->text().toStdString() + ")"));
+	} catch( const boost::bad_lexical_cast &) { std::cerr << "3\n"; exit(0); }
 }
 
 unsigned int SineDataModel::nPorts(PortType portType) const
@@ -355,7 +361,9 @@ CosineDataModel::CosineDataModel() :
 
 void CosineDataModel::valueEdit(QString const)
 {
-	m_v = std::make_shared<ScalarData>(boost::lexical_cast<std::string>("cos(" + m_value->text().toStdString() + ")"));
+	try {
+		m_v = std::make_shared<ScalarData>(boost::lexical_cast<std::string>("cos(" + m_value->text().toStdString() + ")"));
+	} catch( const boost::bad_lexical_cast &) { std::cerr << "4\n"; exit(0); }
 	emit dataUpdated(0);
 }
 
@@ -368,7 +376,9 @@ void CosineDataModel::save(Properties &p) const
 void CosineDataModel::restore(const Properties &p)
 {
   m_value->setText(p.values().find("m_value").value().toString());
-  m_v = std::make_shared<ScalarData>(boost::lexical_cast<std::string>("cos(" + m_value->text().toStdString() + ")"));
+	try {
+		m_v = std::make_shared<ScalarData>(boost::lexical_cast<std::string>("cos(" + m_value->text().toStdString() + ")"));
+	} catch(const boost::bad_lexical_cast &) { std::cerr << "5\n"; exit(0); }
 }
 
 unsigned int CosineDataModel::nPorts(PortType portType) const

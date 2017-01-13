@@ -117,11 +117,37 @@ MainWindow::MainWindow(QWidget *_parent) :
 //	std::cout << hsitho::Expressions::evaluate("( 0.0 ) * ( 0.0 ) + ( 0.0 ) * ( c ) + ( 0.0 ) * ( -s ) + ( 1.0 ) * ( 0.0 )") << "\n";
 //	std::cout << hsitho::Expressions::evaluate("( 0.0 ) * ( 0.0 ) + ( 0.0 ) * ( s ) + ( 0.0 ) * ( c ) + ( 1.0 ) * ( 0.0 )") << "\n";
 
+//	cos(u_GlobalTime), 0, sin(u_GlobalTime), 0,
+//	0, 1, 0, 0,
+//	-sin(u_GlobalTime), 0, cos(u_GlobalTime), 0,
+//	0, 0, 0, 1,
+
+//	cos(1.04666674*copyNum), 0, sin(1.04666674*copyNum), 0,
+//	0, 1, 0, 0,
+//	-sin(1.04666674*copyNum), 0, cos(1.04666674*copyNum), 0,
+//	0, 0, 0, 1,
+
+	Mat4f tt ("cos(u_GlobalTime)", "0", "sin(u_GlobalTime)", "0",
+						"0", "1", "0", "0",
+						"-sin(u_GlobalTime)", "0", "cos(u_GlobalTime)", "0",
+						"0", "0", "0", "1");
+
+	Mat4f ttt("cos(1.04666674*copyNum)", "0", "sin(1.04666674*copyNum)", "0",
+						"0", "1", "0", "0",
+						"-sin(1.04666674*copyNum)", "0", "cos(1.04666674*copyNum)", "0",
+						"0", "0", "0", "1");
+
+//	std::cout << hsitho::Expressions::evaluate("( -sin(u_GlobalTime) ) * ( cos(1.04666674*copyNum) ) + ( 0 ) * ( 0 ) + ( cos(u_GlobalTime) ) * ( -sin(1.04666674*copyNum) ) + ( 0 ) * ( 0 )") << "\n";
+//	exit(0);
+
+//	(tt*ttt).print();
+//	exit(0);
+
   Mat4f t("1.0", "0.0", "0.0", "0.0",
           "0.0", "1.0", "0.0", "0.0",
           "0.0", "0.0", "1.0", "0.0",
           "0.0", "0.0", "0.0", "1.0");
-  Mat4f rx("1.0", "0.0", "0.0",		"0.0",
+	Mat4f rx("1.0", "0.0", "0.0",		"0.0",
            "0.0", "a",	 "-b",	"0.0",
            "0.0", "b",	 "a",			"0.0",
            "0.0", "0.0", "0.0",		"1.0");

@@ -26,12 +26,13 @@ TraceResult castRay(mat2x3 _ray)
 {
 TraceResult trace;
 trace.t = 1.f;
+float tmax = 20.f;
 for(int i = 0; i < 80; ++i)
 {
   vec4 r = map(_ray[0] + trace.t * _ray[1]);
   trace.d = r.x;
   trace.color = r.yzw;
-  if(trace.d <= traceprecision) {
+  if(trace.d <= traceprecision || trace.t > tmax) {
     break;
   }
   trace.t += trace.d;
@@ -100,13 +101,9 @@ return vec3(0.529, 0.807, 0.9215);
 
 void main()
 {
-// Moving camera
-//  vec3 cameraPosition = vec3(sin(u_GlobalTime/10.f)*5.f, 2.5f, cos(u_GlobalTime/10.f)*5.f);
-//  vec3 lookAt = vec3(cameraPosition.x - sin(u_GlobalTime/10.f)*5.f, cameraPosition.y + sin(u_GlobalTime/5.f)*7.f, cameraPosition.z - cos(u_GlobalTime/10.f)*5.f);
-// Static camera
-vec3 cameraPosition = vec3(5.f, 2.5f, 5.f);
+vec3 cameraPosition = u_Camera;
+vec3 upVector = u_CameraUp;
 vec3 lookAt = vec3(0.f);
-vec3 upVector = vec3(0.f, 1.f, 0.f);
 float aspectRatio = u_Resolution.x / u_Resolution.y;
 
 mat2x3 ray = createRay(cameraPosition, lookAt, upVector, o_FragCoord, 90.f, aspectRatio);
