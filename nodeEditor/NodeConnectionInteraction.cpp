@@ -4,7 +4,8 @@
 #include "ConnectionGraphicsObject.hpp"
 #include "NodeGraphicsObject.hpp"
 #include "NodeDataModel.hpp"
-#include "OutputDataModel.hpp"
+
+#include "nodes/CollapsedNodeDataModel.hpp"
 
 bool
 NodeConnectionInteraction::

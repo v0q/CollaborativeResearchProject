@@ -18,7 +18,7 @@ Node::
 Node(std::unique_ptr<NodeDataModel> && dataModel, bool _m, const QUuid &_static)
 	: m_movable(_m)
 	,	_id(_static)
-  , _nodeDataModel(std::move(dataModel))
+	, _nodeDataModel(std::move(dataModel))
   , _nodeState(_nodeDataModel)
   , _nodeGeometry(_nodeDataModel)
   , _nodeGraphicsObject(nullptr)
@@ -28,7 +28,6 @@ Node(std::unique_ptr<NodeDataModel> && dataModel, bool _m, const QUuid &_static)
   // propagate data: model => node
   connect(_nodeDataModel.get(), &NodeDataModel::dataUpdated,
           this, &Node::onDataUpdated);
-
 }
 
 
@@ -147,7 +146,6 @@ nodeGeometry() const
   return _nodeGeometry;
 }
 
-
 NodeState const &
 Node::
 nodeState() const
@@ -199,7 +197,9 @@ onDataUpdated(PortIndex index)
 
 	for(auto const &connection : connections)
 	{
-		if(connection)
+		if(connection) {
 			connection->propagateData(nodeData);
+			_nodeGraphicsObject->getScene().nodeEditorChanged();
+		}
 	}
 }

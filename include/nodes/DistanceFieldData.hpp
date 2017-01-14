@@ -44,7 +44,7 @@ enum DFNodeType
   VECTOR,
   SCALAR,
 	COLOR,
-	OUTPUT,
+	IO,
 	COLLAPSED,
 	COPY
 };

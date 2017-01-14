@@ -126,8 +126,9 @@ restoreNode(Properties const &p)
     auto it = category.second.find(modelName);
 
     if(it != category.second.end())
-    {
+		{
       auto dataModel = it->second->create();
+			dataModel->setScene(this);
       auto node      = std::make_shared<Node>(std::move(dataModel));
       auto ngo       = std::make_unique<NodeGraphicsObject>(*this, node);
       node->setGraphicsObject(std::move(ngo));
@@ -151,12 +152,14 @@ FlowScene::
 removeNode(QGraphicsItem* item)
 {
   auto ngo = dynamic_cast<NodeGraphicsObject*>(item);
+	removeNode(ngo->node().lock());
+}
 
-  std::shared_ptr<Node> const& node = ngo->node().lock();
-
-  auto deleteConnections = [&node, this] (PortType portType)
+void FlowScene::removeNode(std::shared_ptr<Node> node)
+{
+	auto deleteConnections = [&node, this] (PortType portType)
 	{
-    auto nodeState = node->nodeState();
+		auto nodeState = node->nodeState();
 		auto const & nodeEntries = nodeState.getEntries(portType);
 
 		for(std::vector<std::weak_ptr<Connection>> ports : nodeEntries)
@@ -168,11 +171,11 @@ removeNode(QGraphicsItem* item)
 					this->deleteConnection(c);
 				}
 			}
-    }
-  };
+		}
+	};
 
 	deleteConnections(PortType::Out);
-  deleteConnections(PortType::In);
+	deleteConnections(PortType::In);
 
 	if(node->nodeDataModel()->getNodeType() == DFNodeType::COLLAPSED)
 	{
@@ -198,7 +201,7 @@ removeNode(QGraphicsItem* item)
 		}
 	}
 
-  _nodes.erase(node->id());
+	_nodes.erase(node->id());
 	emit nodeEditorChanged();
 }
 
@@ -297,6 +300,7 @@ load()
 
   QDataStream in(&file);
 
+	std::vector<std::shared_ptr<Node>> nodes;
   qint64 nNodes;
 	in >> nNodes;
 
@@ -306,9 +310,10 @@ load()
     auto &values = p.values();
     in >> values;
 
-    restoreNode(p);
-  }
+		nodes.push_back(restoreNode(p));
+	}
 
+	std::vector<Properties> collapsedConnections;
   qint64 nConnections;
   in >> nConnections;
 
@@ -318,15 +323,41 @@ load()
     auto &values = p.values();
     in >> values;
 
-    restoreConnection(p);
+		QUuid nodeInId;
+		QUuid nodeOutId;
+
+		p.get("in_id", &nodeInId);
+		p.get("out_id", &nodeOutId);
+
+		auto nodeIn  = _nodes[nodeInId];
+		auto nodeOut = _nodes[nodeOutId];
+		if(nodeIn->nodeDataModel()->caption() == QString("Collapsed Node") ||
+			 nodeOut->nodeDataModel()->caption() == QString("Collapsed Node"))
+			collapsedConnections.push_back(p);
+		else
+			restoreConnection(p);
   }
+
+	for(auto &n : nodes) {
+		if(n->nodeDataModel()->caption() == QString("Collapsed Node")) {
+			QPointF pos = n->nodeGraphicsObject()->scenePos();
+			std::vector<std::shared_ptr<Node>> selectedNodes = n->nodeDataModel()->getConnectedNodes(nodes);
+			QUuid id = n->id();
+			removeNode(n);
+			auto sceneNode = createNode(std::make_unique<CollapsedNodeDataModel>(selectedNodes, this), true, id);
+			sceneNode->nodeGraphicsObject()->setPos(pos);
+			sceneNode->nodeGraphicsObject()->update();
+		}
+	}
+	for(auto &p : collapsedConnections)
+		restoreConnection(p);
 }
 
 
 FlowScene::
 FlowScene(QWidget *_parent)
 {
-  connect(this, SIGNAL(nodeEditorChanged()), _parent, SLOT(nodeChanged()));
+	connect(this, SIGNAL(nodeEditorChanged()), _parent, SLOT(nodeChanged()));
   setItemIndexMethod(QGraphicsScene::NoIndex);
 }
 

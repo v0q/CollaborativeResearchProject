@@ -97,43 +97,13 @@ contextMenuEvent(QContextMenuEvent *event)
           outputs.push_back(node->nodeDataModel()->dataType(PortType::In, 0));
         }
 			}
-			auto sceneNode = _scene->createNode(std::make_unique<CollapsedNodeDataModel>(selectedNodes));
+			auto sceneNode = _scene->createNode(std::make_unique<CollapsedNodeDataModel>(selectedNodes, _scene));
 
 			QPoint pos = event->pos();
 			QPointF posView = this->mapToScene(pos);
 
 			sceneNode->nodeGraphicsObject()->setPos(posView);
 
-			for(auto &n : selectedNodes)
-			{
-				n->nodeGraphicsObject()->hide();
-
-				auto hideConnections =
-				[&](PortType portType)
-				{
-					for(auto &port : n->nodeState().getEntries(portType))
-					{
-						for(auto &c : port)
-						{
-							if(c.lock())
-							{
-								std::shared_ptr<Node> connectedNode = c.lock()->getNode(PortType::In).lock();
-								if(connectedNode)
-								{
-									if(std::find(selectedNodes.begin(), selectedNodes.end(), connectedNode) == selectedNodes.end()) {
-										_scene->deleteConnection(c.lock());
-									}
-									else {
-										c.lock()->getConnectionGraphicsObject()->hide();
-									}
-								}
-							}
-						}
-					}
-				};
-				hideConnections(PortType::In);
-				hideConnections(PortType::Out);
-			}
 			return;
 		}
 	} else {
@@ -145,6 +115,8 @@ contextMenuEvent(QContextMenuEvent *event)
 			for(auto const &modelRegistry : category.second)
 			{
 				QString const &modelName = modelRegistry.first;
+				if(modelName == QString("Collapsed Node"))
+					continue;
 				modelMenu.addAction(modelName);
 			}
 		}

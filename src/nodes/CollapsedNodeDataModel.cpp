@@ -1,27 +1,99 @@
+#include <QDebug>
+#include <QtGui/QDoubleValidator>
+
 #include "nodeEditor/Connection.hpp"
+#include "nodeEditor/ConnectionGraphicsObject.hpp"
+#include "nodeEditor/NodeGraphicsObject.hpp"
+
 #include "CollapsedNodeDataModel.hpp"
 #include "MathsDataModels.hpp"
 
-CollapsedNodeDataModel::CollapsedNodeDataModel(std::vector<std::shared_ptr<Node> > &_nodes) :
-	m_nodes(_nodes)
+CollapsedNodeDataModel::CollapsedNodeDataModel(std::vector<std::shared_ptr<Node> > &_nodes, FlowScene *_scene)
 {
-	for(auto &n : m_nodes)
-	{
-		if(n->nodeDataModel()->getNodeType() == DFNodeType::OUTPUT)
-		{
-			m_outputs.push_back(n);
-		}
-	}
+	setScene(_scene);
+	addNodes(_nodes);
 }
 
 void CollapsedNodeDataModel::save(Properties &p) const
 {
-  p.put("model_name", name());
+	QVariantList nodeIds;
+	for(auto &n : m_nodes) {
+		nodeIds.push_back(n->id().toString());
+	}
+	p.put("model_name", name());
+	p.put("nodes", nodeIds);
 }
 
 void CollapsedNodeDataModel::restore(const Properties &p)
 {
+	QVariantList ids = p.values().find("nodes").value().value<QVariantList>();
+	for(auto &id : ids)
+		nodeIds.push_back(QUuid(id.value<QString>()));
+}
 
+std::vector<std::shared_ptr<Node>> CollapsedNodeDataModel::getConnectedNodes(std::vector<std::shared_ptr<Node>> &_nodes)
+{
+	std::vector<std::shared_ptr<Node>> connected;
+	for(auto &n : _nodes)
+	{
+		if(std::find(nodeIds.begin(), nodeIds.end(), n->id()) != nodeIds.end() || !nodeIds.size())
+		{
+			connected.push_back(n);
+		}
+	}
+	return connected;
+}
+
+void CollapsedNodeDataModel::addNodes(std::vector<std::shared_ptr<Node>> &_nodes)
+{
+	for(auto &n : _nodes)
+	{
+		if(std::find(nodeIds.begin(), nodeIds.end(), n->id()) != nodeIds.end() || !nodeIds.size())
+		{
+			m_nodes.push_back(n);
+			if(n->nodeDataModel()->getNodeType() == DFNodeType::IO)
+			{
+				if(n->nodeDataModel()->caption() == QString("Output"))
+					m_outputs.push_back(n);
+				else if(n->nodeDataModel()->caption() == QString("Input")) {
+					if(std::find(m_inputs.begin(), m_inputs.end(), n) == m_inputs.end())
+						m_inputs.push_back(n);
+				}
+			}
+		}
+	}
+
+	// Hide related elements
+	for(auto &n : m_nodes)
+	{
+		n->nodeGraphicsObject()->hide();
+
+		auto hideConnections =
+		[&](PortType portType)
+		{
+			for(auto &port : n->nodeState().getEntries(portType))
+			{
+				for(auto &c : port)
+				{
+					if(c.lock())
+					{
+						std::shared_ptr<Node> connectedNode = c.lock()->getNode(PortType::In).lock();
+						if(connectedNode)
+						{
+							if(std::find(m_nodes.begin(), m_nodes.end(), connectedNode) == m_nodes.end()) {
+								m_scene->deleteConnection(c.lock());
+							}
+							else {
+								c.lock()->getConnectionGraphicsObject()->hide();
+							}
+						}
+					}
+				}
+			}
+		};
+		hideConnections(PortType::In);
+		hideConnections(PortType::Out);
+	}
 }
 
 unsigned int CollapsedNodeDataModel::nPorts(PortType portType) const
@@ -31,7 +103,7 @@ unsigned int CollapsedNodeDataModel::nPorts(PortType portType) const
   switch(portType)
 	{
 		case PortType::In:
-			result = 0;
+			result = m_inputs.size();
     break;
 
 		case PortType::Out:
@@ -49,6 +121,10 @@ NodeDataType CollapsedNodeDataModel::dataType(PortType portType, PortIndex portI
 {
 	switch(portType)
 	{
+		case PortType::In:
+			return m_inputs[portIndex]->nodeDataModel()->dataType(PortType::Out, 0);
+		break;
+
 		case PortType::Out:
       return m_outputs[portIndex]->nodeDataModel()->dataType(PortType::In, 0);
 		break;
@@ -62,4 +138,146 @@ NodeDataType CollapsedNodeDataModel::dataType(PortType portType, PortIndex portI
 std::shared_ptr<NodeData> CollapsedNodeDataModel::outData(PortIndex port)
 {
   return m_outputs[(unsigned int)port]->nodeState().getEntries(PortType::In)[0][0].lock()->getNode(PortType::Out).lock()->nodeDataModel()->outData(port);
+}
+
+void CollapsedNodeDataModel::setInData(std::shared_ptr<NodeData> _data, PortIndex _portIndex)
+{
+	m_inputs[_portIndex]->nodeDataModel()->setInData(_data, 0);
+	emit dataUpdated(0);
+}
+
+//*******************************************************************
+// OUTPUT
+//*******************************************************************
+
+OutputDataModel::OutputDataModel() :
+	m_dataType(GenericData().type())
+{ }
+
+void OutputDataModel::save(Properties &p) const
+{
+	p.put("model_name", name());
+	p.put("data_type_id", m_dataType.id);
+	p.put("data_type_name", m_dataType.name);
+	p.put("data_type_color", m_dataType.color);
+}
+
+void OutputDataModel::restore(const Properties &p)
+{
+	m_dataType = NodeDataType{p.values().find("data_type_id").value().toString(), p.values().find("data_type_name").value().toString(), p.values().find("data_type_color").value().value<QColor>()};
+}
+
+unsigned int OutputDataModel::nPorts(PortType portType) const
+{
+	unsigned int result = 0;
+
+	switch (portType)
+	{
+		case PortType::In:
+			result = 1;
+			break;
+
+		default:
+			break;
+	}
+
+	return result;
+}
+
+NodeDataType OutputDataModel::dataType(PortType, PortIndex) const
+{
+	return m_dataType;
+}
+
+//*******************************************************************
+// INPUT
+//*******************************************************************
+
+InputDataModel::InputDataModel() :
+	m_var(false),
+	m_v(nullptr),
+	m_default(new QLineEdit)
+{
+	int y = 0, x = 0;
+	int w = m_default->sizeHint().width()/3;
+	int h = m_default->sizeHint().height();
+
+	auto d = new QDoubleValidator;
+	d->setLocale(QLocale("en_GB"));
+	m_default->setValidator(d);
+	m_default->setMaximumSize(m_default->sizeHint());
+	m_default->setGeometry(x, y, w, h);
+	m_default->setContentsMargins(0, 0, 0, 0);
+	connect(m_default, &QLineEdit::textChanged, this, &InputDataModel::valueEdit);
+
+	m_default->setText("0.0");
+
+	m_v = std::make_shared<ScalarData>(m_default->text().toStdString());
+}
+
+void InputDataModel::save(Properties &p) const
+{
+	p.put("model_name", name());
+	p.put("default", m_default->text());
+}
+
+void InputDataModel::restore(const Properties &p)
+{
+	m_default->setText(p.values().find("default").value().toString());
+}
+
+void InputDataModel::valueEdit(QString const)
+{
+	bool valid = false;
+
+	m_default->text().toFloat(&valid);
+	if(!valid && !m_var) {
+		emit dataInvalidated(0);
+		return;
+	}
+
+	m_v = std::make_shared<ScalarData>(m_default->text().toStdString());
+	emit dataUpdated(0);
+}
+
+unsigned int InputDataModel::nPorts(PortType portType) const
+{
+	unsigned int result = 0;
+
+	switch (portType)
+	{
+		case PortType::Out:
+			result = 1;
+			break;
+
+		default:
+			break;
+	}
+
+	return result;
+}
+
+NodeDataType InputDataModel::dataType(PortType, PortIndex) const
+{
+	return ScalarData().type();
+}
+
+std::shared_ptr<NodeData> InputDataModel::outData(PortIndex)
+{
+	return m_v;
+}
+
+void InputDataModel::setInData(std::shared_ptr<NodeData> _data, PortIndex)
+{
+	auto val = std::dynamic_pointer_cast<ScalarData>(_data);
+	if(val)
+	{
+		m_v = val;
+		m_var = true;
+		m_default->setText(QString::fromStdString(val->value()));
+		emit dataUpdated(0);
+		return;
+	}
+	m_default->setText("0.0");
+	m_var = false;
 }

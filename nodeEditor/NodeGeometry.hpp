@@ -16,7 +16,7 @@ class NodeGeometry
 {
 public:
 
-  NodeGeometry(std::unique_ptr<NodeDataModel> const &dataModel);
+	NodeGeometry(std::unique_ptr<NodeDataModel> &dataModel);
 
 public:
   unsigned int
@@ -111,7 +111,7 @@ public:
 
   /// Returns the position of a widget on the Node surface
   QPointF
-  widgetPosition() const;
+	widgetPosition() const;
 
 private:
 
@@ -145,9 +145,9 @@ private:
 
   QPointF _draggingPos;
 
-  double _opacity;
+	double _opacity;
 
-  std::unique_ptr<NodeDataModel> const &_dataModel;
+	std::unique_ptr<NodeDataModel> &_dataModel;
 
   mutable QFontMetrics _fontMetrics;
 };

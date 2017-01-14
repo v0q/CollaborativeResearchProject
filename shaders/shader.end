@@ -27,7 +27,7 @@ TraceResult castRay(mat2x3 _ray)
 TraceResult trace;
 trace.t = 1.f;
 float tmax = 20.f;
-for(int i = 0; i < 80; ++i)
+for(int i = 0; i < 64; ++i)
 {
   vec4 r = map(_ray[0] + trace.t * _ray[1]);
   trace.d = r.x;
@@ -84,8 +84,8 @@ if(trace.d <= traceprecision)
   vec3 lightDir = normalize(lightPos - p);
 //    vec3 ref = reflect(_ray[1], n);
   float intensity = clamp(dot(n, lightDir), 0.0, 1.0);
-  float shadow = softshadow(p, lightPos, 0.01, 2.5);
-  shadow = 1.0f;
+  //float shadow = softshadow(p, lightPos, 0.01, 2.5);
+  float shadow = 1.0f;
   trace.color = applyFog(trace.color, trace.t/150.f);
 
   // Vigneting

@@ -61,6 +61,9 @@ public:
   void
   removeNode(QGraphicsItem* item);
 
+	void
+	removeNode(std::shared_ptr<Node> node);
+
   void
   save() const;
 

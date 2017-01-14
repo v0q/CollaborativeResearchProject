@@ -4,8 +4,10 @@
 
 #include <QtWidgets/QWidget>
 
+#include "FlowScene.hpp"
 #include "PortType.hpp"
 #include "NodeData.hpp"
+#include "Node.hpp"
 #include "Serializable.hpp"
 
 #include "Export.hpp"
@@ -58,6 +60,8 @@ public:
 
 	virtual bool resizable() const { return false; }
 
+	virtual std::vector<std::shared_ptr<Node>> getConnectedNodes(std::vector<std::shared_ptr<Node>>&) { return std::vector<std::shared_ptr<Node>>(); }
+	virtual void setScene(FlowScene *_scene) { m_scene = _scene; }
 	virtual std::string getExtraParams() const { return ""; }
 	virtual std::string getShaderCode() { return ""; }
 	virtual DFNodeType getNodeType() const = 0;
@@ -78,5 +82,6 @@ signals:
 	void computingFinished();
 
 protected:
+	FlowScene *m_scene;
 	unsigned int m_copyNum;
 };

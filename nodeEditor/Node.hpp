@@ -43,6 +43,8 @@ public:
   QUuid
   id() const;
 
+	void setId(QUuid &id) { _id = id; }
+
   void reactToPossibleConnection(PortType,
                                  NodeDataType,
                                  QPointF const & scenePoint);
@@ -59,13 +61,13 @@ public:
   nodeGraphicsObject();
 
   void
-  setGraphicsObject(std::unique_ptr<NodeGraphicsObject>&& graphics);
+	setGraphicsObject(std::unique_ptr<NodeGraphicsObject>&& graphics);
 
   NodeGeometry&
-  nodeGeometry();
+	nodeGeometry();
 
-  NodeGeometry const&
-  nodeGeometry() const;
+	NodeGeometry const&
+	nodeGeometry() const;
 
   NodeState const &
   nodeState() const;
@@ -73,8 +75,8 @@ public:
   NodeState &
   nodeState();
 
-  std::unique_ptr<NodeDataModel> const &
-  nodeDataModel() const;
+	std::unique_ptr<NodeDataModel> const &
+	nodeDataModel() const;
 
 	bool isMovable() const { return m_movable; }
 

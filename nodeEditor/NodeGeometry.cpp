@@ -8,7 +8,7 @@
 #include "NodeDataModel.hpp"
 
 NodeGeometry::
-NodeGeometry(std::unique_ptr<NodeDataModel> const &dataModel)
+NodeGeometry(std::unique_ptr<NodeDataModel> &dataModel)
   : _width(100)
   , _height(150)
   , _inputPortWidth(70)

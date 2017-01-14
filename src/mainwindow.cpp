@@ -8,6 +8,7 @@
 
 #include "ExpressionEvaluator.hpp"
 #include "nodes/DistanceFieldOutputDataModel.hpp"
+#include "nodes/CollapsedNodeDataModel.hpp"
 #include "nodes/OperationDataModels.hpp"
 #include "nodes/CopyNumDataModel.hpp"
 #include "nodes/TimeDataModel.hpp"
@@ -16,7 +17,6 @@
 #include "nodes/ScaleDataModel.hpp"
 #include "nodes/DistanceFieldOutputDataModel.hpp"
 #include "nodes/ColorPickerDataModel.hpp"
-#include "nodes/OutputDataModel.hpp"
 #include "nodes/CubePrimitiveDataModel.hpp"
 #include "nodes/SpherePrimitiveDataModel.hpp"
 #include "nodes/TorusPrimitiveDataModel.hpp"
@@ -69,8 +69,10 @@ MainWindow::MainWindow(QWidget *_parent) :
 	DataModelRegistry::registerModel<TimeDataModel>("Misc");
 	DataModelRegistry::registerModel<ColorPickerDataModel>("Color");
   DataModelRegistry::registerModel<OutputDataModel>("Generic");
+	DataModelRegistry::registerModel<InputDataModel>("Generic");
 	DataModelRegistry::registerModel<CopyDataModel>("Generic");
 	DataModelRegistry::registerModel<CopyNumDataModel>("Generic");
+	DataModelRegistry::registerModel<CollapsedNodeDataModel>("Generic");
 
   connect(this, SIGNAL(nodeEditorModified(std::unordered_map<QUuid, std::shared_ptr<Node>>)), m_gl, SLOT(nodeChanged(std::unordered_map<QUuid, std::shared_ptr<Node>>)));
 
