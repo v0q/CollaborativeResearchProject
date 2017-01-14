@@ -1,5 +1,6 @@
 #include <QApplication>
 #include <QGLFormat>
+#include <locale>
 
 #include "mainwindow.hpp"
 

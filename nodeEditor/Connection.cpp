@@ -297,9 +297,7 @@ clearNode(PortType portType)
 }
 
 
-NodeDataType
-Connection::
-dataType() const
+NodeDataType Connection::dataType() const
 {
   std::shared_ptr<Node> validNode;
   PortIndex index    = INVALID;
@@ -321,7 +319,7 @@ dataType() const
     auto const &model = validNode->nodeDataModel();
 
     return model->dataType(portType, index);
-  }
+	}
 }
 
 

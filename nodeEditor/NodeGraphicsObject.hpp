@@ -32,13 +32,13 @@ public:
   QRectF
   boundingRect() const override;
 
-  void
-  setGeometryChanged();
+	void setGeometryChanged();
 
   /// Visits all attached connections and corrects
   /// their corresponding end points.
-  void
-  moveConnections() const;
+	void moveConnections() const;
+
+	FlowScene &getScene() const { return _scene; }
 
 protected:
   void
@@ -78,5 +78,5 @@ private:
   std::weak_ptr<Node> _node;
 
   // either nullptr or owned by parent QGraphicsItem
-  QGraphicsProxyWidget * _proxyWidget;
+	std::vector<QGraphicsProxyWidget*> _proxyWidgets;
 };

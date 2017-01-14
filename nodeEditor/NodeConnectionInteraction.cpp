@@ -1,8 +1,11 @@
+#include <QDebug>
 #include "NodeConnectionInteraction.hpp"
 
 #include "ConnectionGraphicsObject.hpp"
 #include "NodeGraphicsObject.hpp"
 #include "NodeDataModel.hpp"
+
+#include "nodes/CollapsedNodeDataModel.hpp"
 
 bool
 NodeConnectionInteraction::
@@ -24,7 +27,7 @@ canConnect(PortIndex &portIndex) const
   portIndex = nodePortIndexUnderScenePoint(requiredPort,
                                            connectionPoint);
 
-  if (portIndex == INVALID)
+	if(portIndex == INVALID)
   {
     return false;
   }
@@ -32,8 +35,8 @@ canConnect(PortIndex &portIndex) const
   // 3) Node port is vacant
 
   // port should be empty
-  if (!nodePortIsEmpty(requiredPort, portIndex))
-    return false;
+//  if (!nodePortIsEmpty(requiredPort, portIndex))
+//    return false;
 
   // 4) Connection type == node port type (not implemented yet)
 
@@ -42,21 +45,26 @@ canConnect(PortIndex &portIndex) const
   auto const &modelTarget = _node->nodeDataModel();
   NodeDataType candidateNodeDataType = modelTarget->dataType(requiredPort, portIndex);
 
-  if (connectionDataType.id != candidateNodeDataType.id)
-    return false;
+	if(requiredPort == PortType::In && _node == _connection->getNode(PortType::Out).lock()) {
+		return false;
+	}
+	else if(_node == _connection->getNode(PortType::In).lock()) {
+		return false;
+	}
+
+	if(connectionDataType.id != candidateNodeDataType.id && (connectionDataType.id != QString("Generic") && candidateNodeDataType.id != QString("Generic")))
+		return false;
 
   return true;
 }
 
 
-bool
-NodeConnectionInteraction::
-tryConnect() const
+bool NodeConnectionInteraction::tryConnect() const
 {
   // 1) Check conditions from 'canConnect'
   PortIndex portIndex = INVALID;
 
-  if (!canConnect(portIndex))
+	if(!canConnect(portIndex))
   {
     return false;
   }
@@ -64,9 +72,23 @@ tryConnect() const
   // 2) Assign node to required port in Connection
 
   PortType requiredPort = connectionRequiredPort();
+	QPointF connectionPoint = connectionEndScenePosition(requiredPort);
+	portIndex = nodePortIndexUnderScenePoint(requiredPort,
+																					 connectionPoint);
+
   _node->nodeState().setConnection(requiredPort,
                                    portIndex,
                                    _connection);
+
+	NodeDataType connectionDataType = _connection->dataType();
+	auto const &modelTarget = _node->nodeDataModel();
+	NodeDataType candidateNodeDataType = modelTarget->dataType(requiredPort, portIndex);
+	std::cout << _node->nodeDataModel()->caption().toStdString() << "\n";
+	if(connectionDataType.id == QString("Generic")) {
+		_connection->getNode(PortType::In).lock()->nodeDataModel()->setDataType(candidateNodeDataType);
+	} else if(candidateNodeDataType.id == QString("Generic")) {
+		_node->nodeDataModel()->setDataType(connectionDataType);
+	}
 
   // 3) Assign Connection to empty port in NodeState
   // The port is not longer required after this function
@@ -82,29 +104,29 @@ tryConnect() const
   if (outNode)
   {
     PortIndex outPortIndex = _connection->getPortIndex(PortType::Out);
-    outNode->onDataUpdated(outPortIndex);
+		outNode->onDataUpdated(outPortIndex);
   }
 
   return true;
 }
 
-
 /// 1) Node and Connection should be already connected
 /// 2) If so, clear Connection entry in the NodeState
 /// 3) Set Connection end to 'requiring a port'
-bool
-NodeConnectionInteraction::
-disconnect(PortType portToDisconnect) const
+bool NodeConnectionInteraction::disconnect(PortType portToDisconnect) const
 {
-  PortIndex portIndex =
-    _connection->getPortIndex(portToDisconnect);
+  PortIndex portIndex = _connection->getPortIndex(portToDisconnect);
 
   NodeState &state = _node->nodeState();
 
-  // clear pointer to Connection in the NodeState
-  state.getEntries(portToDisconnect)[portIndex].reset();
+	// clear pointer to Connection in the NodeState
+	if(portToDisconnect == PortType::In) {
+		state.getEntries(portToDisconnect)[portIndex][0].reset();
+	} else {
+		state.removeConnection(PortType::Out, _connection);
+	}
 
-  // 4) Propagate invalid data to IN node
+   //4) Propagate invalid data to IN node
   _connection->propagateEmptyData();
 
   // clear Connection side
@@ -185,6 +207,11 @@ nodePortIsEmpty(PortType portType, PortIndex portIndex) const
   NodeState const & nodeState = _node->nodeState();
 
   auto const & entries = nodeState.getEntries(portType);
+	bool empty = true;
+	for(auto &e : entries[portIndex]) {
+		if(e.lock())
+			empty = false;
+	}
 
-  return (!entries[portIndex].lock());
+	return empty;
 }

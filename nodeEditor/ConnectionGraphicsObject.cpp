@@ -121,7 +121,7 @@ move()
   };
 
   moveEndPoint(PortType::In);
-  moveEndPoint(PortType::Out);
+	moveEndPoint(PortType::Out);
 }
 
 
@@ -135,7 +135,8 @@ paint(QPainter* painter,
 
   ConnectionPainter::paint(painter,
                            _connection.lock()->connectionGeometry(),
-                           _connection.lock()->connectionState());
+													 _connection.lock()->connectionState(),
+													 _connection.lock().get()->dataType().color);
 }
 
 
@@ -187,7 +188,6 @@ mouseMoveEvent(QGraphicsSceneMouseEvent* event)
   event->accept();
 }
 
-
 void
 ConnectionGraphicsObject::
 mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
@@ -200,16 +200,23 @@ mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
 
   auto connection = _connection.lock();
 
-  NodeConnectionInteraction interaction(node, connection);
+	NodeConnectionInteraction interaction(node, connection);
 
-  if (node && interaction.tryConnect())
-  {
-    node->resetReactionToConnection();
-  }
-  else
-  {
-    _scene.deleteConnection(connection);
-  }
+	PortIndex ind = INVALID;
+	if(node && interaction.canConnect(ind))
+	{
+		std::shared_ptr<Connection> existingConn;
+		if(connection->requiredPort() == PortType::In && node->nodeState().getEntries(PortType::In)[ind].size() && (existingConn = node->nodeState().getEntries(PortType::In)[ind][0].lock())) {
+			_scene.deleteConnection(existingConn);
+		}
+		interaction.tryConnect();
+		node->resetReactionToConnection();
+		emit _scene.nodeEditorChanged();
+	}
+	else
+	{
+		_scene.deleteConnection(connection);
+	}
 }
 
 

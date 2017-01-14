@@ -3,6 +3,7 @@
 #include <QOpenGLWidget>
 #include <QOpenGLFunctions>
 #include <QKeyEvent>
+#include <QTime>
 
 #include "nodeEditor/FlowScene.hpp"
 
@@ -21,12 +22,29 @@ namespace hsitho
 
     void glInfo();
     float getTimePassed() { return m_timePassed; }
+		//----------------------------------------------------------------------------------------------------------------------
+		/// @brief number of frames for the fps counter
+		//----------------------------------------------------------------------------------------------------------------------
+		int m_frames;
 
   private:
     void keyPressEvent(QKeyEvent *_event) override;
-    void timerEvent(QTimerEvent *_timer) override;
+		void timerEvent(QTimerEvent *_event) override;
 
     float m_timePassed;
+
+		//----------------------------------------------------------------------------------------------------------------------
+		/// @brief flag for the fps timer
+		//----------------------------------------------------------------------------------------------------------------------
+		int m_fpsTimer;
+		//----------------------------------------------------------------------------------------------------------------------
+		/// @brief the fps to draw
+		//----------------------------------------------------------------------------------------------------------------------
+		int m_fps;
+		//----------------------------------------------------------------------------------------------------------------------
+		/// @brief timer for re-draw
+		//----------------------------------------------------------------------------------------------------------------------
+		QTime m_timer;
 
   public slots:
     virtual void nodeChanged(std::unordered_map<QUuid, std::shared_ptr<Node>> _nodes) = 0;

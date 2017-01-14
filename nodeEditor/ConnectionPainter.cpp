@@ -54,7 +54,8 @@ void
 ConnectionPainter::
 paint(QPainter* painter,
       ConnectionGeometry const& geom,
-      ConnectionState const& state)
+			ConnectionState const& state,
+			QColor const & color)
 {
   double const lineWidth     = geom.lineWidth();
   double const pointDiameter = geom.pointDiameter();
@@ -90,7 +91,7 @@ paint(QPainter* painter,
     QPen p;
 
     p.setWidth(2 * lineWidth);
-    p.setColor(QColor(Qt::cyan).lighter());
+		p.setColor(QColor(Qt::cyan).lighter());
     painter->setPen(p);
     painter->setBrush(Qt::NoBrush);
 
@@ -104,7 +105,7 @@ paint(QPainter* painter,
     QPen p;
 
     p.setWidth(lineWidth);
-    p.setColor(QColor(Qt::cyan).darker(150));
+		p.setColor(color.darker(150));
 
     if (state.requiresPort())
     {
@@ -125,7 +126,7 @@ paint(QPainter* painter,
 
   painter->setPen(Qt::white);
   painter->setBrush(Qt::white);
-  double const pointRadius = pointDiameter / 2.0;
-  painter->drawEllipse(source, pointRadius, pointRadius);
-  painter->drawEllipse(sink, pointRadius, pointRadius);
+	double const pointRadius = pointDiameter / 2.0;
+	painter->drawEllipse(source, pointRadius, pointRadius);
+	painter->drawEllipse(sink, pointRadius, pointRadius);
 }

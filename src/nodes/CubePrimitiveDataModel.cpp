@@ -1,14 +1,19 @@
+#include <QtGui/QDoubleValidator>
 #include "CubePrimitiveDataModel.hpp"
 
-
-CubePrimitiveDataModel::~CubePrimitiveDataModel()
+CubePrimitiveDataModel::CubePrimitiveDataModel() :
+	m_dimensions(Vec4f("1.0", "1.0", "1.0", "1.0"))
 {
 
 }
 
 void CubePrimitiveDataModel::save(Properties &p) const
 {
-  p.put("Cube_size", CubePrimitiveDataModel::name());
+	p.put("model_name", name());
+}
+
+void CubePrimitiveDataModel::restore(const Properties &p)
+{
 
 }
 
@@ -16,14 +21,14 @@ unsigned int CubePrimitiveDataModel::nPorts(PortType portType) const
 {
   unsigned int result = 1;
 
-  switch (portType)
+  switch(portType)
   {
     case PortType::In:
-      result = 1;
-      break;
+      result = 2;
+    break;
 
     case PortType::Out:
-      result = 0;
+      result = 1;
 
     default:
       break;
@@ -34,29 +39,26 @@ unsigned int CubePrimitiveDataModel::nPorts(PortType portType) const
 
 NodeDataType CubePrimitiveDataModel::dataType(PortType portType, PortIndex portIndex) const
 {
-  switch (portType)
+  switch(portType)
   {
     case PortType::In:
-      switch (portIndex)
+      switch(portIndex)
       {
         case 0:
-          return MyNodeData().type();
-          break;
-
+					return VectorData("Dim").type();
+        break;
         case 1:
-          return SimpleNodeData().type();
-          break;
+          return ColorData().type();
+        break;
       }
-      break;
-
+    break;
     case PortType::Out:
-      return MyNodeData().type();
-      break;
-
+      return DistanceFieldOutput().type();
+    break;
     default:
       break;
   }
-
+  return DistanceFieldInput().type();
 }
 
 std::shared_ptr<NodeData> CubePrimitiveDataModel::outData(PortIndex port)
@@ -64,20 +66,48 @@ std::shared_ptr<NodeData> CubePrimitiveDataModel::outData(PortIndex port)
   return nullptr;
 }
 
-void CubePrimitiveDataModel::setInData(std::shared_ptr<NodeData>, int)
+void CubePrimitiveDataModel::setInData(std::shared_ptr<NodeData> _data, int)
 {
-
+  auto cd = std::dynamic_pointer_cast<ColorData>(_data);
+  if(cd) {
+    m_color = cd->color();
+    return;
+  }
+	auto vecdata = std::dynamic_pointer_cast<VectorData>(_data);
+	if(vecdata) {
+		m_dimensions = vecdata->vector();
+    return;
+	}
 }
 
-QWidget* CubePrimitiveDataModel::embeddedWidget()
+void CubePrimitiveDataModel::setTransform(const Mat4f &_t)
 {
-  return nullptr;
+  std::ostringstream ss;
+	if(Mat4f() == _t) {
+		m_transform = "";
+		return;
+	}
+  for(int y = 0; y < 4; ++y)
+  {
+    for(int x = 0; x < 4; ++x)
+    {
+      if(x || y)
+				ss << ", ";
+			ss << hsitho::Expressions::evaluate(_t.matrix(x, y), "", m_copyNum);
+    }
+	}
+  m_transform = "mat4x4(" + ss.str() + ")";
 }
 
-void CubePrimitiveDataModel::print(float &_cubeSize)
+std::vector<QWidget *> CubePrimitiveDataModel::embeddedWidget()
 {
-  std::cout << _cubeSize << "\n";
-
+	return std::vector<QWidget *>();
 }
 
-
+std::string CubePrimitiveDataModel::getShaderCode()
+{
+	if(m_transform == "")
+		return "sdBox(_position, vec3(" + m_dimensions.m_x + ", " + m_dimensions.m_y + ", " + m_dimensions.m_z + "), vec3(clamp(" + m_color.m_x + ", 0.0, 1.0), clamp(" + m_color.m_y + ", 0.0, 1.0), clamp(" + m_color.m_z + ", 0.0, 1.0)))";
+	else
+		return "sdBox(vec3(" + m_transform + " * vec4(_position, 1.0)).xyz, vec3(" + m_dimensions.m_x + ", " + m_dimensions.m_y + ", " + m_dimensions.m_z + "), vec3(clamp(" + m_color.m_x + ", 0.0, 1.0), clamp(" + m_color.m_y + ", 0.0, 1.0), clamp(" + m_color.m_z + ", 0.0, 1.0)))";
+}

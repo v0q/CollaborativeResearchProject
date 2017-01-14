@@ -16,13 +16,17 @@ SOURCES += ./src/*.cpp \
            ./nodeEditor/*.cpp
 HEADERS += ./include/*.hpp \
            ./include/nodes/*.hpp \
-           ./nodeEditor/*.hpp \
+           ./nodeEditor/*.hpp
+
+#SOURCES += ./calculator/*.cpp
+#HEADERS += ./calculator/*.hpp
 
 FORMS += ./ui/mainwindow.ui
 
 INCLUDEPATH += . ./include \
                ./include/nodes \
-               ./nodeEditor
+               ./nodeEditor \
+               /usr/local/include
 OTHER_FILES += ./shaders/* \
                ./libs/*
 

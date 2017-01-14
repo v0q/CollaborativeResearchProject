@@ -1,7 +1,11 @@
 #pragma once
 
 #include <QMainWindow>
+#include <QColorDialog>
 
+#include "nodeEditor/Node.hpp"
+#include "nodeEditor/NodeGraphicsObject.hpp"
+#include "nodeEditor/FlowView.hpp"
 #include "nodeEditor/FlowScene.hpp"
 #include "SceneWindow.hpp"
 #include "CubePrimitiveDataModel.hpp"
@@ -22,6 +26,7 @@ class MainWindow : public QMainWindow
 public:
   explicit MainWindow(QWidget *_parent = 0);
   ~MainWindow();
+  void keyPressEvent(QKeyEvent *_event);
 
   std::unordered_map<QUuid, std::shared_ptr<Node>> getNodes() { return m_nodes->getNodes(); }
 
@@ -30,6 +35,8 @@ private:
 
   hsitho::SceneWindow *m_gl;
   FlowScene *m_nodes;
+  FlowView *m_flowView;
+  //QColorDialogTester m_colorTester;
 
 public slots:
   void nodeChanged() { emit(nodeEditorModified(getNodes())); }

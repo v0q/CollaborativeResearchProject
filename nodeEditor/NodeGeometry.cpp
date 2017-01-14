@@ -8,13 +8,13 @@
 #include "NodeDataModel.hpp"
 
 NodeGeometry::
-NodeGeometry(std::unique_ptr<NodeDataModel> const &dataModel)
+NodeGeometry(std::unique_ptr<NodeDataModel> &dataModel)
   : _width(100)
   , _height(150)
   , _inputPortWidth(70)
   , _outputPortWidth(70)
   , _entryHeight(20)
-  , _spacing(20)
+	, _spacing(20)
   , _connectionPointDiameter(8)
   , _hovered(false)
   , _nSources(dataModel->nPorts(PortType::Out))
@@ -34,7 +34,7 @@ entryBoundingRect() const
   return QRectF(0 - addon,
                 0 - addon,
                 _entryWidth + 2 * addon,
-                _entryHeight + 2 * addon);
+								_entryHeight + 2 * addon);
 }
 
 
@@ -53,9 +53,9 @@ boundingRect() const
 
 void
 NodeGeometry::
-recalculateSize() const
+recalculateSize(const QString &_name) const
 {
-  _entryHeight = _fontMetrics.height();
+	_entryHeight = _fontMetrics.height();
 
   {
     unsigned int maxNumOfEntries = std::max(_nSinks, _nSources);
@@ -63,9 +63,9 @@ recalculateSize() const
     _height = step * maxNumOfEntries;
   }
 
-  if (auto w = _dataModel->embeddedWidget())
+	for(auto w : _dataModel->embeddedWidget())
   {
-    _height = std::max(_height, static_cast<unsigned>(w->height()));
+    _height = std::max(_height, static_cast<unsigned>(w->height() + w->pos().y()));
   }
 
   _height += nameHeight();
@@ -73,26 +73,27 @@ recalculateSize() const
   _inputPortWidth  = portWidth(PortType::In);
   _outputPortWidth = portWidth(PortType::Out);
 
-  _width = _inputPortWidth +
-           _outputPortWidth +
-           2 * _spacing;
-
-  if (auto w = _dataModel->embeddedWidget())
+	_width = std::max(_inputPortWidth +
+										_outputPortWidth,
+										(unsigned int)_fontMetrics.width(_name));
+	_width += 2 * _spacing;
+	for(auto w : _dataModel->embeddedWidget())
   {
-    _width += w->width();
+//		_width += w->width();
+    _width = std::max(_width, static_cast<unsigned>(w->pos().x() + w->width() + _spacing*2.5));
   }
 }
 
 
 void
 NodeGeometry::
-recalculateSize(QFontMetrics const & fontMetrics) const
+recalculateSize(QFontMetrics const & fontMetrics, const QString &_name) const
 {
   if (_fontMetrics != fontMetrics)
   {
     _fontMetrics = fontMetrics;
 
-    recalculateSize();
+		recalculateSize(_name);
   }
 }
 
@@ -192,14 +193,17 @@ QPointF
 NodeGeometry::
 widgetPosition() const
 {
-  if (auto w = _dataModel->embeddedWidget())
-  {
+  unsigned int step = _entryHeight + _spacing;
+  QPointF result;
 
-    return QPointF(_spacing + portWidth(PortType::In),
-                   (nameHeight() + _height - w->height()) / 2.0);
-  }
+  double totalHeight = 0.0;
+  totalHeight += nameHeight();
 
-  return QPointF();
+  // TODO: why?
+  totalHeight += step / 2.0;
+  totalHeight -= (_dataModel->embeddedWidget()[0]->height()/2.0);
+
+  return QPointF(_spacing + portWidth(PortType::In), totalHeight);
 }
 
 
@@ -224,7 +228,7 @@ portWidth(PortType portType) const
 
   for (auto i = 0ul; i < _dataModel->nPorts(portType); ++i)
   {
-    auto const &name = _dataModel->dataType(PortType::In, i).name;
+		auto const &name = _dataModel->dataType(PortType::In, i).name;
     width = std::max(unsigned(_fontMetrics.width(name)),
                      width);
   }

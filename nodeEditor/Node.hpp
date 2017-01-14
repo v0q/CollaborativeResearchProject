@@ -26,7 +26,7 @@ class Node
 public:
 
   /// NodeDataModel should be an rvalue and is moved into the Node
-  Node(std::unique_ptr<NodeDataModel> && dataModel);
+	Node(std::unique_ptr<NodeDataModel> && dataModel, bool _m = true, const QUuid &_static = QUuid::createUuid());
 
   ~Node();
 
@@ -36,12 +36,14 @@ public:
   save(Properties &p) const override;
 
   void
-  restore(Properties const &p);
+  restore(Properties const &p) override;
 
 public:
 
   QUuid
   id() const;
+
+	void setId(QUuid &id) { _id = id; }
 
   void reactToPossibleConnection(PortType,
                                  NodeDataType,
@@ -59,13 +61,13 @@ public:
   nodeGraphicsObject();
 
   void
-  setGraphicsObject(std::unique_ptr<NodeGraphicsObject>&& graphics);
+	setGraphicsObject(std::unique_ptr<NodeGraphicsObject>&& graphics);
 
   NodeGeometry&
-  nodeGeometry();
+	nodeGeometry();
 
-  NodeGeometry const&
-  nodeGeometry() const;
+	NodeGeometry const&
+	nodeGeometry() const;
 
   NodeState const &
   nodeState() const;
@@ -73,8 +75,10 @@ public:
   NodeState &
   nodeState();
 
-  std::unique_ptr<NodeDataModel> const &
-  nodeDataModel() const;
+	std::unique_ptr<NodeDataModel> const &
+	nodeDataModel() const;
+
+	bool isMovable() const { return m_movable; }
 
 public slots: // data propagation
 
@@ -89,6 +93,8 @@ public slots: // data propagation
   onDataUpdated(PortIndex index);
 
 private:
+
+	bool m_movable;
 
   // addressing
 

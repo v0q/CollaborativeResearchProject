@@ -53,13 +53,16 @@ public:
   deleteConnection(std::shared_ptr<Connection> connection);
 
   std::shared_ptr<Node>
-  createNode(std::unique_ptr<NodeDataModel> && dataModel);
+	createNode(std::unique_ptr<NodeDataModel> && dataModel, bool _m = true, const QUuid &_static = QUuid::createUuid());
 
   std::shared_ptr<Node>
   restoreNode(Properties const &p);
 
   void
   removeNode(QGraphicsItem* item);
+
+	void
+	removeNode(std::shared_ptr<Node> node);
 
   void
   save() const;
@@ -79,6 +82,9 @@ private:
 
 signals:
   void nodeEditorChanged();
+
+public slots:
+	void connectionDeleteRequested(std::shared_ptr<Connection> _conn) { deleteConnection(_conn); }
 };
 
 std::shared_ptr<Node>

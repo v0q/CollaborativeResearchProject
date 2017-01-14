@@ -9,6 +9,8 @@ obj/
 moc/
 moc_*
 ui_*
+*.debug
+*.autosave
 # shadow build directories
 build-*
 Makefile
@@ -57,3 +59,4 @@ install_manifest.txt
 
 #Random
 .DS_Store
+*.flow

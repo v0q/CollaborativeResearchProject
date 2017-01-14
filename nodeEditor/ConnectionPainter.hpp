@@ -23,7 +23,8 @@ public:
   static
   void paint(QPainter* painter,
              ConnectionGeometry const& geom,
-             ConnectionState const& state);
+						 ConnectionState const& state,
+						 QColor const & color);
 };
 
 #endif //  CONNECTION_PAINTER_HPP

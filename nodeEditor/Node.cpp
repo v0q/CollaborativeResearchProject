@@ -15,9 +15,10 @@
 //------------------------------------------------------------------------------
 
 Node::
-Node(std::unique_ptr<NodeDataModel> && dataModel)
-  : _id(QUuid::createUuid())
-  , _nodeDataModel(std::move(dataModel))
+Node(std::unique_ptr<NodeDataModel> && dataModel, bool _m, const QUuid &_static)
+	: m_movable(_m)
+	,	_id(_static)
+	, _nodeDataModel(std::move(dataModel))
   , _nodeState(_nodeDataModel)
   , _nodeGeometry(_nodeDataModel)
   , _nodeGraphicsObject(nullptr)
@@ -145,7 +146,6 @@ nodeGeometry() const
   return _nodeGeometry;
 }
 
-
 NodeState const &
 Node::
 nodeState() const
@@ -154,7 +154,10 @@ nodeState() const
 }
 
 
-NodeState &
+NodeState &//		for(auto connections : m_outputNode.get()->nodeState().connection(PortType::In, 0))
+//		{
+//			std::cout << qPrintable(connections->getNode(PortType::Out).lock()->nodeDataModel()->getShaderCode()) << "\n";
+//		}
 Node::
 nodeState()
 {
@@ -179,7 +182,8 @@ propagateData(std::shared_ptr<NodeData> nodeData,
 
   _nodeGeometry.recalculateSize();
   _nodeGraphicsObject->setGeometryChanged();
-  _nodeGraphicsObject->update();
+	_nodeGraphicsObject->update();
+	emit _nodeGraphicsObject->getScene().nodeEditorChanged();
 }
 
 
@@ -189,8 +193,13 @@ onDataUpdated(PortIndex index)
 {
   auto nodeData = _nodeDataModel->outData(index);
 
-  auto connection = _nodeState.connection(PortType::Out, index);
+	auto connections = _nodeState.connection(PortType::Out, index);
 
-  if (connection)
-    connection->propagateData(nodeData);
+	for(auto const &connection : connections)
+	{
+		if(connection) {
+			connection->propagateData(nodeData);
+			_nodeGraphicsObject->getScene().nodeEditorChanged();
+		}
+	}
 }

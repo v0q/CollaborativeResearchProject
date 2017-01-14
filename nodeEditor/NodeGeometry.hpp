@@ -16,7 +16,7 @@ class NodeGeometry
 {
 public:
 
-  NodeGeometry(std::unique_ptr<NodeDataModel> const &dataModel);
+	NodeGeometry(std::unique_ptr<NodeDataModel> &dataModel);
 
 public:
   unsigned int
@@ -89,11 +89,11 @@ public:
 
   /// Updates size unconditionally
   void
-  recalculateSize() const;
+	recalculateSize(const QString &_name = QString("")) const;
 
   /// Updates size if the QFontMetrics is changed
   void
-  recalculateSize(QFontMetrics const &fontMetrics) const;
+	recalculateSize(QFontMetrics const &fontMetrics, const QString &_name = QString("")) const;
 
   // TODO removed default QTransform()
   QPointF
@@ -111,7 +111,7 @@ public:
 
   /// Returns the position of a widget on the Node surface
   QPointF
-  widgetPosition() const;
+	widgetPosition() const;
 
 private:
 
@@ -145,9 +145,9 @@ private:
 
   QPointF _draggingPos;
 
-  double _opacity;
+	double _opacity;
 
-  std::unique_ptr<NodeDataModel> const &_dataModel;
+	std::unique_ptr<NodeDataModel> &_dataModel;
 
   mutable QFontMetrics _fontMetrics;
 };
