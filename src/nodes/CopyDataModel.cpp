@@ -81,8 +81,11 @@ void CopyDataModel::setInData(std::shared_ptr<NodeData> _data, PortIndex)
 	if(data)
 	{
 		m_cp->setVisible(false);
-		m_cp->setText(data->value().c_str());
-		return;
+		try {
+			float val = boost::lexical_cast<float>(data->value().c_str());
+			m_cp->setText(boost::lexical_cast<std::string>((int)val).c_str());
+			return;
+		} catch(boost::bad_lexical_cast &) {}
 	}
 	m_cp->setVisible(true);
 	m_cp->setText("1");

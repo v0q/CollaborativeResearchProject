@@ -122,7 +122,10 @@ NodeDataType CollapsedNodeDataModel::dataType(PortType portType, PortIndex portI
 	switch(portType)
 	{
 		case PortType::In:
-			return m_inputs[portIndex]->nodeDataModel()->dataType(PortType::Out, 0);
+			if(m_inputs.size())
+				return m_inputs[portIndex]->nodeDataModel()->dataType(PortType::Out, 0);
+			else
+				return NodeDataType{};
 		break;
 
 		case PortType::Out:
