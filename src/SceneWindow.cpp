@@ -165,10 +165,10 @@ namespace hsitho
       }
     }
     if(m_outputNode != nullptr)
-    {
-      Branch branches;
+		{
       std::string shadercode;
       Mat4f translation;
+			hsitho::Expressions::flushUnknowns();
       for(auto connection : m_outputNode->nodeState().connection(PortType::In, 0))
       {
         if(connection.get() && connection->getNode(PortType::Out).lock())
@@ -182,8 +182,10 @@ namespace hsitho
       {
         std::string fragmentShader = m_shaderStart;
 
-        fragmentShader += "pos = ";
-        fragmentShader += shadercode;
+				fragmentShader += hsitho::Expressions::getUnknowns();
+				fragmentShader += "pos = ";
+				fragmentShader += hsitho::Expressions::replaceUnknowns(shadercode);
+				std::cout << "Shader code: " << hsitho::Expressions::replaceUnknowns(shadercode) << "\n";
         fragmentShader += ";";
 
         fragmentShader += m_shaderEnd;
@@ -246,7 +248,6 @@ namespace hsitho
 					++i;
 					shadercode += recurseNodeTree(connection->getNode(PortType::Out).lock(), _t, connection->getPortIndex(PortType::Out), _cp);
 					if(_node->nodeDataModel()->getNodeType() == DFNodeType::MIX) {
-						std::cout << inConns.size() << "\n";
 						if(i < inConns.size())
 							shadercode += ",";
 						else

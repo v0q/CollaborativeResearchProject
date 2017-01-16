@@ -200,43 +200,92 @@ vec4 map(vec3 _position)
 //                                            - sin(u_GlobalTime) * 1.0, 1.0 * sin(u_GlobalTime) * cos(u_GlobalTime) * 1.0, 1.0 * cos(u_GlobalTime) * cos(u_GlobalTime) * 1.0, 0,
 //                                           0, 0, 0, 1) * vec4(_position, 1.0)), 0.6, vec3(clamp(-1, 0, 1), 0, 0)));
 //  _position = opRepetition(_position, vec3(4.0, 4.0, 4.0));
-  pos = opUnion(
-    sdBox(vec3(vec4(_position, 1.0)).xyz,
-    vec3(0.5, 0.2, 0.5),
-    vec3(clamp(0.0, 0.0, 1.0), clamp(0.0, 0.0, 1.0), clamp(0.0, 0.0, 1.0))), pos);
-  pos = opUnion(
-    sdBox(vec3(vec4(_position, 1.0)).xyz,
-    vec3(0.5, 0.2, 0.5),
-    vec3(clamp(0.0, 0.0, 1.0), clamp(0.0, 0.0, 1.0), clamp(0.0, 0.0, 1.0))), pos);
-  pos = opUnion(
-    sdBox(vec3(vec4(_position, 1.0)).xyz,
-    vec3(0.5, 0.2, 0.5),
-    vec3(clamp(0.0, 0.0, 1.0), clamp(0.0, 0.0, 1.0), clamp(0.0, 0.0, 1.0))), pos);
-  pos = opUnion(
-    sdBox(vec3(vec4(_position, 1.0)).xyz,
-    vec3(0.5, 0.2, 0.5),
-    vec3(clamp(0.0, 0.0, 1.0), clamp(0.0, 0.0, 1.0), clamp(0.0, 0.0, 1.0))), pos);
-  pos = opUnion(
-    sdBox(vec3(vec4(_position, 1.0)).xyz,
-    vec3(0.5, 0.2, 0.5),
-    vec3(clamp(0.0, 0.0, 1.0), clamp(0.0, 0.0, 1.0), clamp(0.0, 0.0, 1.0))), pos);
-  pos = opUnion(
-    sdBox(vec3(vec4(_position, 1.0)).xyz,
-    vec3(0.5, 0.2, 0.5),
-    vec3(clamp(0.0, 0.0, 1.0), clamp(0.0, 0.0, 1.0), clamp(0.0, 0.0, 1.0))), pos);
-  pos = opUnion(
-    sdBox(vec3(vec4(_position, 1.0)).xyz,
-    vec3(0.5, 0.2, 0.5),
-    vec3(clamp(0.0, 0.0, 1.0), clamp(0.0, 0.0, 1.0), clamp(0.0, 0.0, 1.0))), pos);
-  pos = opUnion(
-    sdBox(vec3(vec4(_position, 1.0)).xyz,
-    vec3(0.5, 0.2, 0.5),
-    vec3(clamp(0.0, 0.0, 1.0), clamp(0.0, 0.0, 1.0), clamp(0.0, 0.0, 1.0))),
-    pos);
-  pos = opUnion(
-    sdBox(vec3(vec4(_position, 1.0)).xyz, vec3(0.5, 0.2, 0.5),
-    vec3(clamp(0.0, 0.0, 1.0), clamp(0.0, 0.0, 1.0), clamp(0.0, 0.0, 1.0))),
-    pos);
+  float g = sin(5.23333359);
+  float e = 1.54972076;
+  float d = sin(3.14000034);
+  float c = sin(2.09333348);
+  float f = sin(4.18666697);
+  float b = sin(1.04666674);
+  float a = sin(0);
+  pos = opUnion(opSubtraction(sdCapsule(vec3(mat4x4(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 1.25, 0, 0, 1) *
+    vec4(_position, 1.0)).xyz, vec3(0.0, 0.0, 0.0), vec3(0.0, 0.0, 0.0), 1.25*0.7,  vec3(clamp(0.0, 0.0, 1.0), clamp(0.0, 0.0, 1.0), clamp(0.0, 0.0, 1.0))),
+
+  opUnion(sdCappedCylinder(vec3(mat4x4(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 1.25, 0, 0, 1) *
+    vec4(_position, 1.0)).xyz, vec2(1.25, 0.2), vec3(clamp(0.0, 0.0, 1.0), clamp(0.0, 0.0, 1.0), clamp(0.0, 0.0, 1.0))),
+
+  opUnion(sdBox(vec3(mat4x4(1, 0, 0, 0, 0, 1, 0, 0, -a, 0, 1, 0, 2.5, 0, 0, 1) *
+    vec4(_position, 1.0)).xyz, vec3(1.25*0.25, 0.2, 1.25*0.25), vec3(clamp(0.0, 0.0, 1.0), clamp(0.0, 0.0, 1.0), clamp(0.0, 0.0, 1.0))),
+
+    opUnion(sdBox(vec3(mat4x4(0.500459611, 0, 0.86575985, 0, 0, 1, 0, 0, -b, 0, 0.500459611, 0, 1.87557459, 0, 1.08219981, 1) *
+    vec4(_position, 1.0)).xyz, vec3(1.25*0.25, 0.2, 1.25*0.25), vec3(clamp(0.0, 0.0, 1.0), clamp(0.0, 0.0, 1.0), clamp(0.0, 0.0, 1.0))),
+
+    opUnion(sdBox(vec3(mat4x4(-0.49908033, 0, 0.86655575, 0, 0, 1, 0, 0, -c, 0, -0.49908033, 0, 0.626149595, 0, 1.08319473, 1) *
+    vec4(_position, 1.0)).xyz, vec3(1.25*0.25, 0.2, 1.25*0.25), vec3(clamp(0.0, 0.0, 1.0), clamp(0.0, 0.0, 1.0), clamp(0.0, 0.0, 1.0))),
+
+    opUnion(sdBox(vec3(mat4x4(-0.999998748, 0, 0.00159230956, 0, 0, 1, 0, 0, -d, 0, -0.999998748, 0, e-06, 0, 0.00199038698, 1) *
+    vec4(_position, 1.0)).xyz, vec3(1.25*0.25, 0.2, 1.25*0.25), vec3(clamp(0.0, 0.0, 1.0), clamp(0.0, 0.0, 1.0), clamp(0.0, 0.0, 1.0))),
+
+    opUnion(sdBox(vec3(mat4x4(-0.501837671, 0, -0.864961863, 0, 0, 1, 0, 0, -f, 0, -0.501837671, 0, 0.622702897, 0, -1.08120227, 1) *
+    vec4(_position, 1.0)).xyz, vec3(1.25*0.25, 0.2, 1.25*0.25), vec3(clamp(0.0, 0.0, 1.0), clamp(0.0, 0.0, 1.0), clamp(0.0, 0.0, 1.0))),sdBox(vec3(mat4x4(0.497699678, 0, -0.867349446, 0, 0, 1, 0, 0, -g, 0, 0.497699678, 0, 1.87212467, 0, -1.08418679, 1) *
+  vec4(_position, 1.0)).xyz, vec3(1.25*0.25, 0.2, 1.25*0.25), vec3(clamp(0.0, 0.0, 1.0), clamp(0.0, 0.0, 1.0), clamp(0.0, 0.0, 1.0)))))))))),opSubtraction(sdCapsule(vec3(mat4x4(1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0) *
+  vec4(_position, 1.0)).xyz, vec3(0.0, 0.0, 0.0), vec3(0.0, 0.0, 0.0), 1.25*0.7,  vec3(clamp(0.0, 0.0, 1.0), clamp(0.0, 0.0, 1.0), clamp(0.0, 0.0, 1.0))),
+
+  opUnion(sdCappedCylinder(vec3(mat4x4(1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0) *
+    vec4(_position, 1.0)).xyz, vec2(1.25, 0.2), vec3(clamp(0.0, 0.0, 1.0), clamp(0.0, 0.0, 1.0), clamp(0.0, 0.0, 1.0))),
+
+  opUnion(sdBox(vec3(mat4x4(1, 0, 0, 0, 0, 1, 0, 0, -a, 0, 1, 0, 1.25, 0, 0, 1) *
+    vec4(_position, 1.0)).xyz, vec3(1.25*0.25, 0.2, 1.25*0.25), vec3(clamp(0.0, 0.0, 1.0), clamp(0.0, 0.0, 1.0), clamp(0.0, 0.0, 1.0))),
+
+  opUnion(sdBox(vec3(mat4x4(0.500459611, 0, 0.86575985, 0, 0, 1, 0, 0, -b, 0, 0.500459611, 0, 1.25, 0, 0, 1) *
+    vec4(_position, 1.0)).xyz, vec3(1.25*0.25, 0.2, 1.25*0.25), vec3(clamp(0.0, 0.0, 1.0), clamp(0.0, 0.0, 1.0), clamp(0.0, 0.0, 1.0))),
+
+    opUnion(sdBox(vec3(mat4x4(-0.49908033, 0, 0.86655575, 0, 0, 1, 0, 0, -c, 0, -0.49908033, 0, 1.25, 0, 0, 1) *
+    vec4(_position, 1.0)).xyz, vec3(1.25*0.25, 0.2, 1.25*0.25), vec3(clamp(0.0, 0.0, 1.0), clamp(0.0, 0.0, 1.0), clamp(0.0, 0.0, 1.0))),
+
+    opUnion(sdBox(vec3(mat4x4(-0.999998748, 0, 0.00159230956, 0, 0, 1, 0, 0, -d, 0, -0.999998748, 0, 1.25, 0, 0, 1) *
+    vec4(_position, 1.0)).xyz, vec3(1.25*0.25, 0.2, 1.25*0.25), vec3(clamp(0.0, 0.0, 1.0), clamp(0.0, 0.0, 1.0), clamp(0.0, 0.0, 1.0))),
+
+    opUnion(sdBox(vec3(mat4x4(-0.501837671, 0, -0.864961863, 0, 0, 1, 0, 0, -f, 0, -0.501837671, 0, 1.25, 0, 0, 1) *
+    vec4(_position, 1.0)).xyz, vec3(1.25*0.25, 0.2, 1.25*0.25), vec3(clamp(0.0, 0.0, 1.0), clamp(0.0, 0.0, 1.0), clamp(0.0, 0.0, 1.0))),sdBox(vec3(mat4x4(0.497699678, 0, -0.867349446, 0, 0, 1, 0, 0, -g, 0, 0.497699678, 0, 1.25, 0, 0, 1) *
+  vec4(_position, 1.0)).xyz, vec3(1.25*0.25, 0.2, 1.25*0.25), vec3(clamp(0.0, 0.0, 1.0), clamp(0.0, 0.0, 1.0), clamp(0.0, 0.0, 1.0)))))))))));
+  return pos;
+  //  pos = opUnion(
+//    sdBox(vec3(vec4(_position, 1.0)).xyz,
+//    vec3(0.5, 0.2, 0.5),
+//    vec3(clamp(0.0, 0.0, 1.0), clamp(0.0, 0.0, 1.0), clamp(0.0, 0.0, 1.0))), pos);
+//  pos = opUnion(
+//    sdBox(vec3(vec4(_position, 1.0)).xyz,
+//    vec3(0.5, 0.2, 0.5),
+//    vec3(clamp(0.0, 0.0, 1.0), clamp(0.0, 0.0, 1.0), clamp(0.0, 0.0, 1.0))), pos);
+//  pos = opUnion(
+//    sdBox(vec3(vec4(_position, 1.0)).xyz,
+//    vec3(0.5, 0.2, 0.5),
+//    vec3(clamp(0.0, 0.0, 1.0), clamp(0.0, 0.0, 1.0), clamp(0.0, 0.0, 1.0))), pos);
+//  pos = opUnion(
+//    sdBox(vec3(vec4(_position, 1.0)).xyz,
+//    vec3(0.5, 0.2, 0.5),
+//    vec3(clamp(0.0, 0.0, 1.0), clamp(0.0, 0.0, 1.0), clamp(0.0, 0.0, 1.0))), pos);
+//  pos = opUnion(
+//    sdBox(vec3(vec4(_position, 1.0)).xyz,
+//    vec3(0.5, 0.2, 0.5),
+//    vec3(clamp(0.0, 0.0, 1.0), clamp(0.0, 0.0, 1.0), clamp(0.0, 0.0, 1.0))), pos);
+//  pos = opUnion(
+//    sdBox(vec3(vec4(_position, 1.0)).xyz,
+//    vec3(0.5, 0.2, 0.5),
+//    vec3(clamp(0.0, 0.0, 1.0), clamp(0.0, 0.0, 1.0), clamp(0.0, 0.0, 1.0))), pos);
+//  pos = opUnion(
+//    sdBox(vec3(vec4(_position, 1.0)).xyz,
+//    vec3(0.5, 0.2, 0.5),
+//    vec3(clamp(0.0, 0.0, 1.0), clamp(0.0, 0.0, 1.0), clamp(0.0, 0.0, 1.0))), pos);
+//  pos = opUnion(
+//    sdBox(vec3(vec4(_position, 1.0)).xyz,
+//    vec3(0.5, 0.2, 0.5),
+//    vec3(clamp(0.0, 0.0, 1.0), clamp(0.0, 0.0, 1.0), clamp(0.0, 0.0, 1.0))),
+//    pos);
+//  pos = opUnion(
+//    sdBox(vec3(vec4(_position, 1.0)).xyz, vec3(0.5, 0.2, 0.5),
+//    vec3(clamp(0.0, 0.0, 1.0), clamp(0.0, 0.0, 1.0), clamp(0.0, 0.0, 1.0))),
+//    pos);
 //  pos = sdFastBox(vec3(mat4x4(1.0, 0.0, 0.0, 0.0,
 //                              0.0, 1.0, 0.0, 0.0,
 //                              0.0, 0.0, 1.5, 0.0,

@@ -139,10 +139,11 @@ MainWindow::MainWindow(QWidget *_parent) :
 						"-sin(1.04666674*copyNum)", "0", "cos(1.04666674*copyNum)", "0",
 						"0", "0", "0", "1");
 
-//	std::cout << hsitho::Expressions::evaluate("( -sin(u_GlobalTime) ) * ( cos(1.04666674*copyNum) ) + ( 0 ) * ( 0 ) + ( cos(u_GlobalTime) ) * ( -sin(1.04666674*copyNum) ) + ( 0 ) * ( 0 )") << "\n";
-//	exit(0);
-
+	std::cout << "d: " << hsitho::Expressions::evaluate("( 9.6277392e-05 ) * ( cos(1.04666674*0) ) + ( -1 ) * ( 0 ) + ( 0 ) * ( -sin(1.04666674*0) ) + ( 0 ) * ( 0 )") << "\n";
+//	std::cout << "c: " << hsitho::Expressions::evaluate("cos(u_GlobalTime) - 0.0");
+	exit(0);
 //	(tt*ttt).print();
+//	hsitho::Expressions::getUnknowns();
 //	exit(0);
 
   Mat4f t("1.0", "0.0", "0.0", "0.0",

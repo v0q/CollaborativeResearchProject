@@ -5,6 +5,8 @@
  */
 namespace hsitho {
   namespace Expressions {
+		std::shared_ptr<Unknowns> Unknowns::m_instance = 0;
+
 		void parseExpression(std::string &_expression) {
       size_t pos;
       while((pos = _expression.find("*+")) != std::string::npos) {
@@ -71,8 +73,13 @@ namespace hsitho {
 				if(cos == std::string::npos && sin == std::string::npos) {
 					parsed = true;
 				}	else if(cos < sin) {
-					size_t pos = no.find(" ", cos);
+					size_t start = no.find("(", cos) + 1;
 					size_t end = no.find(")", cos);
+					size_t l = end - start;
+					no.replace(start, l, evaluate(no.substr(start, l), "" ,-1, 1));
+					end = no.find(")", cos);
+					sin -= l - (end - start);
+					size_t pos = no.find(" ", cos);
 					if(pos < end) {
 						do {
 							no.replace(pos, 1, "");
@@ -83,8 +90,13 @@ namespace hsitho {
 					}
 					cos = end;
 				} else {
-					size_t pos = no.find(" ", sin);
+					size_t start = no.find("(", sin) + 1;
 					size_t end = no.find(")", sin);
+					size_t l = end - start;
+					no.replace(start, l, evaluate(no.substr(start, l), "", -1, 1));
+					end = no.find(")", sin);
+					cos -= l - (end - start);
+					size_t pos = no.find(" ", sin);
 					if(pos < end) {
 						do {
 							no.replace(pos, 1, "");
@@ -97,13 +109,33 @@ namespace hsitho {
 				}
 			} while(!parsed);
 
+			size_t pos = no.find("e - ", 0);
+			while(pos != std::string::npos) {
+				std::string d = no;
+				no.replace(pos, 4, "e-");
+				pos = no.find("e - ", pos);
+			}
+			pos = no.find("e + ", 0);
+			while(pos != std::string::npos) {
+				no.replace(pos, 4, "e+");
+				pos = no.find("e + ", pos);
+			}
+			if((pos = no.find("e - ")) != std::string::npos) {
+				no.replace(pos, 4, "e-");
+			}
+			if(no.find(" ") == 0) {
+				no.erase(0, 1);
+			}
 			return no;
 		}
 
-		std::string evaluate(const std::string &_expression, const std::string &_prev, const int &_copyNum)
+		std::string evaluate(const std::string &_expression, const std::string &_prev, const int &_copyNum, const unsigned int &_gen)
     {
       // Generate postfix notation for the expression
 			std::string exp = _expression;
+			if(exp.find("- ") == 0) {
+				exp.erase(1, 1);
+			}
 			if(_copyNum != -1) {
 				size_t pos;
 				while((pos = exp.find("copyNum")) != std::string::npos) {
@@ -161,7 +193,7 @@ namespace hsitho {
             stack.pop_back();
           }
           if(stack.size()) stack.pop_back();
-        } else {
+				} else {
           outputQueue.push_back(i);
         }
       }
@@ -175,13 +207,26 @@ namespace hsitho {
       if(s.find("+") == 0)
         s.erase(0, 1);
 
+			std::string derp = s;
+
       s = addSpaces(s);
+			if(s == "9.6277392e * cos(0) - 05 * cos(0)") {
+				std::cout << _expression << "\n";
+				std::string test = s;
+				exit(0);
+			}
       std::string finalOutput;
       if(s != _prev) {
-        finalOutput = evaluate(s, s);
-      } else {
+				finalOutput = evaluate(s, s, _copyNum, 1);
+			} else {
         finalOutput = s;
-      }
+			}
+			if(!_gen) {
+				if(finalOutput.find("e", 0) != std::string::npos) {
+					std::string test = s;
+				}
+				setUnknowns(addSpaces(finalOutput));
+			}
       std::string::iterator end_pos = std::remove(finalOutput.begin(), finalOutput.end(), ' ');
       finalOutput.erase(end_pos, finalOutput.end());
 
@@ -197,7 +242,7 @@ namespace hsitho {
         try {
 					size_t pos;
 					if((pos = o.find("-sin(")) != std::string::npos) {
-						unsigned int startPos = pos+4;
+						unsigned int startPos = pos+5;
 						std::string sineval = "-" + boost::lexical_cast<std::string>(std::sin(boost::lexical_cast<float>(o.substr(startPos, o.find(")", pos) - startPos))));
 						stack.push_back(sineval);
 						continue;
@@ -207,7 +252,7 @@ namespace hsitho {
 						stack.push_back(sineval);
 						continue;
 					} else if((pos = o.find("-cos(")) != std::string::npos) {
-						unsigned int startPos = pos+4;
+						unsigned int startPos = pos+5;
 						std::string cosineval = "-" + boost::lexical_cast<std::string>(std::cos(boost::lexical_cast<float>(o.substr(startPos, o.find(")", pos) - startPos))));
 						stack.push_back(cosineval);
 						continue;
@@ -324,7 +369,9 @@ namespace hsitho {
                     }
                   }
                 }
-              }
+							} else {
+								stack.push_back("0.0");
+							}
             } else if(o == "/") {
               if(vals[1] != "" && vals[0] != "0.0" && vals[1] != "0.0" && vals[0] != "0" && vals[1] != "0") {
                 stack.push_back(std::string(vals[1] + "/" + vals[0]));
@@ -338,9 +385,13 @@ namespace hsitho {
               } else if(vals[0] != "")
                 stack.push_back(std::string(vals[0]));
             } else if(o == "-") {
-              if(vals[1] != "" && vals[1] != "0" && vals[1] != "0.0")
-                stack.push_back(std::string(vals[1] + "-" + vals[0]));
-              else if(vals[0] != "0.0" && vals[0] != "")
+							if(vals[1] != "" && vals[1] != "0" && vals[1] != "0.0") {
+								if(vals[0] != "" && vals[0] != "0" && vals[0] != "0.0")
+									stack.push_back(std::string(vals[1] + "-" + vals[0]));
+								else
+									stack.push_back(vals[1]);
+							}
+							else if(vals[0]!= "0" && vals[0] != "0.0" && vals[0] != "")
                 stack.push_back(std::string("-" + vals[0]));
             }
           }
@@ -358,9 +409,99 @@ namespace hsitho {
       parseExpression(final);
       return final;
     }
+
+		std::string getUnknowns()
+		{
+			std::shared_ptr<Unknowns> u = Unknowns::instance();
+			std::ostringstream ss;
+			for(auto &s : u->getUnknowns())
+				ss << "float " << s.second << " = " << s.first << "; ";
+			return ss.str();
+		}
+
+		void setUnknowns(const std::string &_expression)
+		{
+			std::shared_ptr<Unknowns> u = Unknowns::instance();
+			std::string exp = _expression;
+			std::vector<std::string> expElements;
+			size_t poss = 0;
+			if(exp.find("e") != std::string::npos) {
+				std::string test = exp;
+//				exit(0);
+			}
+			while((poss = exp.find(" ")) != std::string::npos) {
+				if(exp.substr(0, poss) != "") {
+					expElements.push_back(exp.substr(0, poss));
+				}
+				exp.erase(0, poss + 1);
+			}
+			expElements.push_back(exp.substr(0, poss));
+			exp.erase(0, poss + 1);
+
+			std::vector<std::string> outputQueue, stack;
+			for(auto &i : expElements)
+			{
+				try {
+					boost::lexical_cast<float>(i);
+					continue;
+				} catch(const boost::bad_lexical_cast &) {}
+				if(i == "*" || i == "/") {
+					if(stack.size()) {
+						std::string op = stack.back();
+						if(op == "*" || op == "/") {
+							stack.pop_back();
+						}
+					}
+					stack.push_back(i);
+				} else if(i == "+" || i == "-") {
+					if(stack.size()) {
+						std::string op = stack.back();
+						if(op == "+" || op == "-" || op == "*" || op == "/") {
+							stack.pop_back();
+						}
+					}
+					stack.push_back(i);
+				} else if(i == "(") {
+					stack.push_back(i);
+				} else if(i == ")") {
+					while(stack.back() != "(" && stack.size()) {
+						std::string op = stack.back();while((poss = exp.find(" ")) != std::string::npos) {
+							expElements.push_back(exp.substr(0, poss));
+							exp.erase(0, poss + 1);
+						}
+						stack.pop_back();
+					}
+					if(stack.size()) stack.pop_back();
+				} else {
+					try {
+						boost::lexical_cast<float>(i);
+					} catch(boost::bad_lexical_cast &) {
+						u->setUnknown(i);
+					}
+				}
+			}
+		}
+
+		std::string replaceUnknowns(const std::string &_expression)
+		{
+			std::shared_ptr<Unknowns> u = Unknowns::instance();
+			std::string thisOutput = _expression;
+			for(auto &s : u->getUnknowns()) {
+				size_t start_pos = 0;
+				while((start_pos = thisOutput.find(s.first, start_pos)) != std::string::npos) {
+					thisOutput.replace(start_pos, s.first.length(), s.second);
+					start_pos += s.second.length(); // In case 'to' contains 'from', like replacing 'x' with 'yx'
+				}
+			}
+			return thisOutput;
+		}
+
+		void flushUnknowns() {
+			std::shared_ptr<Unknowns> u = Unknowns::instance();
+			u->clear();
+		}
   }
 }
 /*
  * Please do not look at these!
-      std::cout << "\n";
  */
