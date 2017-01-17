@@ -1,3 +1,4 @@
+#include <iomanip>
 #include "ExpressionEvaluator.hpp"
 
 /*
@@ -159,8 +160,10 @@ namespace hsitho {
       for(auto &i : expElements)
       {
         try {
-          boost::lexical_cast<float>(i);
-          outputQueue.push_back(i);
+					float val = boost::lexical_cast<float>(i);
+					std::ostringstream ss;
+					ss << std::fixed << std::setprecision(4) << val;
+					outputQueue.push_back(ss.str());
           continue;
 				} catch(const boost::bad_lexical_cast &) {}
         if(i == "*" || i == "/") {
@@ -210,11 +213,6 @@ namespace hsitho {
 			std::string derp = s;
 
       s = addSpaces(s);
-			if(s == "9.6277392e * cos(0) - 05 * cos(0)") {
-				std::cout << _expression << "\n";
-				std::string test = s;
-				exit(0);
-			}
       std::string finalOutput;
       if(s != _prev) {
 				finalOutput = evaluate(s, s, _copyNum, 1);
@@ -243,27 +241,37 @@ namespace hsitho {
 					size_t pos;
 					if((pos = o.find("-sin(")) != std::string::npos) {
 						unsigned int startPos = pos+5;
-						std::string sineval = "-" + boost::lexical_cast<std::string>(std::sin(boost::lexical_cast<float>(o.substr(startPos, o.find(")", pos) - startPos))));
-						stack.push_back(sineval);
+						float sineval = std::sin(boost::lexical_cast<float>(o.substr(startPos, o.find(")", pos) - startPos)));
+						std::ostringstream ss;
+						ss << std::fixed << std::setprecision(4) << "-" << sineval;
+						stack.push_back(ss.str());
 						continue;
 					} else if((pos = o.find("sin(")) != std::string::npos) {
 						unsigned int startPos = pos+4;
-						std::string sineval = boost::lexical_cast<std::string>(std::sin(boost::lexical_cast<float>(o.substr(startPos, o.find(")", pos) - startPos))));
-						stack.push_back(sineval);
+						float sineval = std::sin(boost::lexical_cast<float>(o.substr(startPos, o.find(")", pos) - startPos)));
+						std::ostringstream ss;
+						ss << std::fixed << std::setprecision(4) << sineval;
+						stack.push_back(ss.str());
 						continue;
 					} else if((pos = o.find("-cos(")) != std::string::npos) {
 						unsigned int startPos = pos+5;
-						std::string cosineval = "-" + boost::lexical_cast<std::string>(std::cos(boost::lexical_cast<float>(o.substr(startPos, o.find(")", pos) - startPos))));
-						stack.push_back(cosineval);
+						float cosineval = std::cos(boost::lexical_cast<float>(o.substr(startPos, o.find(")", pos) - startPos)));
+						std::ostringstream ss;
+						ss << std::fixed << std::setprecision(4) << "-" << cosineval;
+						stack.push_back(ss.str());
 						continue;
 					} else if((pos = o.find("cos(")) != std::string::npos) {
 						unsigned int startPos = pos+4;
-						std::string cosineval = boost::lexical_cast<std::string>(std::cos(boost::lexical_cast<float>(o.substr(startPos, o.find(")", pos) - startPos))));
-						stack.push_back(cosineval);
+						float cosineval = std::cos(boost::lexical_cast<float>(o.substr(startPos, o.find(")", pos) - startPos)));
+						std::ostringstream ss;
+						ss << std::fixed << std::setprecision(4) << cosineval;
+						stack.push_back(ss.str());
 						continue;
 					} else {
-						boost::lexical_cast<float>(o);
-						stack.push_back(o);
+						float val = boost::lexical_cast<float>(o);
+						std::ostringstream ss;
+						ss << std::fixed << std::setprecision(4) << val;
+						stack.push_back(ss.str());
 						continue;
 					}
 				} catch(const boost::bad_lexical_cast &) {}
@@ -281,8 +289,8 @@ namespace hsitho {
           try
           {
             float result;
-            float v1 = boost::lexical_cast<float>(vals[0]);
-            float v2 = boost::lexical_cast<float>(vals[1]);
+						float v1 = boost::lexical_cast<float>(vals[0]);
+						float v2 = boost::lexical_cast<float>(vals[1]);
             if(o == "*") {
               result = v2 * v1;
             } else if(o == "/") {
@@ -292,14 +300,16 @@ namespace hsitho {
             } else if(o == "-") {
               result = v2 - v1;
             }
-            stack.push_back(boost::lexical_cast<std::string>(result));
+						std::ostringstream ss;
+						ss << std::fixed << std::setprecision(4) << result;
+						stack.push_back(ss.str());
 					} catch(const boost::bad_lexical_cast &) {
             if(o == "*") {
-              bool parsed = false;
-              if(vals[0] != "0.0" && vals[0] != "0" && vals[1] != "0.0" && vals[1] != "0") {
-                if(vals[0] == "1.0" || vals[0] == "1") {
-                  stack.push_back(vals[1]);
-                } else if(vals[1] == "1.0" || vals[1] == "1") {
+							bool parsed = false;
+							if(vals[0] != "0.0000" && vals[1] != "0.0000") {
+								if(vals[0] == "1.0000") {
+									stack.push_back(vals[1]);
+								} else if(vals[1] == "1.0000") {
                   stack.push_back(vals[0]);
                 } else {
                   for(unsigned int i = 0; i < 2; ++i) {
@@ -370,28 +380,28 @@ namespace hsitho {
                   }
                 }
 							} else {
-								stack.push_back("0.0");
+								stack.push_back("0.0000");
 							}
             } else if(o == "/") {
-              if(vals[1] != "" && vals[0] != "0.0" && vals[1] != "0.0" && vals[0] != "0" && vals[1] != "0") {
+							if(vals[1] != "" && vals[0] != "0.0000" && vals[1] != "0.0000") {
                 stack.push_back(std::string(vals[1] + "/" + vals[0]));
               }
-            } else if(o == "+") {
-              if(vals[1] != "0" && vals[1] != "0.0" && vals[1] != "") {
-                if(vals[0] != "0" && vals[0] != "0.0" && vals[0] != "")
+						} else if(o == "+") {
+							if(vals[1] != "0.0000" && vals[1] != "") {
+								if(vals[0] != "0.0000" && vals[0] != "")
                   stack.push_back(std::string(vals[1] + "+" + vals[0]));
                 else
                   stack.push_back(std::string(vals[1]));
               } else if(vals[0] != "")
                 stack.push_back(std::string(vals[0]));
-            } else if(o == "-") {
-							if(vals[1] != "" && vals[1] != "0" && vals[1] != "0.0") {
-								if(vals[0] != "" && vals[0] != "0" && vals[0] != "0.0")
+						} else if(o == "-") {
+							if(vals[1] != "" && vals[1] != "0.0000") {
+								if(vals[0] != "" && vals[0] != "0.0000")
 									stack.push_back(std::string(vals[1] + "-" + vals[0]));
 								else
 									stack.push_back(vals[1]);
 							}
-							else if(vals[0]!= "0" && vals[0] != "0.0" && vals[0] != "")
+							else if(vals[0] != "0.0000" && vals[0] != "")
                 stack.push_back(std::string("-" + vals[0]));
             }
           }
@@ -425,10 +435,6 @@ namespace hsitho {
 			std::string exp = _expression;
 			std::vector<std::string> expElements;
 			size_t poss = 0;
-			if(exp.find("e") != std::string::npos) {
-				std::string test = exp;
-//				exit(0);
-			}
 			while((poss = exp.find(" ")) != std::string::npos) {
 				if(exp.substr(0, poss) != "") {
 					expElements.push_back(exp.substr(0, poss));

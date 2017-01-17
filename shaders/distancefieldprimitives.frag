@@ -8,6 +8,20 @@ in vec2 o_FragCoord;
 out vec4 o_FragColor;
 
 //float pixelRadius = (2.0f/u_Resolution.x + 2.0f/u_Resolution.y)/2.0f;
+struct Light {
+  vec3 pos;
+  vec3 diffuse;
+  vec3 ambient;
+  vec3 specular;
+  float intensity;
+};
+
+const float traceprecision = 0.01f;
+const Light SunLight = Light(vec3(2.0f, 2.5f, 2.0f), vec3(1.0, 0.8, 0.55), vec3(1.00, 0.90, 0.70), vec3(0.40,0.60,1.00), 1.0);
+const Light fillLightA = Light(vec3(-2.0f, 1.5f, -1.0f), vec3(0.78, 0.88, 1.0), vec3(1.00, 0.90, 0.70), vec3(0.40,0.60,1.00), 0.2);
+const Light fillLightB = Light(vec3(-1.0f, 1.5f, 2.0f), vec3(1.0, 0.88, 0.78), vec3(1.00, 0.90, 0.70), vec3(0.40,0.60,1.00), 0.2);
+const Light fillLightC = Light(vec3(2.0f, -2.5f, 2.0f), vec3(1.0, 0.88, 0.78), vec3(1.00, 0.90, 0.70), vec3(0.40,0.60,1.00), 0.4);
+const Light Lights[4] = Light[4](SunLight, fillLightA, fillLightB, fillLightC);
 
 struct TraceResult
 {
@@ -15,8 +29,6 @@ struct TraceResult
   float t;
   float d;
 };
-float traceprecision = 0.01f;
-vec3 lightPos = vec3(1.0f, 2.5f, 1.0f);
 
 /**
  * Signed distance field primitives
@@ -194,65 +206,19 @@ vec3 opRepetition(vec3 p, vec3 c)
 vec4 map(vec3 _position)
 {
   vec4 pos = vec4(1.0, 0.0, 0.0, 0.0);
+  pos = sdPlane(_position, vec4(0.0, 1.0, 0.0, 1.0), vec3(0.8, 0.8, 0.8));
 //  pos = opRepetition(_position, pos.xyz);
 //  pos = opUnion(pos, sdFastBox(vec3(mat4x4(1 * cos(u_GlobalTime) * 1.0, 1.0 * sin(u_GlobalTime) * sin(u_GlobalTime) * 1.0, 1.0 * cos(u_GlobalTime) * sin(u_GlobalTime) * 1.0, 0,
 //                                           0, 1.0 * cos(u_GlobalTime) * 1.0 * 1.0,  - sin(u_GlobalTime) * 1.0 * 1.0, 0,
 //                                            - sin(u_GlobalTime) * 1.0, 1.0 * sin(u_GlobalTime) * cos(u_GlobalTime) * 1.0, 1.0 * cos(u_GlobalTime) * cos(u_GlobalTime) * 1.0, 0,
 //                                           0, 0, 0, 1) * vec4(_position, 1.0)), 0.6, vec3(clamp(-1, 0, 1), 0, 0)));
 //  _position = opRepetition(_position, vec3(4.0, 4.0, 4.0));
-  float g = sin(5.23333359);
-  float e = 1.54972076;
-  float d = sin(3.14000034);
-  float c = sin(2.09333348);
-  float f = sin(4.18666697);
-  float b = sin(1.04666674);
-  float a = sin(0);
-  pos = opUnion(opSubtraction(sdCapsule(vec3(mat4x4(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 1.25, 0, 0, 1) *
-    vec4(_position, 1.0)).xyz, vec3(0.0, 0.0, 0.0), vec3(0.0, 0.0, 0.0), 1.25*0.7,  vec3(clamp(0.0, 0.0, 1.0), clamp(0.0, 0.0, 1.0), clamp(0.0, 0.0, 1.0))),
 
-  opUnion(sdCappedCylinder(vec3(mat4x4(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 1.25, 0, 0, 1) *
-    vec4(_position, 1.0)).xyz, vec2(1.25, 0.2), vec3(clamp(0.0, 0.0, 1.0), clamp(0.0, 0.0, 1.0), clamp(0.0, 0.0, 1.0))),
-
-  opUnion(sdBox(vec3(mat4x4(1, 0, 0, 0, 0, 1, 0, 0, -a, 0, 1, 0, 2.5, 0, 0, 1) *
-    vec4(_position, 1.0)).xyz, vec3(1.25*0.25, 0.2, 1.25*0.25), vec3(clamp(0.0, 0.0, 1.0), clamp(0.0, 0.0, 1.0), clamp(0.0, 0.0, 1.0))),
-
-    opUnion(sdBox(vec3(mat4x4(0.500459611, 0, 0.86575985, 0, 0, 1, 0, 0, -b, 0, 0.500459611, 0, 1.87557459, 0, 1.08219981, 1) *
-    vec4(_position, 1.0)).xyz, vec3(1.25*0.25, 0.2, 1.25*0.25), vec3(clamp(0.0, 0.0, 1.0), clamp(0.0, 0.0, 1.0), clamp(0.0, 0.0, 1.0))),
-
-    opUnion(sdBox(vec3(mat4x4(-0.49908033, 0, 0.86655575, 0, 0, 1, 0, 0, -c, 0, -0.49908033, 0, 0.626149595, 0, 1.08319473, 1) *
-    vec4(_position, 1.0)).xyz, vec3(1.25*0.25, 0.2, 1.25*0.25), vec3(clamp(0.0, 0.0, 1.0), clamp(0.0, 0.0, 1.0), clamp(0.0, 0.0, 1.0))),
-
-    opUnion(sdBox(vec3(mat4x4(-0.999998748, 0, 0.00159230956, 0, 0, 1, 0, 0, -d, 0, -0.999998748, 0, e-06, 0, 0.00199038698, 1) *
-    vec4(_position, 1.0)).xyz, vec3(1.25*0.25, 0.2, 1.25*0.25), vec3(clamp(0.0, 0.0, 1.0), clamp(0.0, 0.0, 1.0), clamp(0.0, 0.0, 1.0))),
-
-    opUnion(sdBox(vec3(mat4x4(-0.501837671, 0, -0.864961863, 0, 0, 1, 0, 0, -f, 0, -0.501837671, 0, 0.622702897, 0, -1.08120227, 1) *
-    vec4(_position, 1.0)).xyz, vec3(1.25*0.25, 0.2, 1.25*0.25), vec3(clamp(0.0, 0.0, 1.0), clamp(0.0, 0.0, 1.0), clamp(0.0, 0.0, 1.0))),sdBox(vec3(mat4x4(0.497699678, 0, -0.867349446, 0, 0, 1, 0, 0, -g, 0, 0.497699678, 0, 1.87212467, 0, -1.08418679, 1) *
-  vec4(_position, 1.0)).xyz, vec3(1.25*0.25, 0.2, 1.25*0.25), vec3(clamp(0.0, 0.0, 1.0), clamp(0.0, 0.0, 1.0), clamp(0.0, 0.0, 1.0)))))))))),opSubtraction(sdCapsule(vec3(mat4x4(1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0) *
-  vec4(_position, 1.0)).xyz, vec3(0.0, 0.0, 0.0), vec3(0.0, 0.0, 0.0), 1.25*0.7,  vec3(clamp(0.0, 0.0, 1.0), clamp(0.0, 0.0, 1.0), clamp(0.0, 0.0, 1.0))),
-
-  opUnion(sdCappedCylinder(vec3(mat4x4(1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0) *
-    vec4(_position, 1.0)).xyz, vec2(1.25, 0.2), vec3(clamp(0.0, 0.0, 1.0), clamp(0.0, 0.0, 1.0), clamp(0.0, 0.0, 1.0))),
-
-  opUnion(sdBox(vec3(mat4x4(1, 0, 0, 0, 0, 1, 0, 0, -a, 0, 1, 0, 1.25, 0, 0, 1) *
-    vec4(_position, 1.0)).xyz, vec3(1.25*0.25, 0.2, 1.25*0.25), vec3(clamp(0.0, 0.0, 1.0), clamp(0.0, 0.0, 1.0), clamp(0.0, 0.0, 1.0))),
-
-  opUnion(sdBox(vec3(mat4x4(0.500459611, 0, 0.86575985, 0, 0, 1, 0, 0, -b, 0, 0.500459611, 0, 1.25, 0, 0, 1) *
-    vec4(_position, 1.0)).xyz, vec3(1.25*0.25, 0.2, 1.25*0.25), vec3(clamp(0.0, 0.0, 1.0), clamp(0.0, 0.0, 1.0), clamp(0.0, 0.0, 1.0))),
-
-    opUnion(sdBox(vec3(mat4x4(-0.49908033, 0, 0.86655575, 0, 0, 1, 0, 0, -c, 0, -0.49908033, 0, 1.25, 0, 0, 1) *
-    vec4(_position, 1.0)).xyz, vec3(1.25*0.25, 0.2, 1.25*0.25), vec3(clamp(0.0, 0.0, 1.0), clamp(0.0, 0.0, 1.0), clamp(0.0, 0.0, 1.0))),
-
-    opUnion(sdBox(vec3(mat4x4(-0.999998748, 0, 0.00159230956, 0, 0, 1, 0, 0, -d, 0, -0.999998748, 0, 1.25, 0, 0, 1) *
-    vec4(_position, 1.0)).xyz, vec3(1.25*0.25, 0.2, 1.25*0.25), vec3(clamp(0.0, 0.0, 1.0), clamp(0.0, 0.0, 1.0), clamp(0.0, 0.0, 1.0))),
-
-    opUnion(sdBox(vec3(mat4x4(-0.501837671, 0, -0.864961863, 0, 0, 1, 0, 0, -f, 0, -0.501837671, 0, 1.25, 0, 0, 1) *
-    vec4(_position, 1.0)).xyz, vec3(1.25*0.25, 0.2, 1.25*0.25), vec3(clamp(0.0, 0.0, 1.0), clamp(0.0, 0.0, 1.0), clamp(0.0, 0.0, 1.0))),sdBox(vec3(mat4x4(0.497699678, 0, -0.867349446, 0, 0, 1, 0, 0, -g, 0, 0.497699678, 0, 1.25, 0, 0, 1) *
-  vec4(_position, 1.0)).xyz, vec3(1.25*0.25, 0.2, 1.25*0.25), vec3(clamp(0.0, 0.0, 1.0), clamp(0.0, 0.0, 1.0), clamp(0.0, 0.0, 1.0)))))))))));
-  return pos;
-  //  pos = opUnion(
+  pos = opUnion(sdTriPrism(_position, vec2(0.5, 2.5), vec3(1.0, 0.0, 0.0)), pos);
+//    pos = opUnion(
 //    sdBox(vec3(vec4(_position, 1.0)).xyz,
 //    vec3(0.5, 0.2, 0.5),
-//    vec3(clamp(0.0, 0.0, 1.0), clamp(0.0, 0.0, 1.0), clamp(0.0, 0.0, 1.0))), pos);
+//    vec3(1.0, 0.0, 0.0)), pos);
 //  pos = opUnion(
 //    sdBox(vec3(vec4(_position, 1.0)).xyz,
 //    vec3(0.5, 0.2, 0.5),
@@ -388,7 +354,7 @@ TraceResult castRay(mat2x3 _ray)
 {
   TraceResult trace;
   trace.t = 1.f;
-  float tmax = 10.f;
+  float tmax = 20.f;
 //  float omega = 1.2;
 //  float candidate_error = 1.f;
 //  float candidate_t = 1.f;
@@ -437,13 +403,27 @@ TraceResult castRay(mat2x3 _ray)
 
 vec3 calcNormal(vec3 _position)
 {
-  vec3 offset = vec3(0.001, 0.0, 0.0);
-  vec3 normal = vec3(
-    map(_position + offset.xyy).x - map(_position - offset.xyy).x,
-    map(_position + offset.yxy).x - map(_position - offset.yxy).x,
-    map(_position + offset.yyx).x - map(_position - offset.yyx).x
-  );
+  vec3 offset = vec3(0.0005, -0.0005, 1.0);
+  vec3 normal = normalize(offset.xyy*map( _position + offset.xyy ).x +
+                          offset.yyx*map( _position + offset.yyx ).x +
+                          offset.yxy*map( _position + offset.yxy ).x +
+                          offset.xxx*map( _position + offset.xxx ).x);
   return normalize(normal);
+}
+
+float calcAO(vec3 _position, vec3 _normal)
+{
+  float occ = 0.0;
+  float sca = 1.0;
+  for(int i = 0; i < 5; i++)
+  {
+    float hr = 0.01 + 0.12*float(i)/4.0;
+    vec3 aopos = _normal * hr + _position;
+    float dd = map(aopos).x;
+    occ += -(dd-hr)*sca;
+    sca *= 0.95;
+  }
+  return clamp(1.0 - 3.0*occ, 0.0, 1.0);
 }
 
 vec3 applyFog(vec3 color, float distance)
@@ -459,7 +439,7 @@ float softshadow(vec3 ro, vec3 rd, float mint, float tmax)
   float t = mint;
   for(int i = 0; i < 16; ++i)
   {
-    float h = map(ro + rd*t).x;
+    float h = map(ro + normalize(rd)*t).x;
     res = min(res, 8.0*h/t);
     t += clamp(h, 0.02, 0.10);
     if(h < traceprecision || t > tmax) break;
@@ -467,33 +447,60 @@ float softshadow(vec3 ro, vec3 rd, float mint, float tmax)
   return clamp(res, 0.0, 1.0);
 }
 
+vec3 renderSky(mat2x3 _ray)
+{
+  // background sky
+  vec3 col = 0.9*vec3(0.4, 0.65, 1.0) - _ray[1].y*vec3(0.4, 0.36, 0.4);
+
+  // sun glare
+  float sun = clamp(dot(normalize(SunLight.pos), _ray[1]), 0.0, 1.0);
+  col += 0.6*vec3(1.0, 0.6, 0.3)*pow(sun, 32.0);
+
+  return col;
+}
+
 // Rendering function
 vec3 render(mat2x3 _ray)
 {
   TraceResult trace = castRay(_ray);
+  vec3 col = renderSky(_ray);
 
   if(trace.d <= traceprecision)
   {
     vec3 p = _ray[0] + trace.t * _ray[1];
-//    vec3 n = calcNormal(p);
-//    vec3 lightDir = normalize(lightPos - p);
-////    vec3 ref = reflect(_ray[1], n);
-//    float intensity = clamp(dot(n, lightDir), 0.0, 1.0);
-//    float shadow = softshadow(p, lightPos, 0.01, 2.5);
-//    shadow = 1.0f;
-////    trace.color = applyFog(trace.color, trace.t/150.f);
+    vec3 n = calcNormal(p);
+    vec3 reflection = reflect(_ray[1], n);
+    float intensitySum = 0.f;
+    col = vec3(0.0);
 
-//    // Vigneting
-//    vec2 q = o_FragCoord.xy / u_Resolution.xy;
-//    trace.color *= 0.5 + 0.5*pow( 16.0*q.x*q.y*(1.0-q.x)*(1.0-q.y), 0.25 );
-//    trace.color *= 1.4 /** intensity*/ * vec3(1.0, 1.0, 1.0);
-//    trace.color *= shadow;
-//    trace.color = n;
+    for(int i = 0; i < 4; ++i) {
 
-    return trace.color;
-//    return clamp(trace.color, 0.0, 1.0);
+      vec3 lightDir = normalize(Lights[i].pos - p);
+
+      float diffuse = clamp(dot(n, lightDir), 0.0, 1.0) * softshadow(p, Lights[i].pos, 0.02, 2.5);
+      float ambient = clamp(0.5 + 0.5*n.y, 0.0, 1.0);
+      float occlusion = calcAO(p, n);
+
+      float specular = pow(clamp(dot(reflection, lightDir), 0.0, 1.0 ), 16.0);
+//      float dom = smoothstep(-0.1, 0.1, reflection.y)  * softshadow(p, reflection, 0.02, 2.5);
+
+      vec3 lin = vec3(0.0);
+      lin += 1.40*diffuse*Lights[i].diffuse;
+      lin += 2.00*specular*Lights[i].specular*diffuse;
+      lin += 0.40*ambient*Lights[i].ambient*occlusion;
+//      lin += 0.50*dom*vec3(0.40, 0.60, 1.00)*occlusion;
+
+      col += trace.color*lin*Lights[i].intensity;
+      intensitySum += Lights[i].intensity;
+    }
+    col /= intensitySum;
+    col = applyFog(col, trace.t/150.f);
+
+    // Vigneting
+    vec2 q = o_FragCoord.xy / u_Resolution.xy;
+    col *= 0.5 + 0.5*pow( 16.0*q.x*q.y*(1.0-q.x)*(1.0-q.y), 0.25 );
   }
-  return vec3(0.529, 0.807, 0.9215);
+  return vec3( clamp(col, 0.0, 1.0) );
 }
 
 void main()

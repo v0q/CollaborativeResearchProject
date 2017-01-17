@@ -30,10 +30,10 @@ struct Vec4f
     m_w = _rhs.m_w;
   }
 
-  std::string m_x = "0.0";
-  std::string m_y = "0.0";
-  std::string m_z = "0.0";
-  std::string m_w = "1.0";
+	std::string m_x = "0.0000";
+	std::string m_y = "0.0000";
+	std::string m_z = "0.0000";
+	std::string m_w = "1.0000";
 };
 
 enum DFNodeType

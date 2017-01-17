@@ -2,6 +2,7 @@
 #include "CubePrimitiveDataModel.hpp"
 
 CubePrimitiveDataModel::CubePrimitiveDataModel() :
+	m_color(Vec4f("0.6", "0.6", "0.6", "1.0")),
 	m_dimensions(Vec4f("1.0", "1.0", "1.0", "1.0"))
 {
 
@@ -78,6 +79,8 @@ void CubePrimitiveDataModel::setInData(std::shared_ptr<NodeData> _data, int)
 		m_dimensions = vecdata->vector();
     return;
 	}
+	m_color = Vec4f("0.6", "0.6", "0.6", "1.0");
+	m_dimensions = Vec4f("1.0", "1.0", "1.0", "1.0");
 }
 
 void CubePrimitiveDataModel::setTransform(const Mat4f &_t)

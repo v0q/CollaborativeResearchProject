@@ -75,6 +75,7 @@ MainWindow::MainWindow(QWidget *_parent) :
 	DataModelRegistry::registerModel<CollapsedNodeDataModel>("Generic");
 
   connect(this, SIGNAL(nodeEditorModified(std::unordered_map<QUuid, std::shared_ptr<Node>>)), m_gl, SLOT(nodeChanged(std::unordered_map<QUuid, std::shared_ptr<Node>>)));
+	connect(m_ui->actionCompile, &QAction::triggered, this, &MainWindow::triggered);
 
   m_nodes = new FlowScene(this);
   m_flowView = new FlowView(m_nodes);
@@ -139,9 +140,11 @@ MainWindow::MainWindow(QWidget *_parent) :
 						"-sin(1.04666674*copyNum)", "0", "cos(1.04666674*copyNum)", "0",
 						"0", "0", "0", "1");
 
-	std::cout << "d: " << hsitho::Expressions::evaluate("( 9.6277392e-05 ) * ( cos(1.04666674*0) ) + ( -1 ) * ( 0 ) + ( 0 ) * ( -sin(1.04666674*0) ) + ( 0 ) * ( 0 )") << "\n";
-//	std::cout << "c: " << hsitho::Expressions::evaluate("cos(u_GlobalTime) - 0.0");
-	exit(0);
+//	std::cout << "d: " << hsitho::Expressions::evaluate("( 9.6277392e-05 ) * ( cos(1.04666674*0) ) + ( -1 ) * ( 0 ) + ( 0 ) * ( -sin(1.04666674*0) ) + ( 0 ) * ( 0 )") << "\n";
+//	std::cout << boost::lexical_cast<double>("9.6277392e-05");
+//	std::cout << "a: " << hsitho::Expressions::evaluate("1");
+//	std::cout << "c: " << hsitho::Expressions::evaluate("9.6277392e-05");
+//	exit(0);
 //	(tt*ttt).print();
 //	hsitho::Expressions::getUnknowns();
 //	exit(0);
@@ -195,6 +198,11 @@ void MainWindow::keyPressEvent(QKeyEvent *_event)
   {
     // escape key to quite
     case Qt::Key_Escape : QGuiApplication::exit(EXIT_SUCCESS); break;
+		case Qt::Key_B : {
+			if(_event->modifiers() == Qt::ShiftModifier) {
+				emit(nodeEditorModified(getNodes()));
+			}
+		} break;
     case Qt::Key_S : m_nodes->save(); break;
     case Qt::Key_L : m_nodes->load(); break;
     default: break;

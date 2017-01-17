@@ -1,7 +1,8 @@
 #include "ConePrimitiveDataModel.hpp"
 
-
-ConePrimitiveDataModel::~ConePrimitiveDataModel()
+ConePrimitiveDataModel::ConePrimitiveDataModel() :
+	m_color(Vec4f("0.6", "0.6", "0.6", "1.0")),
+	m_dimensions(Vec4f("1.0", "1.0", "1.0", "1.0"))
 {
 
 }
@@ -9,6 +10,11 @@ ConePrimitiveDataModel::~ConePrimitiveDataModel()
 void ConePrimitiveDataModel::save(Properties &p) const
 {
   p.put("model_name", name());
+}
+
+void ConePrimitiveDataModel::restore(const Properties &p)
+{
+
 }
 
 unsigned int ConePrimitiveDataModel::nPorts(PortType portType) const
@@ -55,10 +61,37 @@ std::shared_ptr<NodeData> ConePrimitiveDataModel::outData(PortIndex port)
 
 void ConePrimitiveDataModel::setInData(std::shared_ptr<NodeData> _data, int)
 {
-  auto data = std::dynamic_pointer_cast<ColorData>(_data);
-  if(data) {
-    m_color = data->color();
-  }
+	auto cd = std::dynamic_pointer_cast<ColorData>(_data);
+	if(cd) {
+		m_color = cd->color();
+		return;
+	}
+	auto vecdata = std::dynamic_pointer_cast<VectorData>(_data);
+	if(vecdata) {
+		m_dimensions = vecdata->vector();
+		return;
+	}
+	m_color = Vec4f("0.6", "0.6", "0.6", "1.0");
+	m_dimensions = Vec4f("1.0", "1.0", "1.0", "1.0");
+}
+
+void ConePrimitiveDataModel::setTransform(const Mat4f &_t)
+{
+	std::ostringstream ss;
+	if(Mat4f() == _t) {
+		m_transform = "";
+		return;
+	}
+	for(int y = 0; y < 4; ++y)
+	{
+		for(int x = 0; x < 4; ++x)
+		{
+			if(x || y)
+				ss << ", ";
+			ss << hsitho::Expressions::evaluate(_t.matrix(x, y), "", m_copyNum);
+		}
+	}
+	m_transform = "mat4x4(" + ss.str() + ")";
 }
 
 std::vector<QWidget *> ConePrimitiveDataModel::embeddedWidget()
@@ -68,11 +101,8 @@ std::vector<QWidget *> ConePrimitiveDataModel::embeddedWidget()
 
 std::string ConePrimitiveDataModel::getShaderCode()
 {
-  if(m_transform == "")
-  {
-    m_transform = "mat4x4(cos(u_GlobalTime)*1.0+0, sin(u_GlobalTime)*1.0+0, 0, 2.5,	-sin(u_GlobalTime)*1.0+0, cos(u_GlobalTime)*1.0+0, 0, 0.600000024, 0, 0, 1, 0, 0, 0, 0, 1)";
-  }
-
-  //return "sdCone(vec3(" + m_transform + " * vec4(_position, 1.0)).xyz, vec2(0.1, 0.1), vec3(clamp(" + m_color.m_x + ", 0.0, 1.0), clamp(" + m_color.m_y + ", 0.0, 1.0), clamp(" +m_color.m_z + ", 0.0, 1.0)))";
-    return "sdCappedCone(vec3(" + m_transform + " * vec4(_position, 1.0)).xyz, vec3(3.0, 3.0, 3.0), vec3(clamp(" + m_color.m_x + ", 0.0, 1.0), clamp(" + m_color.m_y + ", 0.0, 1.0), clamp(" + m_color.m_z + ", 0.0, 1.0)))";
+	if(m_transform == "")
+		return "sdCappedCone(_position, vec3(" + m_dimensions.m_x + ", " + m_dimensions.m_y + ", " + m_dimensions.m_z + "), vec3(clamp(" + m_color.m_x + ", 0.0, 1.0), clamp(" + m_color.m_y + ", 0.0, 1.0), clamp(" + m_color.m_z + ", 0.0, 1.0)))";
+	else
+		return "sdCappedCone(vec3(" + m_transform + " * vec4(_position, 1.0)).xyz, vec3(" + m_dimensions.m_x + ", " + m_dimensions.m_y + ", " + m_dimensions.m_z + "), vec3(clamp(" + m_color.m_x + ", 0.0, 1.0), clamp(" + m_color.m_y + ", 0.0, 1.0), clamp(" + m_color.m_z + ", 0.0, 1.0)))";
 }

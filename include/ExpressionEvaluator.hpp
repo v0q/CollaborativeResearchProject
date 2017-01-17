@@ -33,7 +33,6 @@ namespace hsitho {
 						}
 						unsigned int a = m_unknowns.size();
 						m_unknowns[_val] = 'a' + a;
-						std::cout << "Unknown: " << _val << "\n";
 					}
 				}
 

@@ -31,9 +31,10 @@ namespace hsitho
     GLWindow(_parent),
     m_shaderMan(ShaderManager::instance()),
 		m_outputNode(nullptr),
-		m_cam(glm::vec4(0.f, 0.f, 7.5f, 1.f)),
+		m_cam(glm::vec4(0.f, 0.132164f, 0.991228f, 0.f)),
 		m_camU(glm::vec3(0.f, 1.f, 0.f)),
-		m_camL(glm::vec3(1.f, 0.f, 0.f))
+		m_camL(glm::vec3(1.f, 0.f, 0.f)),
+		m_camDist(7.566f)
   {
     std::ifstream s("shaders/shader.begin");
     std::ifstream e("shaders/shader.end");
@@ -107,11 +108,22 @@ namespace hsitho
 			glm::mat4 rot = glm::rotate(glm::mat4(1.f), glm::radians(dx), m_camU);
 			rot = glm::rotate(rot, glm::radians(dy), -m_camL);
 
-			m_cam = rot * m_cam;
-			glm::vec3 d = glm::normalize(glm::vec3(-m_cam.x, -m_cam.y, -m_cam.z));
+			m_cam = glm::normalize(rot * m_cam);
+			glm::vec3 d = glm::vec3(-m_cam.x, -m_cam.y, -m_cam.z);
 			m_camU = glm::normalize(m_camU - d * glm::dot(m_camU, d));
 			m_camL = glm::normalize(glm::cross(m_camU, -d));
 		}
+	}
+
+	void SceneWindow::wheelEvent(QWheelEvent *_event)
+	{
+		int numDegrees = _event->delta() / 8;
+		int numSteps = numDegrees / 15;
+
+		if(_event->orientation() == Qt::Vertical) {
+			m_camDist -= numSteps*0.25f;
+		}
+		_event->accept();
 	}
 
   void SceneWindow::paintGL()
@@ -136,7 +148,7 @@ namespace hsitho
     m_shaderMan->getProgram()->setAttributeBuffer(uvLocation, GL_FLOAT, 6*2*sizeof(float), 2, 0);
     m_shaderMan->getProgram()->setUniformValue("u_GlobalTime", getTimePassed());
     m_shaderMan->getProgram()->setUniformValueArray("u_Resolution", resolution, 1, 2);
-		m_shaderMan->getProgram()->setUniformValueArray("u_Camera", glm::value_ptr(m_cam), 1, 3);
+		m_shaderMan->getProgram()->setUniformValueArray("u_Camera", glm::value_ptr((m_camDist*m_cam)), 1, 3);
 		m_shaderMan->getProgram()->setUniformValueArray("u_CameraUp", glm::value_ptr(m_camU), 1, 3);
 
     glDrawArrays(GL_TRIANGLES, 0, 6);

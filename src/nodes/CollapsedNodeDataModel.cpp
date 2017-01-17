@@ -1,5 +1,6 @@
 #include <QDebug>
 #include <QtGui/QDoubleValidator>
+#include <QtGui/QRegExpValidator>
 
 #include "nodeEditor/Connection.hpp"
 #include "nodeEditor/ConnectionGraphicsObject.hpp"
@@ -154,8 +155,18 @@ void CollapsedNodeDataModel::setInData(std::shared_ptr<NodeData> _data, PortInde
 //*******************************************************************
 
 OutputDataModel::OutputDataModel() :
+	m_name(new QLineEdit),
 	m_dataType(GenericData().type())
-{ }
+{
+	int y = 0, x = 0;
+	int w = m_name->sizeHint().width();
+	int h = m_name->sizeHint().height();
+
+	auto r = new QRegExpValidator(QRegExp("([A-Z]|[a-z]){0,6}"));
+	m_name->setValidator(r);
+	m_name->setMaximumSize(m_name->sizeHint());
+	m_name->setGeometry(x, y, w, h);
+}
 
 void OutputDataModel::save(Properties &p) const
 {
@@ -163,11 +174,13 @@ void OutputDataModel::save(Properties &p) const
 	p.put("data_type_id", m_dataType.id);
 	p.put("data_type_name", m_dataType.name);
 	p.put("data_type_color", m_dataType.color);
+	p.put("name", m_name->text());
 }
 
 void OutputDataModel::restore(const Properties &p)
 {
 	m_dataType = NodeDataType{p.values().find("data_type_id").value().toString(), p.values().find("data_type_name").value().toString(), p.values().find("data_type_color").value().value<QColor>()};
+	m_name->setText(p.values().find("name").value().toString());
 }
 
 unsigned int OutputDataModel::nPorts(PortType portType) const
@@ -189,7 +202,10 @@ unsigned int OutputDataModel::nPorts(PortType portType) const
 
 NodeDataType OutputDataModel::dataType(PortType, PortIndex) const
 {
-	return m_dataType;
+	if(m_name->text().isEmpty())
+		return m_dataType;
+	else
+		return NodeDataType{m_dataType.id, m_name->text(), m_dataType.color};
 }
 
 //*******************************************************************
@@ -199,10 +215,12 @@ NodeDataType OutputDataModel::dataType(PortType, PortIndex) const
 InputDataModel::InputDataModel() :
 	m_var(false),
 	m_v(nullptr),
+	m_name(new QLineEdit),
 	m_default(new QLineEdit)
 {
+	int margin = 12;
 	int y = 0, x = 0;
-	int w = m_default->sizeHint().width()/3;
+	int w = m_default->sizeHint().width()/2;
 	int h = m_default->sizeHint().height();
 
 	auto d = new QDoubleValidator;
@@ -215,6 +233,11 @@ InputDataModel::InputDataModel() :
 
 	m_default->setText("0.0");
 
+	auto r = new QRegExpValidator(QRegExp("([A-Z]|[a-z]){0,6}"));
+	m_name->setValidator(r);
+	m_name->setMaximumSize(m_name->sizeHint());
+	m_name->setGeometry(x, y + h + margin, m_name->sizeHint().width(), h);
+
 	m_v = std::make_shared<ScalarData>(m_default->text().toStdString());
 }
 
@@ -222,11 +245,13 @@ void InputDataModel::save(Properties &p) const
 {
 	p.put("model_name", name());
 	p.put("default", m_default->text());
+	p.put("name", m_name->text());
 }
 
 void InputDataModel::restore(const Properties &p)
 {
 	m_default->setText(p.values().find("default").value().toString());
+	m_name->setText(p.values().find("name").value().toString());
 }
 
 void InputDataModel::valueEdit(QString const)
@@ -262,7 +287,10 @@ unsigned int InputDataModel::nPorts(PortType portType) const
 
 NodeDataType InputDataModel::dataType(PortType, PortIndex) const
 {
-	return ScalarData().type();
+	if(m_name->text().isEmpty())
+		return ScalarData().type();
+	else
+		return NodeDataType{ScalarData().type().id, m_name->text(), ScalarData().type().color};
 }
 
 std::shared_ptr<NodeData> InputDataModel::outData(PortIndex)

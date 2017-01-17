@@ -29,6 +29,7 @@ namespace hsitho
     void paintGL();
 		void mousePressEvent(QMouseEvent *_event);
 		void mouseMoveEvent(QMouseEvent *_event);
+		void wheelEvent(QWheelEvent *_event);
 
   private:
 		std::string recurseNodeTree(std::shared_ptr<Node> _node, Mat4f _t, PortIndex portIndex = 0, unsigned int _cp = 0);
@@ -42,6 +43,7 @@ namespace hsitho
 		glm::vec4 m_cam;
 		glm::vec3 m_camU;
 		glm::vec3 m_camL;
+		float m_camDist;
 
 		int m_origX;
 		int m_origY;
