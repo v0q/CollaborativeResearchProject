@@ -131,7 +131,7 @@ namespace hsitho {
 		}
 
 		std::string evaluate(const std::string &_expression, const std::string &_prev, const int &_copyNum, const unsigned int &_gen)
-    {
+		{
       // Generate postfix notation for the expression
 			std::string exp = _expression;
 			if(exp.find("- ") == 0) {
@@ -220,11 +220,9 @@ namespace hsitho {
         finalOutput = s;
 			}
 			if(!_gen) {
-				if(finalOutput.find("e", 0) != std::string::npos) {
-					std::string test = s;
-				}
 				setUnknowns(addSpaces(finalOutput));
 			}
+
       std::string::iterator end_pos = std::remove(finalOutput.begin(), finalOutput.end(), ' ');
       finalOutput.erase(end_pos, finalOutput.end());
 

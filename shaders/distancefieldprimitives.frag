@@ -170,16 +170,23 @@ vec3 lerp(vec4 a, vec4 b, float t)
 //  return w1(a.x, b.x, t)*a.yzw + w2(a.x, b.x, t)*b.yzw;
 }
 
-vec4 smin(vec4 a, vec4 b, float k)
+//vec4 opBlend(vec4 a, vec4 b, float k)
+//{
+////  float ax = pow(a.x, k);
+////  float bx = pow(b.x, k);
+////  float d = pow((ax*bx)/(ax+bx), 1.0/k);
+//  float res = exp( -k*a.x ) + exp( -k*b.x );
+//  float d = -log( res )/k;
+////  float h = clamp(0.5+0.5*(b.x-a.x)/k, 0.0, 1.0);
+////  float d = mix(b.x, a.x, h) - k*h*(1.0-h);
+//  return vec4(d, lerp(a, b, 0.5));
+//}
+
+vec4 opBlend(vec4 a, vec4 b, float k)
 {
-//  float ax = pow(a.x, k);
-//  float bx = pow(b.x, k);
-//  float d = pow((ax*bx)/(ax+bx), 1.0/k);
-  float res = exp( -k*a.x ) + exp( -k*b.x );
-  float d = -log( res )/k;
-//  float h = clamp(0.5+0.5*(b.x-a.x)/k, 0.0, 1.0);
-//  float d = mix(b.x, a.x, h) - k*h*(1.0-h);
-  return vec4(d, lerp(a, b, 0.5));
+  float h = clamp(0.5+0.5*(b.x-a.x)/k, 0.0, 1.0);
+  float d = mix(b.x, a.x, h) - k*h*(1.0-h);
+  return vec4(d, lerp(a, b, h));
 }
 
 vec4 opUnion(vec4 a, vec4 b)
@@ -194,7 +201,7 @@ vec4 opIntersection(vec4 a, vec4 b)
 
 vec4 opSubtraction(vec4 a, vec4 b)
 {
-  return -a.x >= b.x ? a : b;
+  return -a.x >= b.x ? vec4(-a.x, a.yzw) : b;
 }
 
 vec3 opRepetition(vec3 p, vec3 c)
@@ -214,7 +221,7 @@ vec4 map(vec3 _position)
 //                                           0, 0, 0, 1) * vec4(_position, 1.0)), 0.6, vec3(clamp(-1, 0, 1), 0, 0)));
 //  _position = opRepetition(_position, vec3(4.0, 4.0, 4.0));
 
-  pos = opUnion(sdTriPrism(_position, vec2(0.5, 2.5), vec3(1.0, 0.0, 0.0)), pos);
+  pos = opUnion(pos, opSubtraction(opSubtraction(sdCappedCylinder(vec3(mat4x4(1.0000, 0.0000, 0.0000, 0.0000, 0.0000, 1.0000, 0.0000, 0.0000, 0.0000, 0.0000, 1.0000, 0.0000, 0.0000, -0.6000, 0.0000, 1.0000) * vec4(_position, 1.0)).xyz, vec2(2.5*0.7, 0.4*2.0), vec3(0.811765, 0.854902, 0.847059)),sdCappedCylinder(vec3(mat4x4(1.0000, 0.0000, 0.0000, 0.0000, 0.0000, 1.0000, 0.0000, 0.0000, 0.0000, 0.0000, 1.0000, 0.0000, 0.0000, -0.6000, 0.0000, 1.0000) * vec4(_position, 1.0)).xyz, vec2(2.5*0.9, 0.4), vec3(0.811765, 0.854902, 0.847059))),opSubtraction(opSubtraction(sdCappedCylinder(vec3(mat4x4(1.0000, 0.0000, 0.0000, 0.0000, 0.0000, 1.0000, 0.0000, 0.0000, 0.0000, 0.0000, 1.0000, 0.0000, 0.0000, 0.6000, 0.0000, 1.0000) * vec4(_position, 1.0)).xyz, vec2(2.5*0.7, 0.4*2.0), vec3(0.811765, 0.854902, 0.847059)),sdCappedCylinder(vec3(mat4x4(1.0000, 0.0000, 0.0000, 0.0000, 0.0000, 1.0000, 0.0000, 0.0000, 0.0000, 0.0000, 1.0000, 0.0000, 0.0000, 0.6000, 0.0000, 1.0000) * vec4(_position, 1.0)).xyz, vec2(2.5*0.9, 0.4), vec3(0.811765, 0.854902, 0.847059))),opSubtraction(sdCapsule(_position, vec3(0.0000, 0.0000, 0.0000), vec3(0.0000, 0.0000, 0.0000), 1.0,  vec3(0.811765, 0.854902, 0.847059)),opBlend(sdCappedCylinder(_position, vec2(2.5, 0.4), vec3(0.811765, 0.854902, 0.847059)),sdCappedCylinder(_position, vec2(2.5*0.3, 0.4+0.2), vec3(0.811765, 0.854902, 0.847059)), 0.6)))));
 //    pos = opUnion(
 //    sdBox(vec3(vec4(_position, 1.0)).xyz,
 //    vec3(0.5, 0.2, 0.5),
@@ -482,13 +489,13 @@ vec3 render(mat2x3 _ray)
       float occlusion = calcAO(p, n);
 
       float specular = pow(clamp(dot(reflection, lightDir), 0.0, 1.0 ), 16.0);
-//      float dom = smoothstep(-0.1, 0.1, reflection.y)  * softshadow(p, reflection, 0.02, 2.5);
+      float dom = smoothstep(-0.1, 0.1, reflection.y)  * softshadow(p, reflection, 0.02, 2.5);
 
       vec3 lin = vec3(0.0);
       lin += 1.40*diffuse*Lights[i].diffuse;
       lin += 2.00*specular*Lights[i].specular*diffuse;
       lin += 0.40*ambient*Lights[i].ambient*occlusion;
-//      lin += 0.50*dom*vec3(0.40, 0.60, 1.00)*occlusion;
+      lin += 0.50*dom*vec3(0.40, 0.60, 1.00)*occlusion;
 
       col += trace.color*lin*Lights[i].intensity;
       intensitySum += Lights[i].intensity;

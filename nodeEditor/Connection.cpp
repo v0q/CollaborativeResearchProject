@@ -332,7 +332,7 @@ propagateData(std::shared_ptr<NodeData> nodeData) const
   if (inNode)
   {
     inNode->propagateData(nodeData, _inPortIndex);
-  }
+	}
 }
 
 

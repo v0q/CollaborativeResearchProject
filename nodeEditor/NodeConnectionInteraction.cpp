@@ -83,7 +83,7 @@ bool NodeConnectionInteraction::tryConnect() const
 	NodeDataType connectionDataType = _connection->dataType();
 	auto const &modelTarget = _node->nodeDataModel();
 	NodeDataType candidateNodeDataType = modelTarget->dataType(requiredPort, portIndex);
-	std::cout << _node->nodeDataModel()->caption().toStdString() << "\n";
+
 	if(connectionDataType.id == QString("Generic")) {
 		_connection->getNode(PortType::In).lock()->nodeDataModel()->setDataType(candidateNodeDataType);
 	} else if(candidateNodeDataType.id == QString("Generic")) {
@@ -102,10 +102,11 @@ bool NodeConnectionInteraction::tryConnect() const
 
   auto outNode = _connection->getNode(PortType::Out).lock();
   if (outNode)
-  {
+	{
     PortIndex outPortIndex = _connection->getPortIndex(PortType::Out);
 		outNode->onDataUpdated(outPortIndex);
-  }
+		std::cout << outPortIndex << "\n";
+	}
 
   return true;
 }

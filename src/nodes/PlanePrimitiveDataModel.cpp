@@ -112,7 +112,7 @@ std::vector<QWidget *> PlanePrimitiveDataModel::embeddedWidget()
 std::string PlanePrimitiveDataModel::getShaderCode()
 {
   if(m_transform == "")
-		return "sdPlane(_position, vec4(" + m_normal.m_x + ", " + m_normal.m_y + ", " + m_normal.m_z + ", " + m_normal.m_w + ") ,vec3(clamp(" + m_color.m_x + ", 0.0, 1.0), clamp(" + m_color.m_y + ", 0.0, 1.0), clamp(" +m_color.m_z + ", 0.0, 1.0)))";
+		return "sdPlane(_position, vec4(" + m_normal.m_x + ", " + m_normal.m_y + ", " + m_normal.m_z + ", " + m_normal.m_w + ") ,vec3(" + m_color.m_x + ", " + m_color.m_y + ", " + m_color.m_z + "))";
 	else
-		return "sdPlane(vec3(" + m_transform + " * vec4(_position, 1.0)).xyz, vec4(" + m_normal.m_x + ", " + m_normal.m_y + ", " + m_normal.m_z + ", " + m_normal.m_w + ") ,vec3(clamp(" + m_color.m_x + ", 0.0, 1.0), clamp(" + m_color.m_y + ", 0.0, 1.0), clamp(" +m_color.m_z + ", 0.0, 1.0)))";
+		return "sdPlane(vec3(" + m_transform + " * vec4(_position, 1.0)).xyz, vec4(" + m_normal.m_x + ", " + m_normal.m_y + ", " + m_normal.m_z + ", " + m_normal.m_w + ") ,vec3(" + m_color.m_x + ", " + m_color.m_y + ", " + m_color.m_z + "))";
 }

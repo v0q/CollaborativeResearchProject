@@ -220,9 +220,11 @@ void VectorDataModel::setInData(std::shared_ptr<NodeData> _data, PortIndex portI
 	if(data) {
 		m_inputs[portIndex]->setVisible(false);
 		m_inputs[portIndex]->setText(data->value().c_str());
+		return;
 	} else {
 		m_inputs[portIndex]->setVisible(true);
 		m_inputs[portIndex]->setText("0.0");
+		return;
 	}
 }
 

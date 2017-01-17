@@ -103,10 +103,12 @@ void CapsulePrimitiveDataModel::setInData(std::shared_ptr<NodeData> _data, PortI
 		if(_portIndex == 1)
 		{
 			m_startPos = vecdata->vector();
+			return;
 		}
 		else if(_portIndex == 2)
 		{
 			m_endPos = vecdata->vector();
+			return;
 		}
 	}
 	auto szdata = std::dynamic_pointer_cast<ScalarData>(_data);
@@ -154,7 +156,7 @@ std::vector<QWidget *> CapsulePrimitiveDataModel::embeddedWidget()
 std::string CapsulePrimitiveDataModel::getShaderCode()
 {
   if(m_transform == "")
-		return "sdCapsule(_position, vec3(" + m_startPos.m_x + ", " + m_startPos.m_y + ", " + m_startPos.m_z + "), vec3(" + m_endPos.m_x + ", " + m_endPos.m_y + ", " + m_endPos.m_z + "), " + m_r->text().toStdString() + ",  vec3(clamp(" + m_color.m_x + ", 0.0, 1.0), clamp(" + m_color.m_y + ", 0.0, 1.0), clamp(" +m_color.m_z + ", 0.0, 1.0)))";
+		return "sdCapsule(_position, vec3(" + m_startPos.m_x + ", " + m_startPos.m_y + ", " + m_startPos.m_z + "), vec3(" + m_endPos.m_x + ", " + m_endPos.m_y + ", " + m_endPos.m_z + "), " + m_r->text().toStdString() + ",  vec3(" + m_color.m_x + ", " + m_color.m_y + ", " + m_color.m_z + "))";
 	else
-		return "sdCapsule(vec3(" + m_transform + " * vec4(_position, 1.0)).xyz, vec3(" + m_startPos.m_x + ", " + m_startPos.m_y + ", " + m_startPos.m_z + "), vec3(" + m_endPos.m_x + ", " + m_endPos.m_y + ", " + m_endPos.m_z + "), " + m_r->text().toStdString() + ",  vec3(clamp(" + m_color.m_x + ", 0.0, 1.0), clamp(" + m_color.m_y + ", 0.0, 1.0), clamp(" +m_color.m_z + ", 0.0, 1.0)))";
+		return "sdCapsule(vec3(" + m_transform + " * vec4(_position, 1.0)).xyz, vec3(" + m_startPos.m_x + ", " + m_startPos.m_y + ", " + m_startPos.m_z + "), vec3(" + m_endPos.m_x + ", " + m_endPos.m_y + ", " + m_endPos.m_z + "), " + m_r->text().toStdString() + ",  vec3(" + m_color.m_x + ", " + m_color.m_y + ", " + m_color.m_z + "))";
 }
