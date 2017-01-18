@@ -134,9 +134,16 @@ VectorDataModel::VectorDataModel() :
 
 void VectorDataModel::valueEdit(QString const)
 {
-	m_v = std::make_shared<VectorData>(m_x->text().toStdString(),
-																		 m_y->text().toStdString(),
-																		 m_z->text().toStdString());
+	std::string x = m_x->text().toStdString();
+	std::string y = m_y->text().toStdString();
+	std::string z = m_z->text().toStdString();
+	if(m_x->text().isEmpty())
+		x = "0.0";
+	if(m_y->text().isEmpty())
+		y = "0.0";
+	if(m_z->text().isEmpty())
+		z = "0.0";
+	m_v = std::make_shared<VectorData>(x, y, z);
 	emit dataUpdated(0);
 }
 

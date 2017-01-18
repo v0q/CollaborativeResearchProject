@@ -58,6 +58,7 @@ namespace hsitho {
 		std::string evaluate(const std::string &_expression, const std::string &_prev = "", const int &_copyNum = -1, const unsigned int &_gen = 0);
 		std::string evaluatePostFix(std::vector<std::string> outputQueue);
 		std::string getUnknowns();
+		bool checkSpaces(char lhs, char rhs);
 		void setUnknowns(const std::string &_expression);
 		std::string replaceUnknowns(const std::string &_expression);
 		void flushUnknowns();

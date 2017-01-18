@@ -10,21 +10,6 @@
 #include "nodes/CollapsedNodeDataModel.hpp"
 #include "SceneWindow.hpp"
 
-
-void printBranch(Branch _b, int _level, int _bn)
-{
-  if(_b.m_sc != "")
-  {
-    std::cout << "L" << _level << " - B" << _bn << ":\n";
-    std::cout << _b.m_sc << "\n";
-  }
-  int i = 0;
-  for(auto &e : _b.m_branches)
-  {
-    printBranch(e, _level + 1, i);
-    ++i;
-  }
-}
 namespace hsitho
 {
   SceneWindow::SceneWindow(QWidget *_parent) :
@@ -34,7 +19,8 @@ namespace hsitho
 		m_cam(glm::vec4(0.f, 0.132164f, 0.991228f, 0.f)),
 		m_camU(glm::vec3(0.f, 1.f, 0.f)),
 		m_camL(glm::vec3(1.f, 0.f, 0.f)),
-		m_camDist(7.566f)
+//		m_camDist(7.566f)
+		m_camDist(15.f)
   {
     std::ifstream s("shaders/shader.begin");
     std::ifstream e("shaders/shader.end");
@@ -129,8 +115,8 @@ namespace hsitho
   void SceneWindow::paintGL()
   {
 		const qreal retinaScale = devicePixelRatio();
-		GLfloat resolution[] = {width() * (float)retinaScale / 4.f, height() * (float)retinaScale / 4.f};
-    glViewport(0, 0, width() * retinaScale, height() * retinaScale);
+		GLfloat resolution[] = {width() * (float)retinaScale, height() * (float)retinaScale};
+		glViewport(0, 0, width() * retinaScale, height() * retinaScale);
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -192,13 +178,14 @@ namespace hsitho
 
       if(shadercode != "")
       {
-        std::string fragmentShader = m_shaderStart;
+				std::string fragmentShader = m_shaderStart;
 
 				fragmentShader += hsitho::Expressions::getUnknowns();
 				fragmentShader += "pos = ";
 				fragmentShader += hsitho::Expressions::replaceUnknowns(shadercode);
-				std::cout << "Shader code: " << hsitho::Expressions::replaceUnknowns(shadercode) << "\n";
-        fragmentShader += ";";
+				fragmentShader += ";";
+				std::cout << hsitho::Expressions::getUnknowns() << "\n";
+				std::cout << hsitho::Expressions::replaceUnknowns(shadercode) << "\n";
 
         fragmentShader += m_shaderEnd;
 

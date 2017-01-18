@@ -186,6 +186,7 @@ vec4 opBlend(vec4 a, vec4 b, float k)
 {
   float h = clamp(0.5+0.5*(b.x-a.x)/k, 0.0, 1.0);
   float d = mix(b.x, a.x, h) - k*h*(1.0-h);
+//  return (1 - k)*a + k*b;
   return vec4(d, lerp(a, b, h));
 }
 
@@ -221,7 +222,8 @@ vec4 map(vec3 _position)
 //                                           0, 0, 0, 1) * vec4(_position, 1.0)), 0.6, vec3(clamp(-1, 0, 1), 0, 0)));
 //  _position = opRepetition(_position, vec3(4.0, 4.0, 4.0));
 
-  pos = opUnion(pos, opSubtraction(opSubtraction(sdCappedCylinder(vec3(mat4x4(1.0000, 0.0000, 0.0000, 0.0000, 0.0000, 1.0000, 0.0000, 0.0000, 0.0000, 0.0000, 1.0000, 0.0000, 0.0000, -0.6000, 0.0000, 1.0000) * vec4(_position, 1.0)).xyz, vec2(2.5*0.7, 0.4*2.0), vec3(0.811765, 0.854902, 0.847059)),sdCappedCylinder(vec3(mat4x4(1.0000, 0.0000, 0.0000, 0.0000, 0.0000, 1.0000, 0.0000, 0.0000, 0.0000, 0.0000, 1.0000, 0.0000, 0.0000, -0.6000, 0.0000, 1.0000) * vec4(_position, 1.0)).xyz, vec2(2.5*0.9, 0.4), vec3(0.811765, 0.854902, 0.847059))),opSubtraction(opSubtraction(sdCappedCylinder(vec3(mat4x4(1.0000, 0.0000, 0.0000, 0.0000, 0.0000, 1.0000, 0.0000, 0.0000, 0.0000, 0.0000, 1.0000, 0.0000, 0.0000, 0.6000, 0.0000, 1.0000) * vec4(_position, 1.0)).xyz, vec2(2.5*0.7, 0.4*2.0), vec3(0.811765, 0.854902, 0.847059)),sdCappedCylinder(vec3(mat4x4(1.0000, 0.0000, 0.0000, 0.0000, 0.0000, 1.0000, 0.0000, 0.0000, 0.0000, 0.0000, 1.0000, 0.0000, 0.0000, 0.6000, 0.0000, 1.0000) * vec4(_position, 1.0)).xyz, vec2(2.5*0.9, 0.4), vec3(0.811765, 0.854902, 0.847059))),opSubtraction(sdCapsule(_position, vec3(0.0000, 0.0000, 0.0000), vec3(0.0000, 0.0000, 0.0000), 1.0,  vec3(0.811765, 0.854902, 0.847059)),opBlend(sdCappedCylinder(_position, vec2(2.5, 0.4), vec3(0.811765, 0.854902, 0.847059)),sdCappedCylinder(_position, vec2(2.5*0.3, 0.4+0.2), vec3(0.811765, 0.854902, 0.847059)), 0.6)))));
+  pos = opBlend(sdBox(_position, vec3(1.0, 1.0, 1.0), vec3(1.0, 1.0, 1.0)), sdTorus(_position + vec3(1.0, 0.0, 0.0), vec2(2.0, 0.5), vec3(0.0, 1.0, 0.0)), abs(sin(u_GlobalTime/10.f)));
+//  pos = opUnion(pos, opSubtraction(opSubtraction(sdCappedCylinder(vec3(mat4x4(1.0000, 0.0000, 0.0000, 0.0000, 0.0000, 1.0000, 0.0000, 0.0000, 0.0000, 0.0000, 1.0000, 0.0000, 0.0000, -0.6000, 0.0000, 1.0000) * vec4(_position, 1.0)).xyz, vec2(2.5*0.7, 0.4*2.0), vec3(0.811765, 0.854902, 0.847059)),sdCappedCylinder(vec3(mat4x4(1.0000, 0.0000, 0.0000, 0.0000, 0.0000, 1.0000, 0.0000, 0.0000, 0.0000, 0.0000, 1.0000, 0.0000, 0.0000, -0.6000, 0.0000, 1.0000) * vec4(_position, 1.0)).xyz, vec2(2.5*0.9, 0.4), vec3(0.811765, 0.854902, 0.847059))),opSubtraction(opSubtraction(sdCappedCylinder(vec3(mat4x4(1.0000, 0.0000, 0.0000, 0.0000, 0.0000, 1.0000, 0.0000, 0.0000, 0.0000, 0.0000, 1.0000, 0.0000, 0.0000, 0.6000, 0.0000, 1.0000) * vec4(_position, 1.0)).xyz, vec2(2.5*0.7, 0.4*2.0), vec3(0.811765, 0.854902, 0.847059)),sdCappedCylinder(vec3(mat4x4(1.0000, 0.0000, 0.0000, 0.0000, 0.0000, 1.0000, 0.0000, 0.0000, 0.0000, 0.0000, 1.0000, 0.0000, 0.0000, 0.6000, 0.0000, 1.0000) * vec4(_position, 1.0)).xyz, vec2(2.5*0.9, 0.4), vec3(0.811765, 0.854902, 0.847059))),opSubtraction(sdCapsule(_position, vec3(0.0000, 0.0000, 0.0000), vec3(0.0000, 0.0000, 0.0000), 1.0,  vec3(0.811765, 0.854902, 0.847059)),opBlend(sdCappedCylinder(_position, vec2(2.5, 0.4), vec3(0.811765, 0.854902, 0.847059)),sdCappedCylinder(_position, vec2(2.5*0.3, 0.4+0.2), vec3(0.811765, 0.854902, 0.847059)), 0.6)))));
 //    pos = opUnion(
 //    sdBox(vec3(vec4(_position, 1.0)).xyz,
 //    vec3(0.5, 0.2, 0.5),

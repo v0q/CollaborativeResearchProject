@@ -13,10 +13,20 @@ namespace hsitho {
       while((pos = _expression.find("*+")) != std::string::npos) {
         _expression.replace(pos, 2, "*");
       }
-      while((pos = _expression.find("*-")) != std::string::npos) {
-        _expression.replace(pos, 2, "*");
-        _expression.insert(0, "-");
-      }
+//      while((pos = _expression.find("*-")) != std::string::npos) {
+//				size_t cos = _expression.find("cos(", 0);
+//				size_t start = no.find("(", cos) + 1;
+//				size_t end = no.find(")", cos);
+//				size_t n = std::count(no.begin() + start, no.begin() + end, '(');
+//				while(n > 0) {
+//					end = no.find(")", end + 1);
+//					--n;
+//				}
+//				if(pos < start || pos > end) {
+//					_expression.replace(pos, 2, "*");
+//					_expression.insert(0, "-");
+//				}
+//      }
       while((pos = _expression.find("--")) != std::string::npos) {
         _expression.replace(pos, 2, "+");
       }
@@ -31,6 +41,11 @@ namespace hsitho {
 			}
     }
 
+		bool checkSpaces(char lhs, char rhs)
+		{
+			return (lhs == rhs) && (lhs == ' ');
+		}
+
     std::string addSpaces(const std::string &_expression) {
       std::string o = _expression;
       std::ostringstream newOutput;
@@ -40,30 +55,54 @@ namespace hsitho {
         size_t minus = o.find("-");
         size_t multiply = o.find("*");
 				size_t divide = o.find("/");
-        if(plus == std::string::npos && minus == std::string::npos && multiply == std::string::npos && divide == std::string::npos) {
+				size_t rb = o.find("(");
+				size_t lb = o.find(")");
+				if(plus == std::string::npos && minus == std::string::npos &&
+					 multiply == std::string::npos && divide == std::string::npos &&
+					 rb == std::string::npos && lb == std::string::npos ) {
           parsed = true;
-        }	else if(plus < minus && plus < multiply && plus < divide) {
+				}	else if(rb < lb && rb < plus && rb < minus && rb < multiply && rb < divide) {
+					newOutput << o.substr(0, rb) << " ( ";
+					o.erase(0, rb + 1);
+				}	else if(lb < rb && lb < plus && lb < minus && lb < multiply && lb < divide) {
+					newOutput << o.substr(0, lb) << " ) ";
+					o.erase(0, lb + 1);
+				} else if(plus < minus && plus < multiply && plus < divide && plus < rb && plus < lb) {
           newOutput << o.substr(0, plus) << " + ";
           o.erase(0, plus + 1);
-        } else if(minus < plus && minus < multiply && minus < divide) {
-          std::string d = newOutput.str();
-          if((newOutput.str().find("* ") == newOutput.str().length() - 2 || newOutput.str().find("/ ") == newOutput.str().length() - 2) && minus == 0) {
-            newOutput << o.substr(0, minus) << "-";
-          } else {
-            newOutput << o.substr(0, minus) << " - ";
-          }
-          o.erase(0, minus + 1);
-        } else if(multiply < plus && multiply < minus && multiply < divide) {
+				} else if(minus < plus && minus < multiply && minus < divide && minus < rb && minus < lb) {
+					if((newOutput.str().rfind("( ") == newOutput.str().length() - 2 || newOutput.str().rfind("* ") == newOutput.str().length() - 2 || newOutput.str().rfind("/ ") == newOutput.str().length() - 2) && minus == 0) {
+						newOutput << o.substr(0, minus) << "-";
+					} else {
+						newOutput << o.substr(0, minus) << " - ";
+					}
+					o.erase(0, minus + 1);
+				} else if(multiply < plus && multiply < minus && multiply < divide && multiply < rb && multiply < lb) {
           newOutput << o.substr(0, multiply) <<  " * ";
           o.erase(0, multiply + 1);
-        } else if(divide < plus && divide < multiply && divide < minus) {
+				} else if(divide < plus && divide < multiply && divide < minus && divide < rb && divide < lb) {
           newOutput << o.substr(0, divide) << " / ";
           o.erase(0, divide + 1);
-        }
+        } 
       } while(!parsed);
 
 			newOutput << o;
 			std::string no = newOutput.str();
+
+			parsed = false;
+			do {
+				size_t cos = no.find("cos (", 0);
+				parsed = true;
+				if(cos != std::string::npos) {
+					no.replace(cos, 5, "cos(");
+					parsed = false;
+				}
+				size_t sin = no.find("sin (", 0);
+				if(sin != std::string::npos) {
+					no.replace(sin, 5, "sin(");
+					parsed = false;
+				}
+			} while(!parsed);
 
 			parsed = false;
 			size_t cos = 0;
@@ -76,6 +115,11 @@ namespace hsitho {
 				}	else if(cos < sin) {
 					size_t start = no.find("(", cos) + 1;
 					size_t end = no.find(")", cos);
+					size_t n = std::count(no.begin() + start, no.begin() + end, '(');
+					while(n > 0) {
+						end = no.find(")", end + 1);
+						--n;
+					}
 					size_t l = end - start;
 					no.replace(start, l, evaluate(no.substr(start, l), "" ,-1, 1));
 					end = no.find(")", cos);
@@ -93,6 +137,11 @@ namespace hsitho {
 				} else {
 					size_t start = no.find("(", sin) + 1;
 					size_t end = no.find(")", sin);
+					size_t n = std::count(no.begin() + start, no.begin() + end, '(');
+					while(n > 0) {
+						end = no.find(")", end + 1);
+						--n;
+					}
 					size_t l = end - start;
 					no.replace(start, l, evaluate(no.substr(start, l), "", -1, 1));
 					end = no.find(")", sin);
@@ -127,6 +176,10 @@ namespace hsitho {
 			if(no.find(" ") == 0) {
 				no.erase(0, 1);
 			}
+
+			std::string::iterator new_end = std::unique(no.begin(), no.end(), checkSpaces);
+			no.erase(new_end, no.end());
+
 			return no;
 		}
 
@@ -134,6 +187,14 @@ namespace hsitho {
 		{
       // Generate postfix notation for the expression
 			std::string exp = _expression;
+
+			while(exp.rfind(" ") == exp.length() - 1) {
+				exp.erase(exp.end() - 1);
+			}
+			while(exp.find(" ") == 0) {
+				exp.erase(0, 1);
+			}
+
 			if(exp.find("- ") == 0) {
 				exp.erase(1, 1);
 			}
@@ -208,11 +269,9 @@ namespace hsitho {
 			// Evaluate the postfix expression
 			std::string s = evaluatePostFix(outputQueue);
       if(s.find("+") == 0)
-        s.erase(0, 1);
+				s.erase(0, 1);
 
-			std::string derp = s;
-
-      s = addSpaces(s);
+			s = addSpaces(s);
       std::string finalOutput;
       if(s != _prev) {
 				finalOutput = evaluate(s, s, _copyNum, 1);
@@ -223,8 +282,8 @@ namespace hsitho {
 				setUnknowns(addSpaces(finalOutput));
 			}
 
-      std::string::iterator end_pos = std::remove(finalOutput.begin(), finalOutput.end(), ' ');
-      finalOutput.erase(end_pos, finalOutput.end());
+			std::string::iterator end_pos = std::remove(finalOutput.begin(), finalOutput.end(), ' ');
+			finalOutput.erase(end_pos, finalOutput.end());
 
       return finalOutput;
     }
@@ -242,28 +301,28 @@ namespace hsitho {
 						float sineval = std::sin(boost::lexical_cast<float>(o.substr(startPos, o.find(")", pos) - startPos)));
 						std::ostringstream ss;
 						ss << std::fixed << std::setprecision(4) << "-" << sineval;
-						stack.push_back(ss.str());
+						stack.push_back(o.substr(0, pos) + ss.str() + o.substr(o.find(")", pos) + 1));
 						continue;
 					} else if((pos = o.find("sin(")) != std::string::npos) {
 						unsigned int startPos = pos+4;
 						float sineval = std::sin(boost::lexical_cast<float>(o.substr(startPos, o.find(")", pos) - startPos)));
 						std::ostringstream ss;
 						ss << std::fixed << std::setprecision(4) << sineval;
-						stack.push_back(ss.str());
+						stack.push_back(o.substr(0, pos) + ss.str() + o.substr(o.find(")", pos) + 1));
 						continue;
 					} else if((pos = o.find("-cos(")) != std::string::npos) {
 						unsigned int startPos = pos+5;
 						float cosineval = std::cos(boost::lexical_cast<float>(o.substr(startPos, o.find(")", pos) - startPos)));
 						std::ostringstream ss;
 						ss << std::fixed << std::setprecision(4) << "-" << cosineval;
-						stack.push_back(ss.str());
+						stack.push_back(o.substr(0, pos) + ss.str() + o.substr(o.find(")", pos) + 1));
 						continue;
 					} else if((pos = o.find("cos(")) != std::string::npos) {
 						unsigned int startPos = pos+4;
 						float cosineval = std::cos(boost::lexical_cast<float>(o.substr(startPos, o.find(")", pos) - startPos)));
 						std::ostringstream ss;
 						ss << std::fixed << std::setprecision(4) << cosineval;
-						stack.push_back(ss.str());
+						stack.push_back(o.substr(0, pos) + ss.str() + o.substr(o.find(")", pos) + 1));
 						continue;
 					} else {
 						float val = boost::lexical_cast<float>(o);
@@ -318,14 +377,48 @@ namespace hsitho {
                     while(!parsed) {
                       bool parsed2 = false;
                       std::string otherValCpy(vals[otherValInd]);
-                      plus = curValCpy.find("+", 1);
-                      minus = curValCpy.find("-", 1);
+											size_t cos = curValCpy.find("cos(", 0);
+											size_t sin = curValCpy.find("sin(", 0);
+											plus = curValCpy.find("+", 1);
+											minus = curValCpy.find("-", 1);
+											if(cos != std::string::npos || sin != std::string::npos ) {
+												size_t start = std::min(curValCpy.find("(", sin) + 1, curValCpy.find("(", cos) + 1);
+												size_t end = std::min(curValCpy.find(")", sin), curValCpy.find(")", cos));
+												size_t n = std::count(curValCpy.begin() + start, curValCpy.begin() + end, '(');
+												while(n > 0) {
+													end = curValCpy.find(")", end + 1);
+													--n;
+												}
+												while(plus > start && plus < end) {
+													plus = curValCpy.find("+", plus + 1);
+												}
+												while(minus > start && minus < end) {
+													minus = curValCpy.find("+", minus + 1);
+												}
+											}
                       if(plus != std::string::npos || minus != std::string::npos) {
                         size_t plus2;
                         size_t minus2;
-                        while(!parsed2) {
-                          plus2 = otherValCpy.find("+", 1);
-                          minus2 = otherValCpy.find("-", 1);
+												while(!parsed2) {
+													size_t cos2 = otherValCpy.find("cos(", 0);
+													size_t sin2 = otherValCpy.find("sin(", 0);
+													plus2 = otherValCpy.find("+", 1);
+													minus2 = otherValCpy.find("-", 1);
+													if(cos2 != std::string::npos || sin2 != std::string::npos ) {
+														size_t start2 = std::min(otherValCpy.find("(", sin2) + 1, otherValCpy.find("(", cos2) + 1);
+														size_t end2 = std::min(otherValCpy.find(")", sin2), otherValCpy.find(")", cos2));
+														size_t n2 = std::count(otherValCpy.begin() + start2, otherValCpy.begin() + end2, '(');
+														while(n2 > 0) {
+															end2 = otherValCpy.find(")", end2 + 1);
+															--n2;
+														}
+														while(plus2 > start2 && plus2 < end2) {
+															plus2 = otherValCpy.find("+", plus2 + 1);
+														}
+														while(minus2 > start2 && minus2 < end2) {
+															minus2 = otherValCpy.find("+", minus2 + 1);
+														}
+													}
                           if(plus2 != std::string::npos || minus2 != std::string::npos) {
                             std::string val = otherValCpy.substr(0, std::min(plus2, minus2)) + "*" + curValCpy.substr(0, std::min(plus, minus));
                             parseExpression(val);
@@ -349,10 +442,27 @@ namespace hsitho {
                         parsed2 = false;
                         std::string otherValCpy(vals[otherValInd]);
                         size_t plus2;
-                        size_t minus2;
-                        while(!parsed2) {
-                          plus2 = otherValCpy.find("+", 1);
-                          minus2 = otherValCpy.find("-", 1);
+												size_t minus2;
+												while(!parsed2) {
+													size_t cos2 = otherValCpy.find("cos(", 0);
+													size_t sin2 = otherValCpy.find("sin(", 0);
+													plus2 = otherValCpy.find("+", 1);
+													minus2 = otherValCpy.find("-", 1);
+													if(cos2 != std::string::npos || sin2 != std::string::npos ) {
+														size_t start2 = std::min(otherValCpy.find("(", sin2) + 1, otherValCpy.find("(", cos2) + 1);
+														size_t end2 = std::min(otherValCpy.find(")", sin2), otherValCpy.find(")", cos2));
+														size_t n2 = std::count(otherValCpy.begin() + start2, otherValCpy.begin() + end2, '(');
+														while(n2 > 0) {
+															end2 = otherValCpy.find(")", end2 + 1);
+															--n2;
+														}
+														while(plus2 > start2 && plus2 < end2) {
+															plus2 = otherValCpy.find("+", plus2 + 1);
+														}
+														while(minus2 > start2 && minus2 < end2) {
+															minus2 = otherValCpy.find("+", minus2 + 1);
+														}
+													}
                           if(plus2 != std::string::npos || minus2 != std::string::npos) {
                             std::string val = otherValCpy.substr(0, std::min(plus2, minus2)) + "*" + curValCpy.substr(0, std::min(plus, minus));
                             parseExpression(val);

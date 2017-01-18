@@ -118,7 +118,7 @@ class BlendDataModel : public NodeDataModel
   Q_OBJECT
 
 public:
-
+	BlendDataModel();
   virtual ~BlendDataModel() {}
 
   QString caption() const override
@@ -131,16 +131,29 @@ public:
     return QString("Blend");
   }
 
-  void save(Properties &p) const override { p.put("model_name", name()); }
+	void save(Properties &p) const override {
+		p.put("model_name", name());
+		p.put("blend", m_blend->text());
+	}
+	void restore(const Properties &p) override {
+		m_blend->setText(p.values().find("blend").value().toString());
+	}
 
   unsigned int nPorts(PortType portType) const override;
   NodeDataType dataType(PortType portType, PortIndex portIndex) const override;
 
   std::shared_ptr<NodeData> outData(PortIndex port) override { return nullptr; }
   void setInData(std::shared_ptr<NodeData>, int) override {}
-  std::vector<QWidget *> embeddedWidget() override { return std::vector<QWidget *>(); }
+	std::vector<QWidget *> embeddedWidget() override { return std::vector<QWidget *>{m_blend}; }
 
   DFNodeType getNodeType() const override { return DFNodeType::MIX; }
   std::string getShaderCode() override { return "opBlend("; }
-  std::string getExtraParams() const override { return ", 0.6"; }
+	std::string getExtraParams() const override {
+		if(m_blend->text().isEmpty())
+			return ", 0.0";
+		else
+			return ", " + m_blend->text().toStdString();
+	}
+private:
+	QLineEdit *m_blend;
 };
