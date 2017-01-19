@@ -184,8 +184,6 @@ namespace hsitho
 				fragmentShader += "pos = ";
 				fragmentShader += hsitho::Expressions::replaceUnknowns(shadercode);
 				fragmentShader += ";";
-				std::cout << hsitho::Expressions::getUnknowns() << "\n";
-				std::cout << hsitho::Expressions::replaceUnknowns(shadercode) << "\n";
 
         fragmentShader += m_shaderEnd;
 

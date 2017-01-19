@@ -134,5 +134,5 @@ std::string SpherePrimitiveDataModel::getShaderCode()
 	if(m_transform == "")
 		return "sdSphere(_position, " + m_size->text().toStdString() + ", vec3(clamp(" + m_color.m_x + ", 0.0, 1.0), clamp(" + m_color.m_y + ", 0.0, 1.0), clamp(" + m_color.m_z + ", 0.0, 1.0)))";
 	else
-		return "sdSphere(vec3(" + m_transform + " * vec4(_position, 1.0)).xyz, " + m_size->text().toStdString() + ", vec3(clamp(" + m_color.m_x + ", 0.0, 1.0), clamp(" + m_color.m_y + ", 0.0, 1.0), clamp(" + m_color.m_z + ", 0.0, 1.0)))";
+		return "sdSphere(vec3(" + m_transform + " * vec4(_position, 1.0)).xyz, " + m_size->text().toStdString() + ", vec3(" + m_color.m_x + ", " + m_color.m_y + ", " + m_color.m_z + "))";
 }

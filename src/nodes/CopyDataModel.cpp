@@ -22,6 +22,12 @@ CopyDataModel::CopyDataModel() :
 void CopyDataModel::save(Properties &p) const
 {
 	p.put("model_name", name());
+	p.put("num_copies", m_cp->text());
+}
+
+void CopyDataModel::restore(const Properties &p)
+{
+	m_cp->setText(p.values().find("num_copies").value().toString());
 }
 
 void CopyDataModel::valueEdit(QString const)

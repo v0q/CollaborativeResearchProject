@@ -187,6 +187,39 @@ namespace hsitho {
 		{
       // Generate postfix notation for the expression
 			std::string exp = _expression;
+			bool parsed = false;
+			size_t cos = 0;
+			size_t sin = 0;
+			do {
+				parsed = true;
+				if((cos = exp.find("cos( ", cos) != std::string::npos)) {
+					exp.replace(cos, 5, "cos(");
+					size_t start = exp.find("(", cos) + 1;
+					size_t end = exp.find(")", cos);
+					size_t n = std::count(exp.begin() + start, exp.begin() + end, '(');
+					while(n > 0) {
+						end = exp.find(")", end + 1);
+						--n;
+					}
+					size_t l = end - start;
+					exp.replace(start + l - 1, 2, ")");
+					parsed = false;
+				}
+
+				if((sin = exp.find("sin( ", sin) != std::string::npos)) {
+					exp.replace(sin, 5, "sin(");
+					size_t start = exp.find("(", sin) + 1;
+					size_t end = exp.find(")", sin);
+					size_t n = std::count(exp.begin() + start, exp.begin() + end, '(');
+					while(n > 0) {
+						end = exp.find(")", end + 1);
+						--n;
+					}
+					size_t l = end - start;
+					exp.replace(start + l - 1, 2, ")");
+					parsed = false;
+				}
+			} while(!parsed);
 
 			while(exp.rfind(" ") == exp.length() - 1) {
 				exp.erase(exp.end() - 1);

@@ -28,6 +28,7 @@ public:
 	}
 
 	void save(Properties &p) const override;
+	void restore(const Properties &p) override;
 	void valueEdit(QString const);
 
 	unsigned int nPorts(PortType portType) const override;
