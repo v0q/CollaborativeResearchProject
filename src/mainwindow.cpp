@@ -75,6 +75,7 @@ MainWindow::MainWindow(QWidget *_parent) :
 	DataModelRegistry::registerModel<CollapsedNodeDataModel>("Generic");
 
   connect(this, SIGNAL(nodeEditorModified(std::unordered_map<QUuid, std::shared_ptr<Node>>)), m_gl, SLOT(nodeChanged(std::unordered_map<QUuid, std::shared_ptr<Node>>)));
+	connect(m_ui->actionCompile, &QAction::triggered, this, &MainWindow::triggered);
 
   m_nodes = new FlowScene(this);
   m_flowView = new FlowView(m_nodes);
@@ -129,61 +130,24 @@ MainWindow::MainWindow(QWidget *_parent) :
 //	-sin(1.04666674*copyNum), 0, cos(1.04666674*copyNum), 0,
 //	0, 0, 0, 1,
 
-	Mat4f tt ("cos(u_GlobalTime)", "0", "sin(u_GlobalTime)", "0",
-						"0", "1", "0", "0",
-						"-sin(u_GlobalTime)", "0", "cos(u_GlobalTime)", "0",
-						"0", "0", "0", "1");
+	Mat4f testR(	"0.0001", "-0.5403", "0.8415", "0.0000",
+								"1.0000", "0.0001", "0.0000", "0.0000",
+								"-0.0001", "0.8415", "0.5403", "0.0000",
+								"0.0000", "0.0000", "0.0000", "1.0000");
 
-	Mat4f ttt("cos(1.04666674*copyNum)", "0", "sin(1.04666674*copyNum)", "0",
-						"0", "1", "0", "0",
-						"-sin(1.04666674*copyNum)", "0", "cos(1.04666674*copyNum)", "0",
-						"0", "0", "0", "1");
+	Mat4f test(	"cos(0.7850*copyNum)", "0.0000", "sin(0.7850*copyNum)", "0.0000",
+							"0.0000", "1.0000", "0.0000", "0.0000",
+							"-sin(0.7850*copyNum)", "0.0000", "cos(0.7850*copyNum)", "0.0000",
+							"0.0000", "0.0000", "0.0000", "1.0000");
 
-//	std::cout << hsitho::Expressions::evaluate("( -sin(u_GlobalTime) ) * ( cos(1.04666674*copyNum) ) + ( 0 ) * ( 0 ) + ( cos(u_GlobalTime) ) * ( -sin(1.04666674*copyNum) ) + ( 0 ) * ( 0 )") << "\n";
+
+//	std::string testStr("0.0001 * sin ( 0.7850 * 1 )");
+//	std::cout << testStr.find_first_of("( ") << " " << testStr.find_last_of("( ") << " " << testStr.length() - 1 << "\n";
+//	std::cout << hsitho::Expressions::evaluate("( 0.0001 ) * ( sin(0.7850*copyNum) ) + ( -0.5403 ) * ( 0.0000 ) + ( 0.8415 ) * ( cos(0.7850*copyNum) ) + ( 0.0000 ) * ( 0.0000 )", "", 1) << "\n";
+//	testR.setCpn(1);
+//	test.setCpn(1);
+//	(testR*test).print();
 //	exit(0);
-
-//	(tt*ttt).print();
-//	exit(0);
-
-  Mat4f t("1.0", "0.0", "0.0", "0.0",
-          "0.0", "1.0", "0.0", "0.0",
-          "0.0", "0.0", "1.0", "0.0",
-          "0.0", "0.0", "0.0", "1.0");
-	Mat4f rx("1.0", "0.0", "0.0",		"0.0",
-           "0.0", "a",	 "-b",	"0.0",
-           "0.0", "b",	 "a",			"0.0",
-           "0.0", "0.0", "0.0",		"1.0");
-  Mat4f ry("a",			 "0.0", "b",		 "0.0",
-           "0.0",		 "1.0", "0.0", "0.0",
-           "-b",		 "0.0", "a",		 "0.0",
-           "0.0",		 "0.0", "0.0", "1.0");
-  Mat4f rz("a",		"-b", "0.0", "0.0",
-           "b",		"a",			"0.0", "0.0",
-           "0.0", "0.0",	"1.0", "0.0",
-           "0.0", "0.0",	"0.0", "1.0");
-
-//	t = t*rx;
-//	t.print();
-//	t = t*ry;
-//	t.print();
-//	t = t*rz;
-//	t.print();
-
-//  std::string expr("cos(u_GlobalTime) * 1.0 + sin(u_GlobalTime) * 0.0 + 0.0 * 0.0 + 0.0 * 0.0");
-  std::string expr("( 6 + a ) * ( a - 2 + b )");
-//	std::string nextExpr("( " + hsitho::Expressions::evaluate(expr) + " ) * ( 3 + 10 + 6 * a )");
-//	std::string expr("cos(u_GlobalTime)+3 * 6");
-//	std::string expr("2 * ( cos(u_GlobalTime) + 6 * 4 )");
-
-//	std::cout << hsitho::Expressions::evaluate("( 0.0 ) * ( 0.0 ) + ( 0.0 ) * ( c ) + ( 1.0 ) * ( -s ) + ( 0.0 ) * ( 0.0 )") << "\n";
-//	std::cout << hsitho::Expressions::evaluate(expr) << "\n";
-//	std::cout << hsitho::Expressions::evaluate("( 6*a+a*a-6*2-a*2+6*b+a*b ) * ( 2 - c ) + 5") << "\n";
-//	std::cout << "\n" << hsitho::Expressions::evaluate("( 0.0 ) * ( 0.0 ) + ( 0.0 ) * ( -b ) + ( 1.0 ) * ( a ) + ( 0.0 ) * ( 0.0 )") << "\n";
-//	std::cout << hsitho::Expressions::evaluate("( -b*-b ) * ( a ) + ( a ) * ( b ) + ( -b*a ) * ( 0.0 ) + ( 0 ) * ( 0.0 )") << "\n";
-//	std::cout << hsitho::Expressions::evaluate("( -b*-b ) * ( a )") << "\n";
-//	std::cout << hsitho::Expressions::evaluate("sin(6) * cos(u_GlobalTime)") << "\n";
-//	exit(0);
-//	exit(EXIT_SUCCESS);
 }
 
 void MainWindow::keyPressEvent(QKeyEvent *_event)
@@ -194,6 +158,11 @@ void MainWindow::keyPressEvent(QKeyEvent *_event)
   {
     // escape key to quite
     case Qt::Key_Escape : QGuiApplication::exit(EXIT_SUCCESS); break;
+		case Qt::Key_B : {
+			if(_event->modifiers() == Qt::ShiftModifier) {
+				emit(nodeEditorModified(getNodes()));
+			}
+		} break;
     case Qt::Key_S : m_nodes->save(); break;
     case Qt::Key_L : m_nodes->load(); break;
     default: break;

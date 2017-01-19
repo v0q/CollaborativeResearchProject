@@ -93,6 +93,8 @@ deleteConnection(std::shared_ptr<Connection> connection)
 {
 	if(connection.get()->getPortIndex(PortType::Out) != -1)
 		connection.get()->getNode(PortType::Out).lock().get()->nodeState().removeConnection(PortType::Out, connection);
+	if(connection.get()->getPortIndex(PortType::In) != -1)
+		connection.get()->getNode(PortType::In).lock().get()->nodeState().removeConnection(PortType::In, connection);
 
   _connections.erase(connection->id());
 	emit nodeEditorChanged();

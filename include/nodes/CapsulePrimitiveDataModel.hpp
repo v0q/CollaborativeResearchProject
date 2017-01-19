@@ -42,19 +42,7 @@ public:
 
   DFNodeType getNodeType() const override { return DFNodeType::PRIMITIVE; }
   std::string getShaderCode() override;
-  void setTransform(const Mat4f &_t) override {
-    std::ostringstream ss;
-    for(int y = 0; y < 4; ++y)
-    {
-      for(int x = 0; x < 4; ++x)
-      {
-        if(x || y)
-          ss << ", ";
-        ss << _t.matrix(x, y);
-      }
-    }
-    m_transform = "mat4x4(" + ss.str() + ")";
-  }
+	void setTransform(const Mat4f &_t) override;
 
 private:
   Vec4f m_color;

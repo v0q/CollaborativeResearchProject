@@ -81,10 +81,11 @@ public:
 	unsigned int nPorts(PortType portType) const override;
 	NodeDataType dataType(PortType, PortIndex) const override;
 	std::shared_ptr<NodeData> outData(PortIndex port) override { return nullptr; }
-	std::vector<QWidget *> embeddedWidget() override { return std::vector<QWidget *>(); }
+	std::vector<QWidget *> embeddedWidget() override { return std::vector<QWidget *>{m_name}; }
 	DFNodeType getNodeType() const override { return DFNodeType::IO; }
 
 private:
+	QLineEdit *m_name;
 	NodeDataType m_dataType;
 };
 
@@ -113,12 +114,13 @@ public:
 	unsigned int nPorts(PortType portType) const override;
 	NodeDataType dataType(PortType, PortIndex) const override;
 	std::shared_ptr<NodeData> outData(PortIndex port) override;
-	std::vector<QWidget *> embeddedWidget() override { return std::vector<QWidget *>{m_default}; }
+	std::vector<QWidget *> embeddedWidget() override { return std::vector<QWidget *>{m_name, m_default}; }
 	DFNodeType getNodeType() const override { return DFNodeType::IO; }
 
 private:
 	bool m_var;
 	std::shared_ptr<ScalarData> m_v;
+	QLineEdit *m_name;
 	QLineEdit *m_default;
 };
 

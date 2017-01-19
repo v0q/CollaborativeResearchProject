@@ -35,11 +35,11 @@ private:
 
   hsitho::SceneWindow *m_gl;
   FlowScene *m_nodes;
-  FlowView *m_flowView;
-  //QColorDialogTester m_colorTester;
+	FlowView *m_flowView;
 
 public slots:
-  void nodeChanged() { emit(nodeEditorModified(getNodes())); }
+	void nodeChanged() { /*emit(nodeEditorModified(getNodes()));*/ }
+	void triggered(bool) { emit(nodeEditorModified(getNodes())); }
 signals:
   void nodeEditorModified(std::unordered_map<QUuid, std::shared_ptr<Node>> _nodes);
 };

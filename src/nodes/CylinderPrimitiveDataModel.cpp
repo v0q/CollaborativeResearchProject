@@ -2,6 +2,7 @@
 #include "CylinderPrimitiveDataModel.hpp"
 
 CylinderPrimitiveDataModel::CylinderPrimitiveDataModel() :
+	m_color(Vec4f("0.6", "0.6", "0.6", "1.0")),
 	m_r(new QLineEdit()),
 	m_height(new QLineEdit())
 {
@@ -121,10 +122,38 @@ void CylinderPrimitiveDataModel::setInData(std::shared_ptr<NodeData> _data, Port
 			return;
 		}
 	}
+
+	m_color = Vec4f("0.6", "0.6", "0.6", "1.0");
+
+	bool valid;
 	m_r->setVisible(true);
-	m_r->setText("1.0");
+	m_r->text().toFloat(&valid);
+	if(!valid)
+		m_r->setText("1.0");
+
 	m_height->setVisible(true);
-	m_height->setText("1.0");
+	m_height->text().toFloat(&valid);
+	if(!valid)
+		m_height->setText("1.0");
+}
+
+void CylinderPrimitiveDataModel::setTransform(const Mat4f &_t)
+{
+	std::ostringstream ss;
+	if(Mat4f() == _t) {
+		m_transform = "";
+		return;
+	}
+	for(int y = 0; y < 4; ++y)
+	{
+		for(int x = 0; x < 4; ++x)
+		{
+			if(x || y)
+				ss << ", ";
+			ss << hsitho::Expressions::evaluate(_t.matrix(x, y), "", m_copyNum);
+		}
+	}
+	m_transform = "mat4x4(" + ss.str() + ")";
 }
 
 std::vector<QWidget *> CylinderPrimitiveDataModel::embeddedWidget()
@@ -134,10 +163,8 @@ std::vector<QWidget *> CylinderPrimitiveDataModel::embeddedWidget()
 
 std::string CylinderPrimitiveDataModel::getShaderCode()
 {
-  if(m_transform == "")
-  {
-    m_transform = "mat4x4(cos(u_GlobalTime)*1.0+0, sin(u_GlobalTime)*1.0+0, 0, 2.5,	-sin(u_GlobalTime)*1.0+0, cos(u_GlobalTime)*1.0+0, 0, 0.600000024, 0, 0, 1, 0, 0, 0, 0, 1)";
-  }
-
-	return "sdCappedCylinder(vec3(" + m_transform + " * vec4(_position, 1.0)).xyz, vec2(" + m_r->text().toStdString() + ", " + m_height->text().toStdString() + "), vec3(clamp(" + m_color.m_x + ", 0.0, 1.0), clamp(" + m_color.m_y + ", 0.0, 1.0), clamp(" +m_color.m_z + ", 0.0, 1.0)))";
+	if(m_transform == "")
+		return "sdCappedCylinder(_position, vec2(" + m_r->text().toStdString() + ", " + m_height->text().toStdString() + "), vec3(" + m_color.m_x + ", " + m_color.m_y + ", " + m_color.m_z + "))";
+	else
+		return "sdCappedCylinder(vec3(" + m_transform + " * vec4(_position, 1.0)).xyz, vec2(" + m_r->text().toStdString() + ", " + m_height->text().toStdString() + "), vec3(" + m_color.m_x + ", " + m_color.m_y + ", " + m_color.m_z + "))";
 }

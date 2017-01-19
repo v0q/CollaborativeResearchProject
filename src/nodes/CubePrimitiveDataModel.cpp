@@ -2,6 +2,7 @@
 #include "CubePrimitiveDataModel.hpp"
 
 CubePrimitiveDataModel::CubePrimitiveDataModel() :
+	m_color(Vec4f("0.6", "0.6", "0.6", "1.0")),
 	m_dimensions(Vec4f("1.0", "1.0", "1.0", "1.0"))
 {
 
@@ -78,6 +79,8 @@ void CubePrimitiveDataModel::setInData(std::shared_ptr<NodeData> _data, int)
 		m_dimensions = vecdata->vector();
     return;
 	}
+	m_color = Vec4f("0.6", "0.6", "0.6", "1.0");
+	m_dimensions = Vec4f("1.0", "1.0", "1.0", "1.0");
 }
 
 void CubePrimitiveDataModel::setTransform(const Mat4f &_t)
@@ -107,7 +110,7 @@ std::vector<QWidget *> CubePrimitiveDataModel::embeddedWidget()
 std::string CubePrimitiveDataModel::getShaderCode()
 {
 	if(m_transform == "")
-		return "sdBox(_position, vec3(" + m_dimensions.m_x + ", " + m_dimensions.m_y + ", " + m_dimensions.m_z + "), vec3(clamp(" + m_color.m_x + ", 0.0, 1.0), clamp(" + m_color.m_y + ", 0.0, 1.0), clamp(" + m_color.m_z + ", 0.0, 1.0)))";
+		return "sdBox(_position, vec3(" + m_dimensions.m_x + ", " + m_dimensions.m_y + ", " + m_dimensions.m_z + "), vec3(" + m_color.m_x + ", " + m_color.m_y + ", " + m_color.m_z + "))";
 	else
-		return "sdBox(vec3(" + m_transform + " * vec4(_position, 1.0)).xyz, vec3(" + m_dimensions.m_x + ", " + m_dimensions.m_y + ", " + m_dimensions.m_z + "), vec3(clamp(" + m_color.m_x + ", 0.0, 1.0), clamp(" + m_color.m_y + ", 0.0, 1.0), clamp(" + m_color.m_z + ", 0.0, 1.0)))";
+		return "sdBox(vec3(" + m_transform + " * vec4(_position, 1.0)).xyz, vec3(" + m_dimensions.m_x + ", " + m_dimensions.m_y + ", " + m_dimensions.m_z + "), vec3(" + m_color.m_x + ", " + m_color.m_y + ", " + m_color.m_z + "))";
 }

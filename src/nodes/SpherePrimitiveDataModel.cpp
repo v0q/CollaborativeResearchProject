@@ -2,6 +2,7 @@
 #include "SpherePrimitiveDataModel.hpp"
 
 SpherePrimitiveDataModel::SpherePrimitiveDataModel() :
+	m_color(Vec4f("0.6", "0.6", "0.6", "1.0")),
   m_size(new QLineEdit)
 {
   auto d = new QDoubleValidator();
@@ -99,8 +100,13 @@ void SpherePrimitiveDataModel::setInData(std::shared_ptr<NodeData> _data, int)
     return;
   }
 
+	m_color = Vec4f("0.6", "0.6", "0.6", "1.0");
+
+	bool valid;
   m_size->setVisible(true);
-  m_size->setText("1.0");
+	m_size->text().toFloat(&valid);
+	if(!valid)
+		m_size->setText("1.0");
 }
 
 std::vector<QWidget *> SpherePrimitiveDataModel::embeddedWidget()
@@ -125,9 +131,8 @@ void SpherePrimitiveDataModel::setTransform(const Mat4f &_t)
 
 std::string SpherePrimitiveDataModel::getShaderCode()
 {
-  if(m_transform == "")
-  {
-    m_transform = "mat4x4(cos(u_GlobalTime)*1.0+0, sin(u_GlobalTime)*1.0+0, 0, 2.5,	-sin(u_GlobalTime)*1.0+0, cos(u_GlobalTime)*1.0+0, 0, 0.600000024, 0, 0, 1, 0, 0, 0, 0, 1)";
-  }
-  return "sdSphere(vec3(" + m_transform + " * vec4(_position, 1.0)).xyz, " + m_size->text().toStdString() + ", vec3(clamp(" + m_color.m_x + ", 0.0, 1.0), clamp(" + m_color.m_y + ", 0.0, 1.0), clamp(" + m_color.m_z + ", 0.0, 1.0)))";
+	if(m_transform == "")
+		return "sdSphere(_position, " + m_size->text().toStdString() + ", vec3(clamp(" + m_color.m_x + ", 0.0, 1.0), clamp(" + m_color.m_y + ", 0.0, 1.0), clamp(" + m_color.m_z + ", 0.0, 1.0)))";
+	else
+		return "sdSphere(vec3(" + m_transform + " * vec4(_position, 1.0)).xyz, " + m_size->text().toStdString() + ", vec3(" + m_color.m_x + ", " + m_color.m_y + ", " + m_color.m_z + "))";
 }

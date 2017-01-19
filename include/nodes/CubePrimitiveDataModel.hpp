@@ -3,15 +3,10 @@
 #include <QtCore/QObject>
 #include <QtWidgets/QLineEdit>
 #include <iostream>
-#include <QColorDialog>
 
 #include "nodeEditor/NodeDataModel.hpp"
 #include "nodes/DistanceFieldData.hpp"
 
-//------------------------------------------------------------------------------
-
-/// The model dictates the number of inputs and outputs for the Node.
-/// In this example it has no logic.
 class CubePrimitiveDataModel : public NodeDataModel
 {
   Q_OBJECT

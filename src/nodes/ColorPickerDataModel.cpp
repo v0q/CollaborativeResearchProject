@@ -112,7 +112,7 @@ void ColorPickerDataModel::setPalColor()
 {
   m_palColor.setColor(_label->backgroundRole(), current_color);
   _label->setPalette(m_palColor);
-  m_x->setText(QString::number(current_color.red() / 255.0));
+	m_x->setText(QString::number(current_color.red() / 255.0));
   m_y->setText(QString::number(current_color.green() / 255.0));
   m_z->setText(QString::number(current_color.blue() / 255.0));
 

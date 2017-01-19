@@ -10,30 +10,17 @@
 #include "nodes/CollapsedNodeDataModel.hpp"
 #include "SceneWindow.hpp"
 
-
-void printBranch(Branch _b, int _level, int _bn)
-{
-  if(_b.m_sc != "")
-  {
-    std::cout << "L" << _level << " - B" << _bn << ":\n";
-    std::cout << _b.m_sc << "\n";
-  }
-  int i = 0;
-  for(auto &e : _b.m_branches)
-  {
-    printBranch(e, _level + 1, i);
-    ++i;
-  }
-}
 namespace hsitho
 {
   SceneWindow::SceneWindow(QWidget *_parent) :
     GLWindow(_parent),
     m_shaderMan(ShaderManager::instance()),
 		m_outputNode(nullptr),
-		m_cam(glm::vec4(0.f, 0.f, 7.5f, 1.f)),
+		m_cam(glm::vec4(0.f, 0.132164f, 0.991228f, 0.f)),
 		m_camU(glm::vec3(0.f, 1.f, 0.f)),
-		m_camL(glm::vec3(1.f, 0.f, 0.f))
+		m_camL(glm::vec3(1.f, 0.f, 0.f)),
+//		m_camDist(7.566f)
+		m_camDist(15.f)
   {
     std::ifstream s("shaders/shader.begin");
     std::ifstream e("shaders/shader.end");
@@ -107,18 +94,29 @@ namespace hsitho
 			glm::mat4 rot = glm::rotate(glm::mat4(1.f), glm::radians(dx), m_camU);
 			rot = glm::rotate(rot, glm::radians(dy), -m_camL);
 
-			m_cam = rot * m_cam;
-			glm::vec3 d = glm::normalize(glm::vec3(-m_cam.x, -m_cam.y, -m_cam.z));
+			m_cam = glm::normalize(rot * m_cam);
+			glm::vec3 d = glm::vec3(-m_cam.x, -m_cam.y, -m_cam.z);
 			m_camU = glm::normalize(m_camU - d * glm::dot(m_camU, d));
 			m_camL = glm::normalize(glm::cross(m_camU, -d));
 		}
 	}
 
+	void SceneWindow::wheelEvent(QWheelEvent *_event)
+	{
+		int numDegrees = _event->delta() / 8;
+		int numSteps = numDegrees / 15;
+
+		if(_event->orientation() == Qt::Vertical) {
+			m_camDist -= numSteps*0.25f;
+		}
+		_event->accept();
+	}
+
   void SceneWindow::paintGL()
   {
 		const qreal retinaScale = devicePixelRatio();
-		GLfloat resolution[] = {width() * (float)retinaScale / 4.f, height() * (float)retinaScale / 4.f};
-    glViewport(0, 0, width() * retinaScale, height() * retinaScale);
+		GLfloat resolution[] = {width() * (float)retinaScale, height() * (float)retinaScale};
+		glViewport(0, 0, width() * retinaScale, height() * retinaScale);
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -136,7 +134,7 @@ namespace hsitho
     m_shaderMan->getProgram()->setAttributeBuffer(uvLocation, GL_FLOAT, 6*2*sizeof(float), 2, 0);
     m_shaderMan->getProgram()->setUniformValue("u_GlobalTime", getTimePassed());
     m_shaderMan->getProgram()->setUniformValueArray("u_Resolution", resolution, 1, 2);
-		m_shaderMan->getProgram()->setUniformValueArray("u_Camera", glm::value_ptr(m_cam), 1, 3);
+		m_shaderMan->getProgram()->setUniformValueArray("u_Camera", glm::value_ptr((m_camDist*m_cam)), 1, 3);
 		m_shaderMan->getProgram()->setUniformValueArray("u_CameraUp", glm::value_ptr(m_camU), 1, 3);
 
     glDrawArrays(GL_TRIANGLES, 0, 6);
@@ -165,10 +163,10 @@ namespace hsitho
       }
     }
     if(m_outputNode != nullptr)
-    {
-      Branch branches;
+		{
       std::string shadercode;
       Mat4f translation;
+			hsitho::Expressions::flushUnknowns();
       for(auto connection : m_outputNode->nodeState().connection(PortType::In, 0))
       {
         if(connection.get() && connection->getNode(PortType::Out).lock())
@@ -180,11 +178,12 @@ namespace hsitho
 
       if(shadercode != "")
       {
-        std::string fragmentShader = m_shaderStart;
+				std::string fragmentShader = m_shaderStart;
 
-        fragmentShader += "pos = ";
-        fragmentShader += shadercode;
-        fragmentShader += ";";
+				fragmentShader += hsitho::Expressions::getUnknowns();
+				fragmentShader += "pos = ";
+				fragmentShader += hsitho::Expressions::replaceUnknowns(shadercode);
+				fragmentShader += ";";
 
         fragmentShader += m_shaderEnd;
 
@@ -246,7 +245,6 @@ namespace hsitho
 					++i;
 					shadercode += recurseNodeTree(connection->getNode(PortType::Out).lock(), _t, connection->getPortIndex(PortType::Out), _cp);
 					if(_node->nodeDataModel()->getNodeType() == DFNodeType::MIX) {
-						std::cout << inConns.size() << "\n";
 						if(i < inConns.size())
 							shadercode += ",";
 						else

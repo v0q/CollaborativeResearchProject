@@ -134,9 +134,16 @@ VectorDataModel::VectorDataModel() :
 
 void VectorDataModel::valueEdit(QString const)
 {
-	m_v = std::make_shared<VectorData>(m_x->text().toStdString(),
-																		 m_y->text().toStdString(),
-																		 m_z->text().toStdString());
+	std::string x = m_x->text().toStdString();
+	std::string y = m_y->text().toStdString();
+	std::string z = m_z->text().toStdString();
+	if(m_x->text().isEmpty())
+		x = "0.0";
+	if(m_y->text().isEmpty())
+		y = "0.0";
+	if(m_z->text().isEmpty())
+		z = "0.0";
+	m_v = std::make_shared<VectorData>(x, y, z);
 	emit dataUpdated(0);
 }
 
@@ -220,9 +227,11 @@ void VectorDataModel::setInData(std::shared_ptr<NodeData> _data, PortIndex portI
 	if(data) {
 		m_inputs[portIndex]->setVisible(false);
 		m_inputs[portIndex]->setText(data->value().c_str());
+		return;
 	} else {
 		m_inputs[portIndex]->setVisible(true);
 		m_inputs[portIndex]->setText("0.0");
+		return;
 	}
 }
 
@@ -256,9 +265,11 @@ SineDataModel::SineDataModel() :
 
 void SineDataModel::valueEdit(QString const)
 {
-	try {
-		m_v = std::make_shared<ScalarData>(boost::lexical_cast<std::string>("sin(" + m_value->text().toStdString() + ")"));
-	} catch( const boost::bad_lexical_cast &) { std::cerr << "2\n"; exit(0); }
+	std::string val = m_value->text().toStdString();
+	if(m_value->text().isEmpty())
+		val = "0.0";
+
+	m_v = std::make_shared<ScalarData>("sin(" + val + ")");
 	emit dataUpdated(0);
 }
 
@@ -270,10 +281,13 @@ void SineDataModel::save(Properties &p) const
 
 void SineDataModel::restore(const Properties &p)
 {
-  m_value->setText(p.values().find("m_value").value().toString());
-	try {
-		m_v = std::make_shared<ScalarData>(boost::lexical_cast<std::string>("sin(" + m_value->text().toStdString() + ")"));
-	} catch( const boost::bad_lexical_cast &) { std::cerr << "3\n"; exit(0); }
+	m_value->setText(p.values().find("m_value").value().toString());
+
+	std::string val = m_value->text().toStdString();
+	if(m_value->text().isEmpty())
+		val = "0.0";
+
+	m_v = std::make_shared<ScalarData>("sin(" + val + ")");
 }
 
 unsigned int SineDataModel::nPorts(PortType portType) const
@@ -361,9 +375,12 @@ CosineDataModel::CosineDataModel() :
 
 void CosineDataModel::valueEdit(QString const)
 {
-	try {
-		m_v = std::make_shared<ScalarData>(boost::lexical_cast<std::string>("cos(" + m_value->text().toStdString() + ")"));
-	} catch( const boost::bad_lexical_cast &) { std::cerr << "4\n"; exit(0); }
+	std::string val = m_value->text().toStdString();
+	if(m_value->text().isEmpty())
+		val = "0.0";
+
+	m_v = std::make_shared<ScalarData>("cos(" + val + ")");
+
 	emit dataUpdated(0);
 }
 
@@ -376,9 +393,12 @@ void CosineDataModel::save(Properties &p) const
 void CosineDataModel::restore(const Properties &p)
 {
   m_value->setText(p.values().find("m_value").value().toString());
-	try {
-		m_v = std::make_shared<ScalarData>(boost::lexical_cast<std::string>("cos(" + m_value->text().toStdString() + ")"));
-	} catch(const boost::bad_lexical_cast &) { std::cerr << "5\n"; exit(0); }
+
+	std::string val = m_value->text().toStdString();
+	if(m_value->text().isEmpty())
+		val = "0.0";
+
+	m_v = std::make_shared<ScalarData>("cos(" + val + ")");
 }
 
 unsigned int CosineDataModel::nPorts(PortType portType) const
@@ -476,7 +496,14 @@ MultiplyDataModel::MultiplyDataModel() :
 
 void MultiplyDataModel::valueEdit(QString const)
 {
-	m_v = std::make_shared<ScalarData>(std::string(m_x->text().toStdString() + "*" + m_y->text().toStdString()));
+	std::string x = m_x->text().toStdString();
+	std::string y = m_y->text().toStdString();
+	if(m_x->text().isEmpty())
+		x = "0.0";
+	if(m_y->text().isEmpty())
+		y = "0.0";
+
+	m_v = std::make_shared<ScalarData>("( " + x + " ) * ( " + y + " )");
 	emit dataUpdated(0);
 }
 
@@ -492,7 +519,14 @@ void MultiplyDataModel::restore(const Properties &p)
   m_x->setText(p.values().find("m_x").value().toString());
   m_y->setText(p.values().find("m_y").value().toString());
 
-  m_v = std::make_shared<ScalarData>(std::string(m_x->text().toStdString() + "*" + m_y->text().toStdString()));
+	std::string x = m_x->text().toStdString();
+	std::string y = m_y->text().toStdString();
+	if(m_x->text().isEmpty())
+		x = "0.0";
+	if(m_y->text().isEmpty())
+		y = "0.0";
+
+	m_v = std::make_shared<ScalarData>("( " + x + " ) * ( " + y + " )");
 }
 
 unsigned int MultiplyDataModel::nPorts(PortType portType) const
@@ -600,7 +634,14 @@ DivideDataModel::DivideDataModel() :
 
 void DivideDataModel::valueEdit(QString const)
 {
-	m_v = std::make_shared<ScalarData>(std::string(m_x->text().toStdString() + "/" + m_y->text().toStdString()));
+	std::string x = m_x->text().toStdString();
+	std::string y = m_y->text().toStdString();
+	if(m_x->text().isEmpty())
+		x = "0.0";
+	if(m_y->text().isEmpty())
+		y = "0.0";
+
+	m_v = std::make_shared<ScalarData>("( " + x + " ) / ( " + y + " )");
 	emit dataUpdated(0);
 }
 
@@ -616,7 +657,14 @@ void DivideDataModel::restore(const Properties &p)
   m_x->setText(p.values().find("m_x").value().toString());
   m_y->setText(p.values().find("m_y").value().toString());
 
-  m_v = std::make_shared<ScalarData>(std::string(m_x->text().toStdString() + "/" + m_y->text().toStdString()));
+	std::string x = m_x->text().toStdString();
+	std::string y = m_y->text().toStdString();
+	if(m_x->text().isEmpty())
+		x = "0.0";
+	if(m_y->text().isEmpty())
+		y = "1.0";
+
+	m_v = std::make_shared<ScalarData>("( " + x + " ) / ( " + y + " )");
 }
 
 unsigned int DivideDataModel::nPorts(PortType portType) const
@@ -724,7 +772,14 @@ AdditionDataModel::AdditionDataModel() :
 
 void AdditionDataModel::valueEdit(QString const)
 {
-	m_v = std::make_shared<ScalarData>(std::string(m_x->text().toStdString() + "+" + m_y->text().toStdString()));
+	std::string x = m_x->text().toStdString();
+	std::string y = m_y->text().toStdString();
+	if(m_x->text().isEmpty())
+		x = "0.0";
+	if(m_y->text().isEmpty())
+		y = "0.0";
+
+	m_v = std::make_shared<ScalarData>("( " + x + " ) + ( " + y + " )");
 	emit dataUpdated(0);
 }
 
@@ -740,7 +795,14 @@ void AdditionDataModel::restore(const Properties &p)
 	m_x->setText(p.values().find("m_x").value().toString());
 	m_y->setText(p.values().find("m_y").value().toString());
 
-	m_v = std::make_shared<ScalarData>(std::string(m_x->text().toStdString() + "+" + m_y->text().toStdString()));
+	std::string x = m_x->text().toStdString();
+	std::string y = m_y->text().toStdString();
+	if(m_x->text().isEmpty())
+		x = "0.0";
+	if(m_y->text().isEmpty())
+		y = "0.0";
+
+	m_v = std::make_shared<ScalarData>("( " + x + " ) + ( " + y + " )");
 }
 
 unsigned int AdditionDataModel::nPorts(PortType portType) const
@@ -849,7 +911,14 @@ SubtractionDataModel::SubtractionDataModel() :
 
 void SubtractionDataModel::valueEdit(QString const)
 {
-	m_v = std::make_shared<ScalarData>(std::string(m_x->text().toStdString() + "-" + m_y->text().toStdString()));
+	std::string x = m_x->text().toStdString();
+	std::string y = m_y->text().toStdString();
+	if(m_x->text().isEmpty())
+		x = "0.0";
+	if(m_y->text().isEmpty())
+		y = "0.0";
+
+	m_v = std::make_shared<ScalarData>("( " + x + " ) - ( " + y + " )");
 	emit dataUpdated(0);
 }
 
@@ -865,7 +934,14 @@ void SubtractionDataModel::restore(const Properties &p)
 	m_x->setText(p.values().find("m_x").value().toString());
 	m_y->setText(p.values().find("m_y").value().toString());
 
-	m_v = std::make_shared<ScalarData>(std::string(m_x->text().toStdString() + "-" + m_y->text().toStdString()));
+	std::string x = m_x->text().toStdString();
+	std::string y = m_y->text().toStdString();
+	if(m_x->text().isEmpty())
+		x = "0.0";
+	if(m_y->text().isEmpty())
+		y = "0.0";
+
+	m_v = std::make_shared<ScalarData>("( " + x + " ) - ( " + y + " )");
 }
 
 unsigned int SubtractionDataModel::nPorts(PortType portType) const
