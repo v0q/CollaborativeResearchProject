@@ -6,10 +6,13 @@
 #include "nodeEditor/NodeDataModel.hpp"
 #include "nodes/DistanceFieldData.hpp"
 
-//------------------------------------------------------------------------------
+/// \file TranslateDataModel.hpp
+/// \brief Node for SDF translation, more comments on the functions can be found in CapsulePrimitiveDataModel.hpp as all of the nodes inherit from the NodeDataModel.
+///        Built around the NodeDataModel by Dimitry Pinaev [https://github.com/paceholder/nodeeditor]
+/// \authors Teemu Lindborg & Phil Gifford
+/// \version 1.0
+/// \date 22/01/17 Updated to NCCA Coding standard
 
-/// The model dictates the number of inputs and outputs for the Node.
-/// In this example it has no logic.
 class TranslateDataModel : public NodeDataModel
 {
 	Q_OBJECT

@@ -6,6 +6,14 @@
 #include "nodeEditor/NodeDataModel.hpp"
 #include "nodes/DistanceFieldData.hpp"
 
+/// \file ScaleDataModel.hpp
+/// \brief Node for SDF scaling, more comments on the functions can be found in CapsulePrimitiveDataModel.hpp as all of the nodes inherit from the NodeDataModel.
+///        Not finished due to scaling working differently with SDFs.
+///        Built around the NodeDataModel by Dimitry Pinaev [https://github.com/paceholder/nodeeditor]
+/// \authors Teemu Lindborg & Phil Gifford
+/// \version 1.0
+/// \date 22/01/17 Updated to NCCA Coding standard
+
 class ScaleDataModel : public NodeDataModel
 {
 	Q_OBJECT

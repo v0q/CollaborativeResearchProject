@@ -3,6 +3,13 @@
 #include "nodeEditor/NodeData.hpp"
 #include "ExpressionEvaluator.hpp"
 
+/// \file DistanceFieldData.hpp
+/// \brief All the data type specific classes and structs.
+///        Some are built around the NodeData class by Dimitry Pinaev [https://github.com/paceholder/nodeeditor]
+/// \authors Teemu Lindborg & Phil Gifford
+/// \version 1.0
+/// \date 22/01/17 Updated to NCCA Coding standard
+
 struct Vec4f
 {
   Vec4f() {}

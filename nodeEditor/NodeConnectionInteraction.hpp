@@ -6,6 +6,11 @@
 #include "Node.hpp"
 #include "Connection.hpp"
 
+/// @brief Node Editor
+/// Dimitry Pinaev.
+/// [Accessed November 2016]. Available from: https://github.com/paceholder/nodeeditor
+/// Modified by Teemu Lindborg & Phil Gifford
+
 /// Class performs various operations on the Node and Connection pair.
 /// An instance should be created on the stack and destroyed when
 /// the operation is completed

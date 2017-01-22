@@ -13,6 +13,11 @@ class Connection;
 class ConnectionGeometry;
 class Node;
 
+/// @brief Node Editor
+/// Dimitry Pinaev.
+/// [Accessed November 2016]. Available from: https://github.com/paceholder/nodeeditor
+/// Modified by Teemu Lindborg & Phil Gifford
+
 /// Graphic Object for connection. Adds itself to scene
 class ConnectionGraphicsObject
   : public QGraphicsObject

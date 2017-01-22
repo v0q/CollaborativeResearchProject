@@ -18,9 +18,6 @@ HEADERS += ./include/*.hpp \
            ./include/nodes/*.hpp \
            ./nodeEditor/*.hpp
 
-#SOURCES += ./calculator/*.cpp
-#HEADERS += ./calculator/*.hpp
-
 FORMS += ./ui/mainwindow.ui
 
 INCLUDEPATH += . ./include \
@@ -28,15 +25,14 @@ INCLUDEPATH += . ./include \
                ./nodeEditor \
                /usr/local/include
 OTHER_FILES += ./shaders/* \
-               ./libs/*
+               ./libs/* \
+               ./nodeEditor/README.md \
+               ./README.md
 
 #LIBS += -L./libs -lnodes
 
 OBJECTS_DIR = ./obj
 MOC_DIR = ./moc
-
-DISTFILES += shaders/crystalbeacon.frag \
-             shaders/raymarchprimitives.frag
 
 DEFINES += NODE_EDITOR_SHARED
 

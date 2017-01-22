@@ -7,6 +7,10 @@
 
 #include <iostream>
 
+/// @brief Node Editor
+/// Dimitry Pinaev.
+/// [Accessed November 2016]. Available from: https://github.com/paceholder/nodeeditor
+
 class ConnectionGeometry
 {
 public:

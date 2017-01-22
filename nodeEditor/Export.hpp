@@ -3,6 +3,10 @@
 #include "Compiler.hpp"
 #include "OperatingSystem.hpp"
 
+/// @brief Node Editor
+/// Dimitry Pinaev.
+/// [Accessed November 2016]. Available from: https://github.com/paceholder/nodeeditor
+
 #ifdef NODE_EDITOR_PLATFORM_WINDOWS
 #  define NODE_EDITOR_EXPORT __declspec(dllexport)
 #  define NODE_EDITOR_IMPORT __declspec(dllimport)

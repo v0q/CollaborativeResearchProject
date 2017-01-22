@@ -18,8 +18,7 @@ namespace hsitho
 		m_outputNode(nullptr),
 		m_cam(glm::vec4(0.f, 0.132164f, 0.991228f, 0.f)),
 		m_camU(glm::vec3(0.f, 1.f, 0.f)),
-		m_camL(glm::vec3(1.f, 0.f, 0.f)),
-//		m_camDist(7.566f)
+    m_camL(glm::vec3(1.f, 0.f, 0.f)),
 		m_camDist(15.f)
   {
     std::ifstream s("shaders/shader.begin");
@@ -37,7 +36,7 @@ namespace hsitho
   {
     GLWindow::initializeGL();
 
-    m_shaderMan->createShader("ScreenQuad", "screenQuad.vert", "distancefieldprimitives.frag");
+    m_shaderMan->createShader("ScreenQuad", "screenQuad.vert", "blank.frag");
     m_shaderMan->useShader("ScreenQuad");
 
     // Generate and bind VAO and VBO buffers
@@ -94,6 +93,7 @@ namespace hsitho
 			glm::mat4 rot = glm::rotate(glm::mat4(1.f), glm::radians(dx), m_camU);
 			rot = glm::rotate(rot, glm::radians(dy), -m_camL);
 
+      // Calculate the new camera location, up and left vectors for the shader
 			m_cam = glm::normalize(rot * m_cam);
 			glm::vec3 d = glm::vec3(-m_cam.x, -m_cam.y, -m_cam.z);
 			m_camU = glm::normalize(m_camU - d * glm::dot(m_camU, d));
@@ -106,6 +106,7 @@ namespace hsitho
 		int numDegrees = _event->delta() / 8;
 		int numSteps = numDegrees / 15;
 
+    // Zoom the camera
 		if(_event->orientation() == Qt::Vertical) {
 			m_camDist -= numSteps*0.25f;
 		}
@@ -172,7 +173,6 @@ namespace hsitho
         if(connection.get() && connection->getNode(PortType::Out).lock())
         {
           shadercode += recurseNodeTree(connection->getNode(PortType::Out).lock(), translation);
-//					branches.m_branches.push_back(recurseNodeTree(connection->getNode(PortType::Out).lock()));
         }
       }
 

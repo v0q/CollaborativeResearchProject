@@ -15,6 +15,11 @@
 #include "nodes/DistanceFieldData.hpp"
 #include "ExpressionEvaluator.hpp"
 
+/// @brief Node Editor
+/// Dimitry Pinaev.
+/// [Accessed November 2016]. Available from: https://github.com/paceholder/nodeeditor
+/// Modified by Teemu Lindborg & Phil Gifford
+
 class NODE_EDITOR_PUBLIC NodeDataModel
   : public QObject
   , public Serializable

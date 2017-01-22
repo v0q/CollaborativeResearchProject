@@ -4,6 +4,10 @@
 #include <QtCore/QObject>
 #include <QtCore/QVariant>
 
+/// @brief Node Editor
+/// Dimitry Pinaev.
+/// [Accessed November 2016]. Available from: https://github.com/paceholder/nodeeditor
+
 class FlowItemInterface: public QObject
 {
   Q_OBJECT

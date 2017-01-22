@@ -7,6 +7,13 @@
 #include "nodeEditor/NodeDataModel.hpp"
 #include "nodes/DistanceFieldData.hpp"
 
+/// \file CubePrimitiveDataModel.hpp
+/// \brief Node for a cube primitive, more comments on the functions can be found in CapsulePrimitiveDataModel.hpp as all of the nodes inherit from the NodeDataModel.
+///        Built around the NodeDataModel by Dimitry Pinaev [https://github.com/paceholder/nodeeditor]
+/// \authors Teemu Lindborg & Phil Gifford
+/// \version 1.0
+/// \date 22/01/17 Updated to NCCA Coding standard
+
 class CubePrimitiveDataModel : public NodeDataModel
 {
   Q_OBJECT

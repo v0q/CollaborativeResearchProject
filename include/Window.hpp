@@ -7,6 +7,13 @@
 
 #include "nodeEditor/FlowScene.hpp"
 
+/// \file Window.hpp
+/// \brief Simple base class for a Qt OpenGL window, used to inherit from
+///        FPS counter is based on the FPS counter in NGL by Jon Macey
+/// \author Teemu Lindborg
+/// \version 1.0
+/// \date 25/04/16 Initial version
+
 namespace hsitho
 {
   class GLWindow : public QOpenGLWidget, protected QOpenGLFunctions
@@ -22,9 +29,6 @@ namespace hsitho
 
     void glInfo();
     float getTimePassed() { return m_timePassed; }
-		//----------------------------------------------------------------------------------------------------------------------
-		/// @brief number of frames for the fps counter
-		//----------------------------------------------------------------------------------------------------------------------
 		int m_frames;
 
   private:
@@ -32,18 +36,8 @@ namespace hsitho
 		void timerEvent(QTimerEvent *_event) override;
 
     float m_timePassed;
-
-		//----------------------------------------------------------------------------------------------------------------------
-		/// @brief flag for the fps timer
-		//----------------------------------------------------------------------------------------------------------------------
-		int m_fpsTimer;
-		//----------------------------------------------------------------------------------------------------------------------
-		/// @brief the fps to draw
-		//----------------------------------------------------------------------------------------------------------------------
-		int m_fps;
-		//----------------------------------------------------------------------------------------------------------------------
-		/// @brief timer for re-draw
-		//----------------------------------------------------------------------------------------------------------------------
+    int m_fpsTimer;
+    int m_fps;
 		QTime m_timer;
 
   public slots:

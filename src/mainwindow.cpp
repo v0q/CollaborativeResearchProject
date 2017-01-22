@@ -38,6 +38,7 @@ MainWindow::MainWindow(QWidget *_parent) :
   m_ui->setupUi(this);
   m_gl = new hsitho::SceneWindow(this);
 
+  // Register the nodes
 	DataModelRegistry::registerModel<CubePrimitiveDataModel>("Primitives");
   DataModelRegistry::registerModel<TorusPrimitiveDataModel>("Primitives");
   DataModelRegistry::registerModel<SpherePrimitiveDataModel>("Primitives");
@@ -103,51 +104,6 @@ MainWindow::MainWindow(QWidget *_parent) :
   node->nodeGraphicsObject()->setPos(posView);
 
   m_flowView->centerOn(node->nodeGraphicsObject().get());
-
-//	std::cout << hsitho::Expressions::evaluate("( 0.0 ) * ( 0.0 ) + ( 1.0 ) * ( c ) + ( 0.0 ) * ( -s ) + ( 0.0 ) * ( 0.0 )") << "\n";
-//	std::cout << hsitho::Expressions::evaluate("( 1.0 ) * ( 1.0 ) + ( 0.0 ) * ( 0.0 ) + ( 0.0 ) * ( 0.0 ) + ( 0.0 ) * ( 0.0 )") << "\n";
-//	std::cout << hsitho::Expressions::evaluate("( 1.0 ) * ( 0.0 ) + ( 0.0 ) * ( c ) + ( 0.0 ) * ( -s ) + ( 0.0 ) * ( 0.0 )") << "\n";
-//	std::cout << hsitho::Expressions::evaluate("( 1.0 ) * ( 0.0 ) + ( 0.0 ) * ( s ) + ( 0.0 ) * ( c ) + ( 0.0 ) * ( 0.0 )") << "\n";
-//	std::cout << hsitho::Expressions::evaluate("( 1.0 ) * ( 0.0 ) + ( 0.0 ) * ( 0.0 ) + ( 0.0 ) * ( 0.0 ) + ( 0.0 ) * ( 1.0 )") << "\n";
-//	std::cout << hsitho::Expressions::evaluate("( 0.0 ) * ( 1.0 ) + ( 1.0 ) * ( 0.0 ) + ( 0.0 ) * ( 0.0 ) + ( 0.0 ) * ( 0.0 )") << "\n";
-//	std::cout << hsitho::Expressions::evaluate("( 0.0 ) * ( 0.0 ) + ( 1.0 ) * ( c ) + ( 0.0 ) * ( -s ) + ( 0.0 ) * ( 0.0 )") << "\n";
-//	std::cout << hsitho::Expressions::evaluate("( 0.0 ) * ( 0.0 ) + ( 1.0 ) * ( s ) + ( 0.0 ) * ( c ) + ( 0.0 ) * ( 0.0 )") << "\n";
-//	std::cout << hsitho::Expressions::evaluate("( 0.0 ) * ( 0.0 ) + ( 1.0 ) * ( 0.0 ) + ( 0.0 ) * ( 0.0 ) + ( 0.0 ) * ( 1.0 )") << "\n";
-//	std::cout << hsitho::Expressions::evaluate("( 0.0 ) * ( 1.0 ) + ( 0.0 ) * ( 0.0 ) + ( 1.0 ) * ( 0.0 ) + ( 0.0 ) * ( 0.0 )") << "\n";
-//	std::cout << hsitho::Expressions::evaluate("( 0.0 ) * ( 0.0 ) + ( 0.0 ) * ( s ) + ( 1.0 ) * ( c ) + ( 0.0 ) * ( 0.0 )") << "\n";
-//	std::cout << hsitho::Expressions::evaluate("( 0.0 ) * ( 0.0 ) + ( 0.0 ) * ( 0.0 ) + ( 1.0 ) * ( 0.0 ) + ( 0.0 ) * ( 1.0 )") << "\n";
-//	std::cout << hsitho::Expressions::evaluate("( 0.0 ) * ( 1.0 ) + ( 0.0 ) * ( 0.0 ) + ( 0.0 ) * ( 0.0 ) + ( 1.0 ) * ( 0.0 )") << "\n";
-//	std::cout << hsitho::Expressions::evaluate("( 0.0 ) * ( 0.0 ) + ( 0.0 ) * ( c ) + ( 0.0 ) * ( -s ) + ( 1.0 ) * ( 0.0 )") << "\n";
-//	std::cout << hsitho::Expressions::evaluate("( 0.0 ) * ( 0.0 ) + ( 0.0 ) * ( s ) + ( 0.0 ) * ( c ) + ( 1.0 ) * ( 0.0 )") << "\n";
-
-//	cos(u_GlobalTime), 0, sin(u_GlobalTime), 0,
-//	0, 1, 0, 0,
-//	-sin(u_GlobalTime), 0, cos(u_GlobalTime), 0,
-//	0, 0, 0, 1,
-
-//	cos(1.04666674*copyNum), 0, sin(1.04666674*copyNum), 0,
-//	0, 1, 0, 0,
-//	-sin(1.04666674*copyNum), 0, cos(1.04666674*copyNum), 0,
-//	0, 0, 0, 1,
-
-	Mat4f testR(	"0.0001", "-0.5403", "0.8415", "0.0000",
-								"1.0000", "0.0001", "0.0000", "0.0000",
-								"-0.0001", "0.8415", "0.5403", "0.0000",
-								"0.0000", "0.0000", "0.0000", "1.0000");
-
-	Mat4f test(	"cos(0.7850*copyNum)", "0.0000", "sin(0.7850*copyNum)", "0.0000",
-							"0.0000", "1.0000", "0.0000", "0.0000",
-							"-sin(0.7850*copyNum)", "0.0000", "cos(0.7850*copyNum)", "0.0000",
-							"0.0000", "0.0000", "0.0000", "1.0000");
-
-
-//	std::string testStr("0.0001 * sin ( 0.7850 * 1 )");
-//	std::cout << testStr.find_first_of("( ") << " " << testStr.find_last_of("( ") << " " << testStr.length() - 1 << "\n";
-//	std::cout << hsitho::Expressions::evaluate("( 0.0001 ) * ( sin(0.7850*copyNum) ) + ( -0.5403 ) * ( 0.0000 ) + ( 0.8415 ) * ( cos(0.7850*copyNum) ) + ( 0.0000 ) * ( 0.0000 )", "", 1) << "\n";
-//	testR.setCpn(1);
-//	test.setCpn(1);
-//	(testR*test).print();
-//	exit(0);
 }
 
 void MainWindow::keyPressEvent(QKeyEvent *_event)

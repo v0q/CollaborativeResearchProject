@@ -3,6 +3,10 @@
 
 #include <QtGui/QPainter>
 
+/// @brief Node Editor
+/// Dimitry Pinaev.
+/// [Accessed November 2016]. Available from: https://github.com/paceholder/nodeeditor
+
 class ConnectionGeometry;
 class ConnectionState;
 

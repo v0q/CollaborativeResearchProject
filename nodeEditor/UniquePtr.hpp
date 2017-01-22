@@ -3,6 +3,10 @@
 #include <memory>
 #include "Compiler.hpp"
 
+/// @brief Node Editor
+/// Dimitry Pinaev.
+/// [Accessed November 2016]. Available from: https://github.com/paceholder/nodeeditor
+
 #if !defined(_MSC_VER) ||                     \
   (defined(_MSC_VER) && (_MSC_VER < 1900))
 
