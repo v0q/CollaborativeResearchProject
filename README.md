@@ -8,9 +8,9 @@ When approaching 3D modelling, it requires a large amount of expertise to develo
 The original node editor used in this project was created by Dimitry Pinaev (https://github.com/paceholder/nodeeditor). The current implementation uses a modified version of the editor. Details regarding the modifications made to the node editor can be found in ./nodeEditor/README.md
 
 ### Examples
-![example1](https://github.com/v0q/CollaborativeResearchProject/tree/master/Examples/1.png "Example 1")
-![example2](https://github.com/v0q/CollaborativeResearchProject/tree/master/Examples/2.png "Example 2")
-![example3](https://github.com/v0q/CollaborativeResearchProject/tree/master/Examples/3.png "Example 3")
+![example1](https://raw.githubusercontent.com/v0q/CollaborativeResearchProject/master/Examples/1.png "Example 1")
+![example2](https://raw.githubusercontent.com/v0q/CollaborativeResearchProject/master/Examples/2.png "Example 2")
+![example3](https://raw.githubusercontent.com/v0q/CollaborativeResearchProject/master/Examples/3.png "Example 3")
 
 Two examples videos can be found under _Examples_
 
